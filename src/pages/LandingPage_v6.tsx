@@ -1,38 +1,33 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import {
-  ArrowRight, Check, Bell, Calendar, BookOpen,
-  TrendingUp, Clock, ShieldCheck, Sparkles,
-} from 'lucide-react';
+import { motion, useScroll, useTransform, useInView } from 'framer-motion';
+import { ArrowRight, Check, Bell, Calendar, BookOpen, TrendingUp, Clock, ShieldCheck, Sparkles } from 'lucide-react';
 
-function useScrollReveal() {
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const el = entry.target as HTMLElement;
-            const delay = parseInt(el.getAttribute('data-delay') ?? '0');
-            setTimeout(() => {
-              el.style.opacity = '1';
-              el.style.transform = 'translateY(0)';
-            }, delay);
-          }
-        });
-      },
-      { threshold: 0.08 }
-    );
-    document.querySelectorAll('[data-sr6]').forEach((el) => {
-      const h = el as HTMLElement;
-      h.style.opacity = '0';
-      h.style.transform = 'translateY(28px)';
-      h.style.transition = 'opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1)';
-      observer.observe(el);
-    });
-    return () => observer.disconnect();
-  }, []);
-}
+// ── Animation presets ──────────────────────────────────────────────────────
+const EASE = [0.22, 1, 0.36, 1] as const;
+const SPRING = { type: 'spring', stiffness: 300, damping: 24 } as const;
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 32 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: EASE } },
+};
+
+const wordReveal = {
+  hidden: { opacity: 0, y: 22, filter: 'blur(8px)' },
+  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.55, ease: EASE } },
+};
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: EASE } },
+};
+
+const stagger = (delay = 0.09, delayChildren = 0) => ({
+  hidden: {},
+  visible: { transition: { staggerChildren: delay, delayChildren } },
+});
+
+// ── Counter hook ───────────────────────────────────────────────────────────
 function useCounter(target: number, duration: number, trigger: boolean) {
   const [value, setValue] = useState(0);
   useEffect(() => {
@@ -41,8 +36,7 @@ function useCounter(target: number, duration: number, trigger: boolean) {
     const totalFrames = Math.round(duration / 16);
     const timer = setInterval(() => {
       frame++;
-      const progress = frame / totalFrames;
-      const eased = 1 - Math.pow(1 - progress, 3);
+      const eased = 1 - Math.pow(1 - frame / totalFrames, 3);
       setValue(Math.round(eased * target));
       if (frame >= totalFrames) { setValue(target); clearInterval(timer); }
     }, 16);
@@ -51,6 +45,7 @@ function useCounter(target: number, duration: number, trigger: boolean) {
   return value;
 }
 
+// ── Palette ────────────────────────────────────────────────────────────────
 const P = {
   bg: '#faf8f5',
   card: '#ffffff',
@@ -63,6 +58,14 @@ const P = {
   muted: '#7a6b78',
   faint: '#c4b8c0',
 };
+
+// ── Hero word list ─────────────────────────────────────────────────────────
+const heroWords = [
+  { w: 'Enquanto', a: false }, { w: 'você', a: false }, { w: 'aplica', a: false },
+  { w: 'o', a: false }, { w: 'Volume', a: true }, { w: 'Russo,', a: true },
+  { w: 'sua', a: false }, { w: 'próxima', a: false }, { w: 'cliente', a: false },
+  { w: 'já', a: false }, { w: 'agendou.', a: false },
+];
 
 const features = [
   { icon: <Calendar size={20} />, title: 'Agenda aberta 24h', desc: 'Suas clientes agendam sozinhas pelo link do seu estúdio. De madrugada. No feriado. Quando quiserem.' },
@@ -79,210 +82,315 @@ const testimonials = [
   { text: 'Minha agenda nunca mais ficou bagunçada. E ver o quanto faturei no mês sem precisar contar no papel é incrível.', name: 'Gabriela Costa', role: 'Lash Designer • Gabi Cílios' },
 ];
 
+// ── Component ──────────────────────────────────────────────────────────────
 export default function LandingPage_v6() {
   const navigate = useNavigate();
-  useScrollReveal();
+  const { scrollY, scrollYProgress } = useScroll();
+  const [scrolled, setScrolled] = useState(false);
 
+  useEffect(() => {
+    return scrollY.on('change', (v) => setScrolled(v > 80));
+  }, [scrollY]);
+
+  // Parallax blobs
+  const blob1Y = useTransform(scrollYProgress, [0, 1], ['0%', '-30%']);
+  const blob2Y = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
+
+  // Counter trigger via Framer Motion useInView
   const statsRef = useRef<HTMLDivElement>(null);
-  const [statsVisible, setStatsVisible] = useState(false);
-  const c24 = useCounter(24, 1000, statsVisible);
-  const c3 = useCounter(3, 600, statsVisible);
-  const c0 = useCounter(0, 400, statsVisible);
-
-  useEffect(() => {
-    const styleTag = document.createElement('style');
-    styleTag.setAttribute('id', 'v6-keyframes');
-    styleTag.textContent = `
-      @keyframes v6float {
-        0%, 100% { transform: translateY(0px) rotate(-1.5deg); }
-        50% { transform: translateY(-18px) rotate(1.5deg); }
-      }
-      @keyframes v6floatB {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
-      }
-      @keyframes v6pulse {
-        0%, 100% { opacity: 0.5; transform: scale(1); }
-        50% { opacity: 1; transform: scale(1.04); }
-      }
-    `;
-    document.head.appendChild(styleTag);
-    return () => { const s = document.getElementById('v6-keyframes'); if (s) s.remove(); };
-  }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) setStatsVisible(true);
-    }, { threshold: 0.3 });
-    if (statsRef.current) observer.observe(statsRef.current);
-    return () => observer.disconnect();
-  }, []);
+  const statsInView = useInView(statsRef, { once: true, amount: 0.3 });
+  const c24 = useCounter(24, 1000, statsInView);
+  const c3 = useCounter(3, 600, statsInView);
+  const c0 = useCounter(0, 400, statsInView);
 
   return (
     <div style={{ background: P.bg, color: P.text, minHeight: '100vh', fontFamily: 'inherit', overflowX: 'hidden' }}>
 
-      {/* Decorative blobs */}
+      {/* ── DECORATIVE BLOBS (parallax) ── */}
       <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: '-15%', right: '-10%', width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle, rgba(200,75,114,0.08) 0%, transparent 70%)' }} />
-        <div style={{ position: 'absolute', bottom: '-10%', left: '-10%', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle, rgba(200,75,114,0.06) 0%, transparent 70%)' }} />
+        <motion.div style={{ position: 'absolute', top: '-15%', right: '-10%', width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle, rgba(200,75,114,0.08) 0%, transparent 70%)', y: blob1Y }} />
+        <motion.div style={{ position: 'absolute', bottom: '-10%', left: '-10%', width: 500, height: 500, borderRadius: '50%', background: 'radial-gradient(circle, rgba(200,75,114,0.06) 0%, transparent 70%)', y: blob2Y }} />
       </div>
 
       {/* ── HEADER ── */}
-      <header style={{ position: 'fixed', top: 16, left: '50%', transform: 'translateX(-50%)', width: 'calc(100% - 32px)', maxWidth: 1040, background: 'rgba(250,248,245,0.88)', backdropFilter: 'blur(20px)', border: `1px solid ${P.border}`, borderRadius: 999, padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', zIndex: 100, boxShadow: '0 2px 20px rgba(0,0,0,0.06)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <div style={{ width: 30, height: 30, borderRadius: 8, background: `linear-gradient(135deg, ${P.accent}, #e88faa)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 11, color: '#fff' }}>LH</div>
-          <span className="hidden min-[380px]:inline" style={{ fontWeight: 800, fontSize: 17, background: `linear-gradient(135deg, ${P.accent}, #e88faa)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Lash Hub</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <Link to="/login" style={{ color: P.muted, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>Entrar</Link>
-          <button onClick={() => navigate('/cadastro')} style={{ background: P.accent, color: '#fff', border: 'none', borderRadius: 999, padding: '9px 20px', fontWeight: 700, fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, boxShadow: `0 4px 16px rgba(200,75,114,0.3)` }}>
-            Começar grátis <ArrowRight size={13} />
-          </button>
-        </div>
-      </header>
+      <motion.div
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
+        style={{ position: 'fixed', top: 16, left: '50%', x: '-50%', width: 'calc(100% - 32px)', maxWidth: 1040, zIndex: 100 }}
+      >
+        <motion.header
+          animate={{
+            background: scrolled ? 'rgba(250,248,245,0.97)' : 'rgba(250,248,245,0.82)',
+            boxShadow: scrolled ? '0 2px 32px rgba(0,0,0,0.1)' : '0 2px 16px rgba(0,0,0,0.04)',
+          }}
+          transition={{ duration: 0.35 }}
+          style={{ backdropFilter: 'blur(20px)', border: `1px solid ${P.border}`, borderRadius: 999, padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            <div style={{ width: 30, height: 30, borderRadius: 8, background: `linear-gradient(135deg, ${P.accent}, #e88faa)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 11, color: '#fff' }}>LH</div>
+            <span className="hidden min-[380px]:inline" style={{ fontWeight: 800, fontSize: 17, background: `linear-gradient(135deg, ${P.accent}, #e88faa)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Lash Hub</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <Link to="/login" style={{ color: P.muted, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>Entrar</Link>
+            <motion.button
+              onClick={() => navigate('/cadastro')}
+              whileHover={{ scale: 1.06, boxShadow: `0 6px 28px rgba(200,75,114,0.4)` }}
+              whileTap={{ scale: 0.95 }}
+              transition={SPRING}
+              style={{ background: P.accent, color: '#fff', border: 'none', borderRadius: 999, padding: '9px 20px', fontWeight: 700, fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
+            >
+              Começar grátis <ArrowRight size={13} />
+            </motion.button>
+          </div>
+        </motion.header>
+      </motion.div>
 
       {/* ── HERO ── */}
       <section style={{ position: 'relative', zIndex: 1, minHeight: '100vh', padding: '120px 20px 80px', maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center' }}>
         <div className="flex flex-col lg:flex-row items-center gap-12 w-full">
 
-          {/* Left — Text */}
+          {/* Left — text */}
           <div className="flex-1 text-center lg:text-left">
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 14px', background: P.accentLight, border: `1px solid rgba(200,75,114,0.2)`, borderRadius: 999, fontSize: 11, fontWeight: 700, color: P.accent, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 28 }}>
+
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.6, ease: EASE }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '5px 14px', background: P.accentLight, border: `1px solid rgba(200,75,114,0.22)`, borderRadius: 999, fontSize: 11, fontWeight: 700, color: P.accent, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 28 }}
+            >
               ✦ Feito só pra Lash Designer
-            </div>
+            </motion.div>
 
-            <h1 style={{ fontSize: 'clamp(34px, 5vw, 64px)', fontWeight: 900, lineHeight: 1.08, letterSpacing: -1.5, marginBottom: 20, color: P.text }}>
-              Enquanto você aplica o{' '}
-              <span style={{ color: P.accent }}>Volume Russo,</span>
-              {' '}sua próxima cliente já agendou.
-            </h1>
+            {/* Word-by-word title */}
+            <motion.h1
+              initial="hidden"
+              animate="visible"
+              variants={stagger(0.07, 0.5)}
+              style={{ fontSize: 'clamp(34px, 5vw, 64px)', fontWeight: 900, lineHeight: 1.08, letterSpacing: -1.5, marginBottom: 20, color: P.text }}
+            >
+              {heroWords.map((item, i) => (
+                <motion.span
+                  key={i}
+                  variants={wordReveal}
+                  style={{ display: 'inline-block', marginRight: '0.22em', color: item.a ? P.accent : 'inherit' }}
+                >
+                  {item.w}
+                </motion.span>
+              ))}
+            </motion.h1>
 
-            <p style={{ fontSize: 16, color: P.muted, lineHeight: 1.8, marginBottom: 36, maxWidth: 520 }}>
+            {/* Subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.3, duration: 0.7, ease: EASE }}
+              style={{ fontSize: 16, color: P.muted, lineHeight: 1.8, marginBottom: 36, maxWidth: 520 }}
+            >
               Com o Lash Hub, suas clientes marcam horário pelo app do seu estúdio. Sem precisar te chamar no WhatsApp. Sem depender de você estar disponível.
-            </p>
+            </motion.p>
 
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 32 }}>
-              <button onClick={() => navigate('/cadastro')} style={{ background: P.accent, color: '#fff', border: 'none', borderRadius: 14, padding: '15px 28px', fontWeight: 700, fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, boxShadow: `0 8px 32px rgba(200,75,114,0.35)` }}>
+            {/* CTAs */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.5, duration: 0.6, ease: EASE }}
+              style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 32 }}
+            >
+              <motion.button
+                onClick={() => navigate('/cadastro')}
+                whileHover={{ scale: 1.05, boxShadow: `0 12px 40px rgba(200,75,114,0.45)` }}
+                whileTap={{ scale: 0.97 }}
+                transition={SPRING}
+                style={{ background: P.accent, color: '#fff', border: 'none', borderRadius: 14, padding: '15px 28px', fontWeight: 700, fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, boxShadow: `0 8px 32px rgba(200,75,114,0.35)` }}
+              >
                 Testar 14 dias grátis <ArrowRight size={16} />
-              </button>
+              </motion.button>
               <Link to="/login" style={{ color: P.muted, fontSize: 14, fontWeight: 500, textDecoration: 'none', padding: '15px 20px', border: `1px solid ${P.border}`, borderRadius: 14, display: 'flex', alignItems: 'center' }}>
                 Já tenho conta
               </Link>
-            </div>
+            </motion.div>
 
-            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+            {/* Trust */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.7, duration: 0.5 }}
+              style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}
+            >
               {['14 dias grátis', 'Sem cartão de crédito', 'Garantia 7 dias'].map(b => (
                 <span key={b} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: P.muted }}>
                   <Check size={13} color={P.accent} /> {b}
                 </span>
               ))}
-            </div>
+            </motion.div>
           </div>
 
-          {/* Right — Floating Mockup */}
+          {/* Right — floating mockup */}
           <div className="flex-1 flex justify-center" style={{ position: 'relative', minHeight: 400 }}>
-            {/* Floating decorative circles — hidden on mobile to avoid overflow */}
-            <div className="hidden sm:block" style={{ position: 'absolute', top: -20, right: -20, width: 120, height: 120, borderRadius: '50%', border: `2px dashed rgba(200,75,114,0.2)`, animation: 'v6pulse 4s ease-in-out infinite' }} />
-            <div className="hidden sm:block" style={{ position: 'absolute', bottom: 20, left: -30, width: 80, height: 80, borderRadius: '50%', background: P.accentLight, animation: 'v6floatB 3s ease-in-out infinite' }} />
 
-            {/* Main mockup card */}
-            <div style={{ width: '100%', maxWidth: 380, background: P.card, border: `1px solid ${P.border}`, borderRadius: 20, padding: 20, boxShadow: '0 32px 80px rgba(0,0,0,0.1)', animation: 'v6float 5s ease-in-out infinite', position: 'relative', zIndex: 2 }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, paddingBottom: 12, borderBottom: `1px solid ${P.border}` }}>
-                <div>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: P.accent, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>App do Estúdio</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: P.text }}>Mari Lash Studio</div>
-                </div>
-                <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981', boxShadow: '0 0 6px rgba(16,185,129,0.5)' }} />
-              </div>
+            {/* Decorative circles — hidden on mobile */}
+            <motion.div
+              className="hidden sm:block"
+              animate={{ opacity: [0.4, 0.9, 0.4], scale: [1, 1.05, 1] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              style={{ position: 'absolute', top: -20, right: -20, width: 120, height: 120, borderRadius: '50%', border: `2px dashed rgba(200,75,114,0.22)`, pointerEvents: 'none' }}
+            />
+            <motion.div
+              className="hidden sm:block"
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+              style={{ position: 'absolute', bottom: 20, left: -30, width: 80, height: 80, borderRadius: '50%', background: P.accentLight, pointerEvents: 'none' }}
+            />
 
-              <div style={{ background: P.accentLight, border: `1px solid rgba(200,75,114,0.15)`, borderRadius: 12, padding: 14, marginBottom: 12 }}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: P.accent, marginBottom: 6 }}>✦ Volume Russo — R$ 180</div>
-                <div style={{ fontSize: 9, color: P.muted }}>Escolha a data e horário disponíveis</div>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 14 }}>
-                {['Segunda — 09:00', 'Segunda — 11:00', 'Terça — 14:00'].map((slot, i) => (
-                  <div key={i} style={{ background: i === 0 ? P.accentLight : P.bg, border: `1px solid ${i === 0 ? 'rgba(200,75,114,0.3)' : P.border}`, borderRadius: 8, padding: '8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: 11, fontWeight: i === 0 ? 700 : 400, color: i === 0 ? P.accent : P.muted }}>📅 {slot}</span>
-                    {i === 0 && <span style={{ width: 6, height: 6, borderRadius: '50%', background: P.accent, display: 'inline-block' }} />}
+            {/* Main mockup card — floats */}
+            <motion.div
+              initial={{ opacity: 0, y: 40, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: 1.2, duration: 0.8, ease: EASE }}
+              style={{ width: '100%', maxWidth: 380, position: 'relative', zIndex: 2 }}
+            >
+              <motion.div
+                animate={{ y: [0, -16, 0], rotate: [-1, 1, -1] }}
+                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+                style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 20, padding: 20, boxShadow: '0 32px 80px rgba(0,0,0,0.1)' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, paddingBottom: 12, borderBottom: `1px solid ${P.border}` }}>
+                  <div>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: P.accent, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>App do Estúdio</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: P.text }}>Mari Lash Studio</div>
                   </div>
-                ))}
-              </div>
+                  <motion.div
+                    animate={{ opacity: [1, 0.4, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981' }}
+                  />
+                </div>
 
-              <button style={{ width: '100%', background: P.accent, color: '#fff', border: 'none', borderRadius: 10, padding: '10px 0', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
-                Confirmar agendamento
-              </button>
+                <div style={{ background: P.accentLight, border: `1px solid rgba(200,75,114,0.15)`, borderRadius: 12, padding: 14, marginBottom: 12 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: P.accent, marginBottom: 6 }}>✦ Volume Russo — R$ 180</div>
+                  <div style={{ fontSize: 9, color: P.muted }}>Escolha a data e horário disponíveis</div>
+                </div>
 
-              <div style={{ marginTop: 12, paddingTop: 10, borderTop: `1px solid ${P.border}`, fontSize: 9, color: P.faint, textAlign: 'center' }}>
-                Sua cliente agenda sozinha — você recebe o aviso na hora
-              </div>
-            </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 14 }}>
+                  {[{ slot: 'Segunda — 09:00', selected: true }, { slot: 'Segunda — 11:00', selected: false }, { slot: 'Terça — 14:00', selected: false }].map((item, i) => (
+                    <div key={i} style={{ background: item.selected ? P.accentLight : P.bg, border: `1px solid ${item.selected ? 'rgba(200,75,114,0.3)' : P.border}`, borderRadius: 8, padding: '8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: 11, fontWeight: item.selected ? 700 : 400, color: item.selected ? P.accent : P.muted }}>📅 {item.slot}</span>
+                      {item.selected && <span style={{ width: 6, height: 6, borderRadius: '50%', background: P.accent, display: 'inline-block' }} />}
+                    </div>
+                  ))}
+                </div>
 
-            {/* Floating notification chip — hidden on mobile to avoid overflow */}
-            <div className="hidden sm:flex" style={{ position: 'absolute', top: 10, left: -10, background: P.card, border: `1px solid ${P.border}`, borderRadius: 12, padding: '8px 14px', alignItems: 'center', gap: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.08)', zIndex: 3, animation: 'v6floatB 4s ease-in-out infinite 1s' }}>
-              <Bell size={14} color={P.accent} />
-              <div>
-                <div style={{ fontSize: 10, fontWeight: 700, color: P.text }}>Nova marcação!</div>
-                <div style={{ fontSize: 9, color: P.muted }}>Volume Russo • Segunda 09h</div>
-              </div>
-            </div>
+                <button style={{ width: '100%', background: P.accent, color: '#fff', border: 'none', borderRadius: 10, padding: '10px 0', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+                  Confirmar agendamento
+                </button>
+
+                <div style={{ marginTop: 12, paddingTop: 10, borderTop: `1px solid ${P.border}`, fontSize: 9, color: P.faint, textAlign: 'center' }}>
+                  Sua cliente agenda sozinha — você recebe o aviso na hora
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Floating notification chip — hidden on mobile */}
+            <motion.div
+              className="hidden sm:flex"
+              initial={{ opacity: 0, x: -24 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 2.2, duration: 0.6, ease: EASE }}
+              style={{ position: 'absolute', top: 10, left: -10, zIndex: 3 }}
+            >
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+                style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 12, padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.08)' }}
+              >
+                <Bell size={14} color={P.accent} />
+                <div>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: P.text }}>Nova marcação!</div>
+                  <div style={{ fontSize: 9, color: P.muted }}>Volume Russo • Segunda 09h</div>
+                </div>
+              </motion.div>
+            </motion.div>
           </div>
-
         </div>
       </section>
 
       {/* ── COUNTER STATS ── */}
-      <section ref={statsRef} style={{ position: 'relative', zIndex: 1, padding: '60px 20px', background: P.accent }}>
+      <motion.section
+        ref={statsRef}
+        style={{ position: 'relative', zIndex: 1, padding: '60px 20px', background: P.accent }}
+      >
         <div style={{ maxWidth: 800, margin: '0 auto' }}>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center text-white">
-            <div>
-              <div style={{ fontSize: 'clamp(48px, 8vw, 72px)', fontWeight: 900, lineHeight: 1, marginBottom: 8 }}>
-                {c24}h
-              </div>
-              <div style={{ fontSize: 14, opacity: 0.85 }}>Sua agenda aberta todo dia, o tempo todo</div>
-            </div>
-            <div>
-              <div style={{ fontSize: 'clamp(48px, 8vw, 72px)', fontWeight: 900, lineHeight: 1, marginBottom: 8 }}>
-                {c3}
-              </div>
-              <div style={{ fontSize: 14, opacity: 0.85 }}>Cliques pra sua cliente agendar</div>
-            </div>
-            <div>
-              <div style={{ fontSize: 'clamp(48px, 8vw, 72px)', fontWeight: 900, lineHeight: 1, marginBottom: 8 }}>
-                R${c0}
-              </div>
-              <div style={{ fontSize: 14, opacity: 0.85 }}>De taxa sobre cada atendimento</div>
-            </div>
-          </div>
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center text-white"
+            initial="hidden"
+            animate={statsInView ? 'visible' : 'hidden'}
+            variants={stagger(0.15)}
+          >
+            {[
+              { value: `${c24}h`, label: 'Sua agenda aberta todo dia, o tempo todo' },
+              { value: c3, label: 'Cliques pra sua cliente agendar' },
+              { value: `R$${c0}`, label: 'De taxa sobre cada atendimento' },
+            ].map((s, i) => (
+              <motion.div key={i} variants={scaleIn}>
+                <div style={{ fontSize: 'clamp(48px, 8vw, 72px)', fontWeight: 900, lineHeight: 1, marginBottom: 8 }}>
+                  {s.value}
+                </div>
+                <div style={{ fontSize: 14, opacity: 0.85 }}>{s.label}</div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ── COMPARISON ── */}
       <section style={{ position: 'relative', zIndex: 1, padding: '80px 20px', background: '#f3f0eb' }}>
         <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center' }}>
-          <div data-sr6="" style={{ marginBottom: 48 }}>
-            <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: P.accent, marginBottom: 12 }}>Por que o Lash Hub é diferente</p>
-            <h2 style={{ fontSize: 'clamp(24px, 3.5vw, 42px)', fontWeight: 900, lineHeight: 1.15, letterSpacing: -0.5 }}>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={stagger(0.08)}
+            style={{ marginBottom: 48 }}
+          >
+            <motion.p variants={fadeUp} style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: P.accent, marginBottom: 12 }}>Por que o Lash Hub é diferente</motion.p>
+            <motion.h2 variants={fadeUp} style={{ fontSize: 'clamp(24px, 3.5vw, 42px)', fontWeight: 900, lineHeight: 1.15, letterSpacing: -0.5 }}>
               Sistemas de salão não foram feitos<br />pra Lash Designer.
-            </h2>
-            <p style={{ fontSize: 15, color: P.muted, maxWidth: 520, margin: '12px auto 0', lineHeight: 1.7 }}>
+            </motion.h2>
+            <motion.p variants={fadeUp} style={{ fontSize: 15, color: P.muted, maxWidth: 520, margin: '12px auto 0', lineHeight: 1.7 }}>
               Eles têm comissões, equipes, múltiplos profissionais. Você atende por conta própria. Você precisa de outra coisa.
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
 
-          <div data-sr6="" data-delay="100" className="grid grid-cols-1 md:grid-cols-2 gap-5 text-left">
-            <div style={{ background: '#fff0f0', border: '1px solid #ffd0d0', borderRadius: 20, padding: 28 }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-left">
+            {/* Bad systems — slides from left */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.65, ease: EASE }}
+              style={{ background: '#fff0f0', border: '1px solid #ffd0d0', borderRadius: 20, padding: 28 }}
+            >
               <h3 style={{ fontSize: 14, fontWeight: 700, color: '#b91c1c', marginBottom: 16 }}>✗ Sistemas genéricos de salão</h3>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {['Feitos pra equipes com 10, 20 funcionários', 'Cheios de menus que você nunca vai usar', 'Cobram porcentagem de cada atendimento', 'Você precisa de um computador pra usar direito'].map(i => (
+                {['Feitos pra equipes com 10, 20 funcionários', 'Cheios de menus que você nunca vai usar', 'Cobram porcentagem de cada atendimento', 'Você precisa de computador pra usar direito'].map(i => (
                   <li key={i} style={{ fontSize: 13, color: '#7f1d1d', display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                     <span style={{ color: '#b91c1c', fontWeight: 700, marginTop: 1 }}>×</span> {i}
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
 
-            <div style={{ background: P.accentLight, border: `2px solid ${P.accent}`, borderRadius: 20, padding: 28 }}>
+            {/* Lash Hub — slides from right */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.65, ease: EASE, delay: 0.1 }}
+              whileHover={{ y: -4, boxShadow: `0 20px 60px rgba(200,75,114,0.15)`, transition: { type: 'spring', stiffness: 300 } }}
+              style={{ background: P.accentLight, border: `2px solid ${P.accent}`, borderRadius: 20, padding: 28 }}
+            >
               <h3 style={{ fontSize: 14, fontWeight: 700, color: P.accent, marginBottom: 16 }}>✓ Lash Hub</h3>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {['Pensado pra quem trabalha com Lash por conta própria', 'Só o que você realmente precisa no dia a dia', 'Mensalidade fixa — 0% de taxa por atendimento', 'Feito pro celular, funciona de qualquer lugar'].map(i => (
@@ -291,7 +399,7 @@ export default function LandingPage_v6() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -299,56 +407,105 @@ export default function LandingPage_v6() {
       {/* ── FEATURES ── */}
       <section style={{ position: 'relative', zIndex: 1, padding: '80px 20px' }}>
         <div style={{ maxWidth: 1040, margin: '0 auto' }}>
-          <div data-sr6="" style={{ textAlign: 'center', marginBottom: 56 }}>
-            <h2 style={{ fontSize: 'clamp(26px, 4vw, 48px)', fontWeight: 900, lineHeight: 1.1, letterSpacing: -0.5 }}>
-              Tudo que você precisa.<br />
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={stagger(0.08)}
+            style={{ textAlign: 'center', marginBottom: 56 }}
+          >
+            <motion.h2 variants={fadeUp} style={{ fontSize: 'clamp(26px, 4vw, 48px)', fontWeight: 900, lineHeight: 1.1, letterSpacing: -0.5 }}>
+              Tudo que você precisa.{' '}
               <span style={{ color: P.accent }}>Exatamente do jeito que você precisa.</span>
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            </motion.h2>
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.05 }}
+            variants={stagger(0.09)}
+          >
             {features.map((f, i) => (
-              <div key={i} data-sr6="" data-delay={String(i * 80)} style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 16, padding: 24, boxShadow: '0 2px 12px rgba(0,0,0,0.04)', transition: 'box-shadow 0.2s, border-color 0.2s' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 32px rgba(200,75,114,0.12)'; (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(200,75,114,0.3)'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 12px rgba(0,0,0,0.04)'; (e.currentTarget as HTMLDivElement).style.borderColor = P.border; }}>
+              <motion.div
+                key={i}
+                variants={fadeUp}
+                whileHover={{ y: -8, boxShadow: '0 24px 60px rgba(200,75,114,0.14)', borderColor: 'rgba(200,75,114,0.35)' }}
+                transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+                style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 16, padding: 24, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}
+              >
                 <div style={{ width: 44, height: 44, borderRadius: 12, background: P.accentLight, color: P.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>{f.icon}</div>
                 <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 8, color: P.text }}>{f.title}</h3>
                 <p style={{ fontSize: 13, color: P.muted, lineHeight: 1.7 }}>{f.desc}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ── TESTIMONIALS ── */}
       <section style={{ position: 'relative', zIndex: 1, padding: '80px 20px', background: '#f3f0eb' }}>
         <div style={{ maxWidth: 1040, margin: '0 auto' }}>
-          <div data-sr6="" style={{ textAlign: 'center', marginBottom: 48 }}>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.5 }}
+            variants={fadeUp}
+            style={{ textAlign: 'center', marginBottom: 48 }}
+          >
             <h2 style={{ fontSize: 'clamp(24px, 3.5vw, 40px)', fontWeight: 900, letterSpacing: -0.5 }}>O que dizem as Lash Designers</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-4"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+            variants={stagger(0.11)}
+          >
             {testimonials.map((t, i) => (
-              <div key={i} data-sr6="" data-delay={String(i * 100)} style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 16, padding: 24, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
+              <motion.div
+                key={i}
+                variants={scaleIn}
+                whileHover={{ y: -6, rotateZ: 0.4, boxShadow: '0 20px 50px rgba(0,0,0,0.08)', transition: { type: 'spring', stiffness: 300 } }}
+                style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 16, padding: 24, boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}
+              >
                 <div style={{ color: P.accent, fontSize: 14, marginBottom: 14 }}>★★★★★</div>
                 <p style={{ fontSize: 13, color: P.muted, lineHeight: 1.8, fontStyle: 'italic', marginBottom: 20 }}>"{t.text}"</p>
                 <div style={{ paddingTop: 14, borderTop: `1px solid ${P.border}` }}>
                   <div style={{ fontSize: 13, fontWeight: 700, color: P.text }}>{t.name}</div>
                   <div style={{ fontSize: 11, color: P.faint, marginTop: 2 }}>{t.role}</div>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ── PRICING ── */}
       <section style={{ position: 'relative', zIndex: 1, padding: '80px 20px' }}>
         <div style={{ maxWidth: 740, margin: '0 auto', textAlign: 'center' }}>
-          <div data-sr6="" style={{ marginBottom: 48 }}>
-            <h2 style={{ fontSize: 'clamp(24px, 3.5vw, 42px)', fontWeight: 900, letterSpacing: -0.5, marginBottom: 12 }}>Planos sem taxa por atendimento</h2>
-            <p style={{ fontSize: 14, color: P.muted }}>14 dias grátis pra testar. Sem precisar colocar cartão.</p>
-          </div>
-          <div data-sr6="" data-delay="100" className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-            <div style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 20, padding: 28, boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.4 }}
+            variants={stagger(0.08)}
+            style={{ marginBottom: 48 }}
+          >
+            <motion.h2 variants={fadeUp} style={{ fontSize: 'clamp(24px, 3.5vw, 42px)', fontWeight: 900, letterSpacing: -0.5, marginBottom: 12 }}>Planos sem taxa por atendimento</motion.h2>
+            <motion.p variants={fadeUp} style={{ fontSize: 14, color: P.muted }}>14 dias grátis pra testar. Sem precisar colocar cartão.</motion.p>
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={stagger(0.14)}
+          >
+            <motion.div
+              variants={fadeUp}
+              whileHover={{ y: -6, boxShadow: '0 20px 60px rgba(0,0,0,0.08)', transition: { type: 'spring', stiffness: 260 } }}
+              style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 20, padding: 28, boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}
+            >
               <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: P.muted, marginBottom: 8 }}>Plano Básico</div>
               <div style={{ marginBottom: 20 }}>
                 <span style={{ fontSize: 11, color: P.muted }}>R$ </span>
@@ -363,11 +520,20 @@ export default function LandingPage_v6() {
                 ))}
                 <div style={{ fontSize: 12, color: P.faint, marginTop: 4 }}>× Sem agenda online</div>
               </div>
-              <button onClick={() => navigate('/cadastro')} style={{ width: '100%', padding: '12px 0', border: `1px solid ${P.accent}`, borderRadius: 12, background: 'transparent', color: P.accent, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
+              <motion.button
+                onClick={() => navigate('/cadastro')}
+                whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                style={{ width: '100%', padding: '12px 0', border: `1px solid ${P.accent}`, borderRadius: 12, background: 'transparent', color: P.accent, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
+              >
                 Criar conta grátis
-              </button>
-            </div>
-            <div style={{ background: P.card, border: `2px solid ${P.accent}`, borderRadius: 20, padding: 28, position: 'relative', boxShadow: `0 8px 40px rgba(200,75,114,0.15)` }}>
+              </motion.button>
+            </motion.div>
+
+            <motion.div
+              variants={fadeUp}
+              whileHover={{ y: -6, boxShadow: `0 24px 64px rgba(200,75,114,0.2)`, transition: { type: 'spring', stiffness: 260 } }}
+              style={{ background: P.card, border: `2px solid ${P.accent}`, borderRadius: 20, padding: 28, position: 'relative', boxShadow: `0 8px 40px rgba(200,75,114,0.15)` }}
+            >
               <div style={{ position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)', background: P.accent, color: '#fff', fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, padding: '4px 16px', borderRadius: 999, whiteSpace: 'nowrap' }}>Mais completo</div>
               <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: P.accent, marginBottom: 8 }}>Plano Premium</div>
               <div style={{ marginBottom: 20 }}>
@@ -382,17 +548,27 @@ export default function LandingPage_v6() {
                   </div>
                 ))}
               </div>
-              <button onClick={() => navigate('/cadastro')} style={{ width: '100%', padding: '12px 0', border: 'none', borderRadius: 12, background: P.accent, color: '#fff', fontWeight: 700, fontSize: 13, cursor: 'pointer', boxShadow: `0 4px 16px rgba(200,75,114,0.35)` }}>
+              <motion.button
+                onClick={() => navigate('/cadastro')}
+                whileHover={{ scale: 1.02, boxShadow: `0 8px 32px rgba(200,75,114,0.45)` }} whileTap={{ scale: 0.98 }}
+                style={{ width: '100%', padding: '12px 0', border: 'none', borderRadius: 12, background: P.accent, color: '#fff', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
+              >
                 Testar 14 dias grátis
-              </button>
-            </div>
-          </div>
+              </motion.button>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* ── GUARANTEE ── */}
       <section style={{ position: 'relative', zIndex: 1, padding: '56px 20px', textAlign: 'center', background: '#f3f0eb' }}>
-        <div data-sr6="" style={{ maxWidth: 540, margin: '0 auto' }}>
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
+          variants={scaleIn}
+          style={{ maxWidth: 540, margin: '0 auto' }}
+        >
           <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
             <ShieldCheck size={24} color="#10b981" />
           </div>
@@ -400,23 +576,37 @@ export default function LandingPage_v6() {
           <p style={{ fontSize: 14, color: P.muted, lineHeight: 1.8 }}>
             Use na sua rotina real. Se em até 7 dias você achar que o Lash Hub não ajudou no seu dia a dia, devolvemos seu dinheiro integralmente. Sem burocracia, sem pergunta.
           </p>
-        </div>
+        </motion.div>
       </section>
 
       {/* ── FINAL CTA ── */}
       <section style={{ position: 'relative', zIndex: 1, padding: '80px 20px', background: P.accent, textAlign: 'center' }}>
-        <div data-sr6="" style={{ maxWidth: 680, margin: '0 auto' }}>
-          <h2 style={{ fontSize: 'clamp(26px, 4vw, 52px)', fontWeight: 900, lineHeight: 1.1, letterSpacing: -1, marginBottom: 20, color: '#fff' }}>
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={stagger(0.1)}
+          style={{ maxWidth: 680, margin: '0 auto' }}
+        >
+          <motion.h2 variants={fadeUp} style={{ fontSize: 'clamp(26px, 4vw, 52px)', fontWeight: 900, lineHeight: 1.1, letterSpacing: -1, marginBottom: 20, color: '#fff' }}>
             Chega de perder horário<br />respondendo WhatsApp.
-          </h2>
-          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.8)', marginBottom: 40, lineHeight: 1.7 }}>
+          </motion.h2>
+          <motion.p variants={fadeUp} style={{ fontSize: 15, color: 'rgba(255,255,255,0.8)', marginBottom: 40, lineHeight: 1.7 }}>
             Deixa o Lash Hub cuidar da agenda enquanto você cuida das clientes.
-          </p>
-          <button onClick={() => navigate('/cadastro')} style={{ background: '#fff', color: P.accent, border: 'none', borderRadius: 16, padding: '18px 40px', fontWeight: 800, fontSize: 16, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 10, boxShadow: '0 16px 48px rgba(0,0,0,0.15)' }}>
-            Criar conta grátis agora <ArrowRight size={18} />
-          </button>
-          <p style={{ marginTop: 16, fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>Sem cartão de crédito. Cancele quando quiser.</p>
-        </div>
+          </motion.p>
+          <motion.div variants={fadeUp}>
+            <motion.button
+              onClick={() => navigate('/cadastro')}
+              whileHover={{ scale: 1.05, boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}
+              whileTap={{ scale: 0.97 }}
+              transition={SPRING}
+              style={{ background: '#fff', color: P.accent, border: 'none', borderRadius: 16, padding: '18px 40px', fontWeight: 800, fontSize: 16, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 10, boxShadow: '0 16px 48px rgba(0,0,0,0.15)' }}
+            >
+              Criar conta grátis agora <ArrowRight size={18} />
+            </motion.button>
+            <p style={{ marginTop: 16, fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>Sem cartão de crédito. Cancele quando quiser.</p>
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* ── FOOTER ── */}
