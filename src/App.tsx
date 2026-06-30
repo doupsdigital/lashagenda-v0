@@ -97,6 +97,10 @@ export default function App() {
             <Route path="/oferta1-dark" element={<LandingPage_OfertaUm_Dark />} />
             <Route path="/oferta2" element={<LandingPage_OfertaDois />} />
             <Route path="/oferta2-dark" element={<LandingPage_OfertaDois_Dark />} />
+            {/* Sempre mostra a landing page, independente de sessão — uso
+                deliberado pra compartilhar/indicar (ex: WhatsApp, Instagram),
+                já que a "/" redireciona quem já está logada. */}
+            <Route path="/lp" element={<LandingPage_OfertaUm />} />
             <Route path="/" element={<HomeRoute />} />
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<CadastroProfissional />} />

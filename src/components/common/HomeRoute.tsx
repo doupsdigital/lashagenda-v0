@@ -2,13 +2,26 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import LandingPage_OfertaUm from '../../pages/LandingPage_OfertaUm';
 
+// Detecta resquício de sessão do Supabase salva no navegador (chave padrão
+// "sb-<project-ref>-auth-token"), sem depender do AuthContext já ter
+// confirmado a sessão. Usado como rede de segurança: se existe um token
+// salvo mas o AuthContext concluiu "sem sessão" (ex: falha pontual de rede
+// bem na hora de abrir o app), não arriscamos mostrar a landing page pra
+// quem já é cliente — mandamos pro login em vez disso.
+function hasStoredSupabaseSession(): boolean {
+  try {
+    return Object.keys(localStorage).some(
+      (key) => key.startsWith('sb-') && key.endsWith('-auth-token')
+    );
+  } catch {
+    return false;
+  }
+}
+
 // Rota raiz ("/"): pública por padrão (landing page de marketing), mas
 // redireciona automaticamente quem já tem uma sessão ATIVA — cobre o caso
 // do PWA instalado (start_url "/") e de quem digita o link principal de
-// memória. Não há fallback por localStorage aqui de propósito: redirecionar
-// com base em "último portal visitado" sem uma sessão real prende qualquer
-// pessoa sem sessão (inclusive a própria profissional testando seu portal)
-// numa página sem volta, já que o portal não linka de volta pro /login.
+// memória.
 export default function HomeRoute() {
   const { user, isProfissional, estabelecimentoSlug, loading } = useAuth();
 
@@ -34,6 +47,8 @@ export default function HomeRoute() {
     if (estabelecimentoSlug) {
       return <Navigate to={`/portal/${estabelecimentoSlug}/catalogo`} replace />;
     }
+  } else if (hasStoredSupabaseSession()) {
+    return <Navigate to="/login" replace />;
   }
 
   return <LandingPage_OfertaUm />;

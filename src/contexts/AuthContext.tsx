@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { supabase } from '../lib/supabase';
-import type { User } from '@supabase/supabase-js';
+import type { User, Session } from '@supabase/supabase-js';
 import type { Usuario } from '../types';
 import { setCurrentUsuarioNome } from '../utils/log';
 
@@ -45,8 +45,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    let active = true;
+
+    const applySession = async (session: Session | null) => {
       if (!session?.user) {
+        if (!active) return;
         setUser(null);
         setProfile(null);
         setEstabelecimentoId(null);
@@ -56,6 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
+      if (!active) return;
       setUser(session.user);
 
       if (!profileRef.current) {
@@ -85,6 +89,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         error = res.error;
       }
 
+      if (!active) return;
+
       const profileData = data as any;
       if (!profileData) {
         console.warn('[AuthContext] No profile found for', session.user.email, 'signing out. Error:', error);
@@ -100,9 +106,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setEstabelecimentoSlug(profileData.estabelecimentos?.slug ?? null);
       setTrialEndsAt(profileData.estabelecimentos?.trial_ends_at ?? null);
       setLoading(false);
+    };
+
+    // Leitura direta e imediata da sessão salva — mais confiável do que
+    // depender só do evento do listener abaixo, especialmente em cold
+    // start de PWA (app fechado de verdade e reaberto pelo ícone).
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      applySession(session);
     });
 
-    return () => subscription.unsubscribe();
+    // Assinatura para mudanças subsequentes (login, logout, refresh de token).
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      applySession(session);
+    });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
