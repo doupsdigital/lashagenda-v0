@@ -4,7 +4,6 @@ import { AuthProvider } from './contexts/AuthContext';
 import { supabase } from './lib/supabase';
 import { applyPalette } from './utils/theme';
 import ProfissionalRoute from './components/common/ProfissionalRoute';
-import HomeRoute from './components/common/HomeRoute';
 import ClienteRoute from './components/common/ClienteRoute';
 import Layout from './components/layout/Layout';
 import PortalLayout from './components/layout/PortalLayout';
@@ -97,11 +96,9 @@ export default function App() {
             <Route path="/oferta1-dark" element={<LandingPage_OfertaUm_Dark />} />
             <Route path="/oferta2" element={<LandingPage_OfertaDois />} />
             <Route path="/oferta2-dark" element={<LandingPage_OfertaDois_Dark />} />
-            {/* Sempre mostra a landing page, independente de sessão — uso
-                deliberado pra compartilhar/indicar (ex: WhatsApp, Instagram),
-                já que a "/" redireciona quem já está logada. */}
+            {/* Landing page de marketing/divulgação (bio do Instagram, etc.).
+                A "/" é só do sistema (protegida por ProfissionalRoute). */}
             <Route path="/lp" element={<LandingPage_OfertaUm />} />
-            <Route path="/" element={<HomeRoute />} />
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<CadastroProfissional />} />
             <Route path="/recuperar-senha" element={<RecuperarSenha />} />
@@ -109,12 +106,16 @@ export default function App() {
 
             {/* Rotas da profissional */}
             <Route
+              path="/"
               element={
                 <ProfissionalRoute>
                   <Layout />
                 </ProfissionalRoute>
               }
             >
+              {/* "/" sem rota específica (ex: PWA reaberto) cai direto no painel */}
+              <Route index element={<Navigate to="/meu-estudio" replace />} />
+
               {/* Páginas acessíveis independente de faturamento */}
               <Route path="assinatura" element={<Faturamento />} />
               <Route path="configuracoes" element={<Configuracoes />} />
