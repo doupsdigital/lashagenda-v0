@@ -105,7 +105,7 @@ export default function App() {
             <Route path="/v7" element={<LandingPage_v7 />} />
             <Route path="/v8" element={<LandingPage_v8 />} />
             <Route path="/v9" element={<LandingPage_v9 />} />
-            <Route path="/lp" element={<LandingPage_OfertaUm />} />
+            <Route path="/" element={<LandingPage_OfertaUm />} />
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<CadastroProfissional />} />
             <Route path="/recuperar-senha" element={<RecuperarSenha />} />
@@ -113,7 +113,6 @@ export default function App() {
 
             {/* Rotas da profissional */}
             <Route
-              path="/"
               element={
                 <ProfissionalRoute>
                   <Layout />
