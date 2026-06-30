@@ -27,7 +27,6 @@ import PortalLogin from './pages/portal-clientes/PortalLogin';
 import { PortalProvider } from './contexts/PortalContext';
 import RecuperarSenha from './pages/profissional/RecuperarSenha';
 import RedefinirSenha from './pages/profissional/RedefinirSenha';
-import LandingPage from './pages/LandingPage';
 import LandingPage_ModernElegant from './pages/LandingPage_ModernElegant';
 import LandingPage_DarkChic from './pages/LandingPage_DarkChic';
 import LandingPage_PlayfulBoutique from './pages/LandingPage_PlayfulBoutique';
@@ -37,6 +36,8 @@ import LandingPage_v6 from './pages/LandingPage_v6';
 import LandingPage_v7 from './pages/LandingPage_v7';
 import LandingPage_v8 from './pages/LandingPage_v8';
 import LandingPage_v9 from './pages/LandingPage_v9';
+import LandingPage_OfertaUm from './pages/LandingPage_OfertaUm';
+import LandingPage_OfertaDois from './pages/LandingPage_OfertaDois';
 
 
 import PlanGuard from './components/common/PlanGuard';
@@ -95,7 +96,6 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             {/* Públicas */}
-            <Route path="/v0" element={<LandingPage />} />
             <Route path="/v1" element={<LandingPage_ModernElegant />} />
             <Route path="/v2" element={<LandingPage_DarkChic />} />
             <Route path="/v3" element={<LandingPage_PlayfulBoutique />} />
@@ -105,6 +105,8 @@ export default function App() {
             <Route path="/v7" element={<LandingPage_v7 />} />
             <Route path="/v8" element={<LandingPage_v8 />} />
             <Route path="/v9" element={<LandingPage_v9 />} />
+            <Route path="/oferta1" element={<LandingPage_OfertaUm />} />
+            <Route path="/oferta2" element={<LandingPage_OfertaDois />} />
             <Route path="/" element={<HomeRoute />} />
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<CadastroProfissional />} />
