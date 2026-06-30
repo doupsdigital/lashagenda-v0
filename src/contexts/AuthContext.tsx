@@ -108,14 +108,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     };
 
-    // Leitura direta e imediata da sessão salva — mais confiável do que
-    // depender só do evento do listener abaixo, especialmente em cold
-    // start de PWA (app fechado de verdade e reaberto pelo ícone).
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      applySession(session);
-    });
-
-    // Assinatura para mudanças subsequentes (login, logout, refresh de token).
+    // onAuthStateChange dispara INITIAL_SESSION imediatamente ao subscrever,
+    // cobrindo cold start de PWA e todas as mudanças subsequentes (login,
+    // logout, refresh de token). Não chamamos getSession() separadamente para
+    // evitar duas chamadas concorrentes a applySession, que causavam race
+    // condition: se uma delas falhasse ao buscar o perfil e chamasse signOut(),
+    // o usuário era derrubado mesmo que a outra chamada tivesse sucedido.
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       applySession(session);
     });
