@@ -36,6 +36,7 @@ import LandingPage_v6 from './pages/LandingPage_v6';
 import LandingPage_v7 from './pages/LandingPage_v7';
 import LandingPage_v8 from './pages/LandingPage_v8';
 import LandingPage_v9 from './pages/LandingPage_v9';
+import LandingPage_OfertaUm from './pages/LandingPage_OfertaUm';
 
 
 import PlanGuard from './components/common/PlanGuard';
@@ -104,6 +105,7 @@ export default function App() {
             <Route path="/v7" element={<LandingPage_v7 />} />
             <Route path="/v8" element={<LandingPage_v8 />} />
             <Route path="/v9" element={<LandingPage_v9 />} />
+            <Route path="/lp" element={<LandingPage_OfertaUm />} />
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<CadastroProfissional />} />
             <Route path="/recuperar-senha" element={<RecuperarSenha />} />
