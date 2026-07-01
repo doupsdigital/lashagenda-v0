@@ -32,6 +32,7 @@ import LandingPage_OfertaUm from './pages/LandingPage_OfertaUm';
 import LandingPage_OfertaUm_Dark from './pages/LandingPage_OfertaUm_Dark';
 import LandingPage_OfertaDois from './pages/LandingPage_OfertaDois';
 import LandingPage_OfertaDois_Dark from './pages/LandingPage_OfertaDois_Dark';
+import Tutoriais from './pages/profissional/Tutoriais';
 
 
 import PlanGuard from './components/common/PlanGuard';
@@ -119,6 +120,7 @@ export default function App() {
               {/* Páginas acessíveis independente de faturamento */}
               <Route path="assinatura" element={<Faturamento />} />
               <Route path="configuracoes" element={<Configuracoes />} />
+              <Route path="tutoriais" element={<Tutoriais />} />
 
               {/* Proteção de Faturamento Ativo / Trial Válido */}
               <Route element={<BillingGuard />}>

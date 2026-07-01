@@ -14,8 +14,10 @@ import {
   CreditCard,
   BarChart2,
   Link2,
+  PlayCircle,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { FEATURES } from '../../config/features';
 import { supabase } from '../../lib/supabase';
 import { useSubscription } from '../../hooks/useSubscription';
 import UpgradeModal from '../common/UpgradeModal';
@@ -111,6 +113,7 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
   const systemItems: NavItem[] = [
     { name: 'Minha Assinatura', path: '/assinatura', icon: CreditCard },
     { name: 'Configurações', path: '/configuracoes', icon: Settings },
+    ...(FEATURES.tutoriais ? [{ name: 'Tutoriais', path: '/tutoriais', icon: PlayCircle }] : []),
   ];
 
   const renderNavItems = (items: NavItem[]) => {
