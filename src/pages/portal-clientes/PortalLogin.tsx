@@ -24,15 +24,14 @@ export default function PortalLogin() {
 
     if (!isCliente) {
       if (justSubmittedRef.current) {
-        // Profissional tentou logar pelo formulário do portal → rejeitar
+        // Profissional tentou logar com as próprias credenciais no form do portal → rejeitar
         justSubmittedRef.current = false;
         signOut();
         setErrorMsg('Este portal é exclusivo para clientes. Para acessar seu painel, use o link de login da profissional.');
         setSubmitting(false);
-      } else {
-        // Profissional já logada navegou até aqui → redirecionar
-        navigate('/meu-estudio', { replace: true });
       }
+      // Se apenas navegou até aqui (sem submeter o form), deixa ver o form
+      // para que possa entrar com credenciais de uma conta de cliente.
       return;
     }
 

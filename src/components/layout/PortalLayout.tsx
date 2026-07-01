@@ -81,15 +81,23 @@ export default function PortalLayout() {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Profissional visualizando o próprio portal: mostra botão de retorno ao painel */}
+          {/* Profissional visualizando o próprio portal: botão de retorno + Entrar como cliente */}
           {isProfissional ? (
-            <button
-              onClick={() => navigate('/meu-estudio')}
-              className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-rose-600 hover:bg-rose-800 rounded-xl transition-all shadow-md cursor-pointer"
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              <span>Voltar ao Painel</span>
-            </button>
+            <>
+              <Link
+                to={`/portal/${slug}/login`}
+                className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-rose-600 border border-rose-300 hover:bg-rose-50 rounded-xl transition-all cursor-pointer"
+              >
+                Entrar como cliente
+              </Link>
+              <button
+                onClick={() => navigate('/meu-estudio')}
+                className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-rose-600 hover:bg-rose-800 rounded-xl transition-all shadow-md cursor-pointer"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                <span>Painel</span>
+              </button>
+            </>
           ) : !isAuthPage && !isBasico && (user ? (
             <>
               {profile?.avatar_url ? (
