@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
 
 export default function Login() {
-  const { user, isProfissional, loading: authLoading, signIn, signOut } = useAuth();
+  const { user, isProfissional, estabelecimentoSlug, loading: authLoading, signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -16,19 +16,16 @@ export default function Login() {
     if (!authLoading && !user) setSubmitting(false);
   }, [authLoading, user]);
 
-  // Usuário autenticado como não-profissional chegou na tela de login profissional
-  // (ex: estava logado como cliente no portal e veio para cá). Faz logout para
-  // limpar a sessão e exibir o formulário — sem isso criaria loop ou redirecionaria
-  // para o portal quando o usuário quer logar como profissional.
-  useEffect(() => {
-    if (!authLoading && user && !isProfissional) {
-      signOut();
+  // Redireciona usuário já autenticado
+  if (!authLoading && user) {
+    if (isProfissional) {
+      return <Navigate to="/meu-estudio" replace />;
+    } else if (estabelecimentoSlug) {
+      return <Navigate to={`/portal/${estabelecimentoSlug}/catalogo`} replace />;
+    } else {
+      console.warn('[Login] Logged in but isProfissional is false and no slug found - redirecting back to /login');
+      return <Navigate to="/login" replace />;
     }
-  }, [authLoading, user, isProfissional, signOut]);
-
-  // Redireciona profissional já autenticado
-  if (!authLoading && user && isProfissional) {
-    return <Navigate to="/meu-estudio" replace />;
   }
 
   const handleLogin = async (e: React.FormEvent) => {

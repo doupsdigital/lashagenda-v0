@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { supabase } from '../lib/supabase';
-import type { User, Session } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
 import type { Usuario } from '../types';
 import { setCurrentUsuarioNome } from '../utils/log';
 
@@ -45,16 +45,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let active = true;
-    // Impede que dois eventos concorrentes (ex: SIGNED_IN do signUp +
-    // SIGNED_IN do signInWithPassword imediato) busquem o perfil ao mesmo
-    // tempo e criem race condition onde um falha e chama signOut.
-    let applyingForUserId: string | null = null;
-
-    const applySession = async (session: Session | null) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!session?.user) {
-        if (!active) return;
-        applyingForUserId = null;
         setUser(null);
         setProfile(null);
         setEstabelecimentoId(null);
@@ -64,16 +56,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      // Se já está buscando o perfil para este usuário, ignora evento duplicado
-      if (applyingForUserId === session.user.id) return;
-      applyingForUserId = session.user.id;
-
-      if (!active) return;
       setUser(session.user);
 
       if (!profileRef.current) {
         setLoading(true);
       }
+
+      let data = null;
+      let error = null;
 
       const fetchProfile = async () => {
         return await supabase
@@ -83,28 +73,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           .maybeSingle();
       };
 
-      // Tenta até 5 vezes com backoff — cobre tanto o delay do trigger no
-      // banco quanto eventuais lentidões de rede.
-      const delays = [0, 300, 600, 1000, 1500];
-      let data = null;
-      let error = null;
+      let res = await fetchProfile();
+      data = res.data;
+      error = res.error;
 
-      for (const delay of delays) {
-        if (delay > 0) await new Promise(r => setTimeout(r, delay));
-        if (!active) return;
-        const res = await fetchProfile();
+      if (!data) {
+        console.warn('[AuthContext] Profile not found on first attempt, retrying in 150ms...', error);
+        await new Promise(resolve => setTimeout(resolve, 150));
+        res = await fetchProfile();
         data = res.data;
         error = res.error;
-        if (data) break;
-        console.warn(`[AuthContext] Perfil não encontrado (tentativa com delay ${delay}ms). Erro:`, error);
       }
-
-      if (!active) return;
-      applyingForUserId = null;
 
       const profileData = data as any;
       if (!profileData) {
-        console.error('[AuthContext] Perfil não encontrado após todas as tentativas para', session.user.email, '— erro:', JSON.stringify(error));
+        console.warn('[AuthContext] No profile found for', session.user.email, 'signing out. Error:', error);
         await supabase.auth.signOut();
         return;
       }
@@ -117,22 +100,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setEstabelecimentoSlug(profileData.estabelecimentos?.slug ?? null);
       setTrialEndsAt(profileData.estabelecimentos?.trial_ends_at ?? null);
       setLoading(false);
-    };
-
-    // onAuthStateChange dispara INITIAL_SESSION imediatamente ao subscrever,
-    // cobrindo cold start de PWA e todas as mudanças subsequentes (login,
-    // logout, refresh de token). Não chamamos getSession() separadamente para
-    // evitar duas chamadas concorrentes a applySession, que causavam race
-    // condition: se uma delas falhasse ao buscar o perfil e chamasse signOut(),
-    // o usuário era derrubado mesmo que a outra chamada tivesse sucedido.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      applySession(session);
     });
 
-    return () => {
-      active = false;
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   const signIn = async (email: string, password: string) => {
@@ -176,7 +146,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .from('usuarios')
       .update({ onboarding_paginas_vistas: updated })
       .eq('id', user.id);
-    // Atualiza o profile local sem roundtrip ao banco
     if (profileRef.current) {
       setProfile({ ...profileRef.current, onboarding_paginas_vistas: updated });
     }
