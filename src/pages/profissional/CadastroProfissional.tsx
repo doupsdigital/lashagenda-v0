@@ -64,14 +64,17 @@ export default function CadastroProfissional() {
     setSubmitting(true);
 
     try {
-      // Gerar o slug do negócio amigável para URL (a partir do nome pessoal da profissional)
-      const slug = form.nome
+      // Gerar o slug do negócio amigável para URL.
+      // Sufixo aleatório garante unicidade — evita falha silenciosa do trigger
+      // no banco por violação de UNIQUE constraint no campo slug.
+      const slugBase = form.nome
         .toLowerCase()
         .trim()
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '') // Remove acentos
         .replace(/[^a-z0-9]+/g, '-')     // Sequências de caracteres inválidos → único hífen
         .replace(/^-+|-+$/g, '');        // Remove hífens nas bordas
+      const slug = slugBase + '-' + Math.random().toString(36).slice(2, 7);
 
       const phoneDigits = form.telefone.replace(/\D/g, '');
 
@@ -116,11 +119,12 @@ export default function CadastroProfissional() {
 
       if (updateError) throw updateError;
 
-      // Seed dos horários padrão (Seg–Sex, 09:00–18:00) para o novo estabelecimento
-      // Retry até 3× com 300ms de intervalo — o trigger pode não ter rodado ainda
+      // Confirma que o trigger criou o perfil no banco.
+      // Retry até 5× com backoff — o trigger pode estar lento.
       let userProfile = null;
-      for (let attempt = 0; attempt < 3; attempt++) {
-        if (attempt > 0) await new Promise(r => setTimeout(r, 300));
+      const retryDelays = [0, 400, 800, 1200, 1600];
+      for (const delay of retryDelays) {
+        if (delay > 0) await new Promise(r => setTimeout(r, delay));
         const { data: profileData } = await supabase
           .from('usuarios')
           .select('estabelecimento_id')
@@ -129,15 +133,20 @@ export default function CadastroProfissional() {
         if (profileData?.estabelecimento_id) { userProfile = profileData; break; }
       }
 
-      if (userProfile?.estabelecimento_id) {
-        const defaultHorarios = [1, 2, 3, 4, 5].map(dia => ({
+      // Se o trigger falhou silenciosamente no banco, o cadastro não está completo
+      if (!userProfile?.estabelecimento_id) {
+        throw new Error('Erro ao configurar seu perfil. Tente novamente ou entre em contato com o suporte.');
+      }
+
+      // Seed horários padrão (Seg–Sex, 09:00–18:00)
+      await supabase.from('horarios_atendimento').insert(
+        [1, 2, 3, 4, 5].map(dia => ({
           estabelecimento_id: userProfile!.estabelecimento_id,
           dia_semana: dia,
           hora_inicio: '09:00',
           hora_fim: '18:00',
-        }));
-        await supabase.from('horarios_atendimento').insert(defaultHorarios);
-      }
+        }))
+      );
 
       setSuccess(true);
     } catch (err: unknown) {

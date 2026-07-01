@@ -46,10 +46,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let active = true;
+    // Impede que dois eventos concorrentes (ex: SIGNED_IN do signUp +
+    // SIGNED_IN do signInWithPassword imediato) busquem o perfil ao mesmo
+    // tempo e criem race condition onde um falha e chama signOut.
+    let applyingForUserId: string | null = null;
 
     const applySession = async (session: Session | null) => {
       if (!session?.user) {
         if (!active) return;
+        applyingForUserId = null;
         setUser(null);
         setProfile(null);
         setEstabelecimentoId(null);
@@ -59,15 +64,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
+      // Se já está buscando o perfil para este usuário, ignora evento duplicado
+      if (applyingForUserId === session.user.id) return;
+      applyingForUserId = session.user.id;
+
       if (!active) return;
       setUser(session.user);
 
       if (!profileRef.current) {
         setLoading(true);
       }
-
-      let data = null;
-      let error = null;
 
       const fetchProfile = async () => {
         return await supabase
@@ -77,23 +83,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           .maybeSingle();
       };
 
-      let res = await fetchProfile();
-      data = res.data;
-      error = res.error;
+      // Tenta até 5 vezes com backoff — cobre tanto o delay do trigger no
+      // banco quanto eventuais lentidões de rede.
+      const delays = [0, 300, 600, 1000, 1500];
+      let data = null;
+      let error = null;
 
-      if (!data) {
-        console.warn('[AuthContext] Profile not found on first attempt, retrying in 150ms...', error);
-        await new Promise(resolve => setTimeout(resolve, 150));
-        res = await fetchProfile();
+      for (const delay of delays) {
+        if (delay > 0) await new Promise(r => setTimeout(r, delay));
+        if (!active) return;
+        const res = await fetchProfile();
         data = res.data;
         error = res.error;
+        if (data) break;
+        console.warn(`[AuthContext] Perfil não encontrado (tentativa com delay ${delay}ms). Erro:`, error);
       }
 
       if (!active) return;
+      applyingForUserId = null;
 
       const profileData = data as any;
       if (!profileData) {
-        console.warn('[AuthContext] No profile found for', session.user.email, 'signing out. Error:', error);
+        console.error('[AuthContext] Perfil não encontrado após todas as tentativas para', session.user.email, '— erro:', JSON.stringify(error));
         await supabase.auth.signOut();
         return;
       }
