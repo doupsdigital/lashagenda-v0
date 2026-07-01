@@ -1,4 +1,4 @@
-import { Link, NavLink, Outlet, useNavigate, useLocation, useParams } from 'react-router-dom';
+import { Link, NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { BookOpen, Calendar, ClipboardList, User, LogOut, MessageCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
