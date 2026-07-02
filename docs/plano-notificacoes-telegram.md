@@ -223,6 +223,186 @@ Usando a mesma estrutura, é simples adicionar depois:
 
 ---
 
+## Plano: Notificar cada profissional no Telegram quando houver novo agendamento
+
+> **Status:** Não implementado. Ler este bloco antes de começar.
+
+### Contexto
+
+Cada profissional tem seu próprio painel no Lash Hub e suas clientes fazem
+agendamentos nele. A ideia é que cada profissional receba uma mensagem no
+Telegram quando uma cliente agendar um serviço.
+
+O push notification via PWA já funciona. Implementar Telegram para as
+profissionais é viável mas tem fricção de onboarding — avaliar se há demanda
+real antes de implementar.
+
+### Arquitetura
+
+```
+Cliente faz agendamento
+        ↓
+INSERT em public.agendamentos
+        ↓
+Trigger SQL (pg_net) → Edge Function: notify-new-appointment
+        ↓
+Busca telegram_chat_id da profissional no banco
+        ↓
+Telegram Bot API → mensagem no celular da profissional
+```
+
+O **mesmo bot** já existente (`TELEGRAM_BOT_TOKEN`) envia as mensagens.
+Não é necessário criar um bot novo — cada profissional apenas precisa
+iniciar uma conversa com o bot e fornecer seu `chat_id`.
+
+### Alterações necessárias
+
+#### 1. Migration SQL
+
+Adicionar coluna `telegram_chat_id` na tabela `estabelecimentos`:
+
+```sql
+ALTER TABLE public.estabelecimentos
+  ADD COLUMN IF NOT EXISTS telegram_chat_id text;
+```
+
+#### 2. Frontend — seção "Conectar Telegram" no painel da profissional
+
+Criar uma seção nas configurações do painel (`/portal/[slug]/configuracoes`
+ou similar) com instruções para a profissional:
+
+1. Abrir o Telegram e buscar o bot `@NOME_DO_BOT`
+2. Enviar `/start`
+3. Buscar `@userinfobot`, enviar qualquer mensagem, copiar o `Id` numérico
+4. Colar o número no campo "Seu chat ID do Telegram" e salvar
+
+Ao salvar, o frontend faz um `UPDATE` em `estabelecimentos.telegram_chat_id`.
+
+**Alternativa mais polida (deep link):** gerar um link único por profissional:
+```
+https://t.me/NOME_DO_BOT?start=estab_ID123
+```
+Ao clicar, o Telegram abre direto no bot com o `/start` já preenchido.
+O bot recebe o código, identifica o estabelecimento e salva o `chat_id`
+automaticamente — zero fricção para a profissional. Requer configurar um
+webhook no bot (mais infraestrutura, implementar separadamente).
+
+#### 3. Edge Function: `notify-new-appointment`
+
+Criar `supabase/functions/notify-new-appointment/index.ts`:
+
+```typescript
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const BOT_TOKEN = Deno.env.get('TELEGRAM_BOT_TOKEN')!;
+const SUPA_URL  = Deno.env.get('SUPABASE_URL')!;
+const SUPA_KEY  = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+
+Deno.serve(async (req) => {
+  const payload = await req.json();
+  const record  = payload?.record; // linha do agendamento inserida
+
+  if (!record) return new Response('OK', { status: 200 });
+
+  const supabase = createClient(SUPA_URL, SUPA_KEY);
+
+  // Busca o estabelecimento da profissional para obter o telegram_chat_id
+  const { data: estudio } = await supabase
+    .from('estabelecimentos')
+    .select('nome_negocio, slug, telegram_chat_id')
+    .eq('id', record.estabelecimento_id)
+    .single();
+
+  if (!estudio?.telegram_chat_id) {
+    return new Response('OK', { status: 200 }); // profissional não conectou Telegram
+  }
+
+  // Busca dados da cliente (ajustar campos conforme schema real)
+  const { data: cliente } = await supabase
+    .from('clientes')
+    .select('nome, telefone')
+    .eq('id', record.cliente_id)
+    .single();
+
+  const agora = new Date(record.data_hora).toLocaleString('pt-BR', {
+    timeZone: 'America/Sao_Paulo',
+  });
+
+  const texto = [
+    '📅 *Novo agendamento!*',
+    '',
+    `👤 ${cliente?.nome || 'Cliente'}`,
+    `📱 ${cliente?.telefone || 'Não informado'}`,
+    `🕐 ${agora}`,
+    `💅 ${record.servico || 'Serviço'}`,
+  ].join('\n');
+
+  await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      chat_id: estudio.telegram_chat_id,
+      text: texto,
+      parse_mode: 'Markdown',
+    }),
+  });
+
+  return new Response('OK', { status: 200 });
+});
+```
+
+> Verificar os nomes reais das colunas da tabela `agendamentos` antes de
+> implementar (`data_hora`, `servico`, `cliente_id`, `estabelecimento_id`).
+
+#### 4. Trigger SQL
+
+```sql
+CREATE OR REPLACE FUNCTION public.notify_new_appointment()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  PERFORM net.http_post(
+    url     := 'https://vgolovxcrsxnpcecvoyi.supabase.co/functions/v1/notify-new-appointment',
+    headers := '{"Content-Type": "application/json"}'::jsonb,
+    body    := jsonb_build_object(
+      'type',   'INSERT',
+      'table',  'agendamentos',
+      'schema', 'public',
+      'record', row_to_json(NEW)::jsonb
+    )
+  );
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER on_new_appointment_notify
+  AFTER INSERT ON public.agendamentos
+  FOR EACH ROW EXECUTE FUNCTION public.notify_new_appointment();
+```
+
+### Riscos e considerações multitenant
+
+| Risco | Nível | Mitigação |
+|---|---|---|
+| Bot bloqueado afeta todas as profissionais | Médio | Tratar erro na edge function sem propagar |
+| Rate limit do Telegram (30 msg/s) | Baixo | Volume esperado é tranquilo |
+| LGPD — armazenar chat_id da profissional | Baixo | Opt-in voluntário, informar na UI |
+| Profissional desativa e para de usar | Baixo | Ignorar se `telegram_chat_id` for null |
+
+### Resumo do que fazer
+
+```
+1. Rodar a migration SQL (adicionar telegram_chat_id em estabelecimentos)
+2. Criar a Edge Function notify-new-appointment no Supabase Dashboard
+3. Criar o trigger SQL no SQL Editor
+4. Adicionar seção "Conectar Telegram" no painel da profissional (frontend)
+5. Testar: profissional conecta o Telegram, cliente faz agendamento, mensagem chega
+```
+
+---
+
 ## Instruções para o Claude Code (implementar em outra conversa)
 
 > **Leia este bloco antes de começar a implementar.**
