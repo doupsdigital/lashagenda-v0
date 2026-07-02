@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AlertCircle, Eye, EyeOff, Mail, Lock, User, Sparkles, Calendar, Link2, Phone } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -64,9 +64,6 @@ export default function CadastroProfissional() {
     setSubmitting(true);
 
     try {
-      // Gerar o slug do negócio amigável para URL.
-      // Sufixo aleatório garante unicidade — evita falha silenciosa do trigger
-      // no banco por violação de UNIQUE constraint no campo slug.
       const slugBase = form.nome
         .toLowerCase()
         .trim()
@@ -74,7 +71,20 @@ export default function CadastroProfissional() {
         .replace(/[\u0300-\u036f]/g, '') // Remove acentos
         .replace(/[^a-z0-9]+/g, '-')     // Sequências de caracteres inválidos → único hífen
         .replace(/^-+|-+$/g, '');        // Remove hífens nas bordas
-      const slug = slugBase + '-' + Math.random().toString(36).slice(2, 7);
+      const { data: existingSlugs } = await supabase
+        .from('estabelecimentos')
+        .select('slug')
+        .like('slug', `${slugBase}%`);
+
+      let slug = slugBase;
+      if (existingSlugs && existingSlugs.length > 0) {
+        const taken = new Set(existingSlugs.map(r => r.slug));
+        if (taken.has(slug)) {
+          let counter = 2;
+          while (taken.has(`${slugBase}-${counter}`)) counter++;
+          slug = `${slugBase}-${counter}`;
+        }
+      }
 
       const phoneDigits = form.telefone.replace(/\D/g, '');
 
