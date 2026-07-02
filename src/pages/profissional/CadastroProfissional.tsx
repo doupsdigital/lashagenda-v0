@@ -376,7 +376,7 @@ export default function CadastroProfissional() {
               <div className="flex justify-center">
                 <div className="relative rounded-xl overflow-hidden bg-black w-full" style={{ maxWidth: '240px', aspectRatio: '9 / 16' }}>
                   <iframe
-                    src="https://player.vimeo.com/video/1206207885?h=aca73d1e2d&badge=0&autopause=0&player_id=0&app_id=58479"
+                    src="https://player.vimeo.com/video/1206436040?h=c13f7199c9&badge=0&autopause=0&player_id=0&app_id=58479"
                     className="absolute inset-0 w-full h-full"
                     frameBorder={0}
                     allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
