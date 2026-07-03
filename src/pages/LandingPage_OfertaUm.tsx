@@ -353,6 +353,83 @@ export default function LandingPage_OfertaUm() {
         </div>
       </section>
 
+      {/* ── VSL VIDEO ── */}
+      <section style={{ position: 'relative', zIndex: 1, padding: 'clamp(44px, 8vw, 80px) 20px', background: P.bg }}>
+        <div style={{ maxWidth: 860, margin: '0 auto' }}>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={stagger(0.1)}
+            style={{ textAlign: 'center', marginBottom: 36 }}
+          >
+            <motion.p variants={fadeUp} style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: P.accent, marginBottom: 12 }}>Veja em 2 minutos</motion.p>
+            <motion.h2 variants={fadeUp} style={{ fontSize: 'clamp(22px, 3vw, 38px)', fontWeight: 900, letterSpacing: -0.5, color: P.text, lineHeight: 1.15 }}>
+              Como o Lash Hub muda o seu dia a dia
+            </motion.h2>
+            <motion.p variants={fadeUp} style={{ fontSize: 14, color: P.muted, marginTop: 12, lineHeight: 1.7 }}>
+              Agenda automática, ficha de cliente, controle de ganhos — tudo no seu celular.
+            </motion.p>
+          </motion.div>
+
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <motion.div
+              initial={{ opacity: 0, y: 40, scale: 0.97 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.75, ease: EASE }}
+              style={{
+                position: 'relative',
+                borderRadius: 20,
+                overflow: 'hidden',
+                boxShadow: '0 32px 80px rgba(0,0,0,0.18)',
+                border: `1px solid ${P.border}`,
+                background: '#000',
+                width: '100%',
+                maxWidth: 400,
+              }}
+            >
+              {/* 9:16 aspect ratio wrapper */}
+              <div style={{ position: 'relative', paddingBottom: '177.78%', height: 0 }}>
+                <iframe
+                  src="https://player.vimeo.com/video/1206779153?h=03800b86dd&badge=0&autopause=0&player_id=0&app_id=58479"
+                  allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    border: 'none',
+                  }}
+                  title="Lash Hub — Como funciona"
+                />
+              </div>
+            </motion.div>
+          </div>
+
+          {/* CTA abaixo do vídeo */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ delay: 0.3, duration: 0.6, ease: EASE }}
+            style={{ textAlign: 'center', marginTop: 32 }}
+          >
+            <motion.button
+              onClick={() => navigate('/cadastro')}
+              whileHover={{ scale: 1.05, boxShadow: `0 12px 40px rgba(200,75,114,0.45)` }}
+              whileTap={{ scale: 0.97 }}
+              transition={SPRING}
+              style={{ background: P.accent, color: '#fff', border: 'none', borderRadius: 14, padding: '14px 32px', fontWeight: 700, fontSize: 15, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8, boxShadow: `0 8px 32px rgba(200,75,114,0.35)` }}
+            >
+              Testar 14 dias grátis <ArrowRight size={16} />
+            </motion.button>
+            <p style={{ marginTop: 10, fontSize: 12, color: P.faint }}>Sem cartão de crédito. Cancele quando quiser.</p>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ── COUNTER STATS ── */}
       <motion.section
         ref={statsRef}
