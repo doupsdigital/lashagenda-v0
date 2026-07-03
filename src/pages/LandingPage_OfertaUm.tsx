@@ -266,7 +266,7 @@ export default function LandingPage_OfertaUm() {
           </div>
 
           {/* Right — floating mockup */}
-          <div className="flex-1 flex justify-center" style={{ position: 'relative', minHeight: 400 }}>
+          <div className="flex-1 flex justify-center w-full bg-[#c84b72] lg:bg-transparent rounded-2xl lg:rounded-none py-10 lg:py-0 px-4 lg:px-0" style={{ position: 'relative', minHeight: 400 }}>
 
             {/* Decorative circles — hidden on mobile */}
             <motion.div
@@ -354,8 +354,8 @@ export default function LandingPage_OfertaUm() {
       </section>
 
       {/* ── VSL VIDEO ── */}
-      <section style={{ position: 'relative', zIndex: 1, padding: 'clamp(44px, 8vw, 80px) 20px', background: P.bg }}>
-        <div style={{ maxWidth: 860, margin: '0 auto' }}>
+      <section style={{ position: 'relative', zIndex: 1, padding: 'clamp(24px, 4vw, 56px) 20px clamp(44px, 8vw, 80px)', background: P.bg }}>
+        <div style={{ maxWidth: 560, margin: '0 auto' }}>
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -364,10 +364,10 @@ export default function LandingPage_OfertaUm() {
             style={{ textAlign: 'center', marginBottom: 36 }}
           >
             <motion.p variants={fadeUp} style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: P.accent, marginBottom: 12 }}>Veja em 2 minutos</motion.p>
-            <motion.h2 variants={fadeUp} style={{ fontSize: 'clamp(22px, 3vw, 38px)', fontWeight: 900, letterSpacing: -0.5, color: P.text, lineHeight: 1.15 }}>
-              Como o Lash Hub muda o seu dia a dia
+            <motion.h2 variants={fadeUp} style={{ fontSize: 'clamp(20px, 4.5vw, 34px)', fontWeight: 900, letterSpacing: -0.5, lineHeight: 1.2, color: '#3a2d40', textWrap: 'balance' } as React.CSSProperties}>
+              Como o Lash Hub muda<br />o seu dia a dia
             </motion.h2>
-            <motion.p variants={fadeUp} style={{ fontSize: 14, color: P.muted, marginTop: 12, lineHeight: 1.7 }}>
+            <motion.p variants={fadeUp} style={{ fontSize: 14, color: P.muted, marginTop: 10, lineHeight: 1.75, maxWidth: 380, margin: '10px auto 0' }}>
               Agenda automática, ficha de cliente, controle de ganhos — tudo no seu celular.
             </motion.p>
           </motion.div>
@@ -386,7 +386,7 @@ export default function LandingPage_OfertaUm() {
                 border: `1px solid ${P.border}`,
                 background: '#000',
                 width: '100%',
-                maxWidth: 400,
+                maxWidth: 320,
               }}
             >
               {/* 9:16 aspect ratio wrapper */}
