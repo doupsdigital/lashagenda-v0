@@ -363,11 +363,11 @@ export default function LandingPage_OfertaUm() {
             variants={stagger(0.1)}
             style={{ textAlign: 'center', marginBottom: 36 }}
           >
-            <motion.p variants={fadeUp} style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: P.accent, marginBottom: 12 }}>Veja em 2 minutos</motion.p>
+            <motion.p variants={fadeUp} style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: P.accent, marginBottom: 12 }}>Veja como funciona</motion.p>
             <motion.h2 variants={fadeUp} style={{ fontSize: 'clamp(20px, 4.5vw, 34px)', fontWeight: 900, letterSpacing: -0.5, lineHeight: 1.2, color: '#3a2d40', textWrap: 'balance' } as React.CSSProperties}>
               Como o Lash Hub muda<br />o seu dia a dia
             </motion.h2>
-            <motion.p variants={fadeUp} style={{ fontSize: 14, color: P.muted, marginTop: 10, lineHeight: 1.75, maxWidth: 380, margin: '10px auto 0' }}>
+            <motion.p variants={fadeUp} style={{ fontSize: 14, color: P.muted, marginTop: 10, lineHeight: 1.75, maxWidth: 380, margin: '10px auto 0', fontStyle: 'italic' }}>
               Agenda automática, ficha de cliente, controle de ganhos — tudo no seu celular.
             </motion.p>
           </motion.div>
