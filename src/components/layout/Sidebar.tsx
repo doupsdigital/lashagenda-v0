@@ -15,6 +15,7 @@ import {
   BarChart2,
   Link2,
   PlayCircle,
+  MessageCircle,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { FEATURES } from '../../config/features';
@@ -115,6 +116,13 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
     { name: 'Configurações', path: '/configuracoes', icon: Settings },
     ...(FEATURES.tutoriais ? [{ name: 'Tutoriais', path: '/tutoriais', icon: PlayCircle }] : []),
   ];
+
+  const handleSupportClick = () => {
+    setMobileOpen(false);
+    const message = 'Olá, preciso de ajuda.';
+    const url = `https://wa.me/5562991083435?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  };
 
   const renderNavItems = (items: NavItem[]) => {
     return items.map((item) => {
@@ -238,6 +246,18 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
               )}
               <div className="space-y-1">
                 {renderNavItems(systemItems)}
+                <button
+                  onClick={handleSupportClick}
+                  title={collapsed ? 'Suporte' : undefined}
+                  className={`
+                    relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group w-full
+                    text-text-secondary hover:bg-rose-50 hover:text-rose-600
+                    ${collapsed ? 'justify-center' : ''}
+                  `}
+                >
+                  <MessageCircle className="w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-105" />
+                  {!collapsed && <span className="text-sm font-sans flex-1 text-left">Suporte</span>}
+                </button>
               </div>
             </div>
           </nav>
