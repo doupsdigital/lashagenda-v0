@@ -363,20 +363,20 @@ export default function Clientes() {
                     >
                       {/* Avatar + Name */}
                       <td className="px-6 py-4 flex items-center gap-3">
-                        <div className="w-9 h-9 flex-shrink-0 rounded-full bg-rose-100 border border-rose-200 text-rose-800 flex items-center justify-center font-title font-semibold text-sm">
+                        <div className="hidden md:flex w-9 h-9 flex-shrink-0 rounded-full bg-rose-100 border border-rose-200 text-rose-800 items-center justify-center font-title font-semibold text-sm">
                           {initials}
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-text-primary group-hover:text-rose-600 transition-colors">
                             {client.nome} {client.sobrenome}
                           </p>
-                          <p className="text-[10px] text-text-muted">
+                          <p className="hidden md:block text-[10px] text-text-muted">
                             Cadastrado em: {new Date(client.created_at || '').toLocaleDateString('pt-BR')}
                           </p>
                         </div>
                       </td>
                       {/* WhatsApp */}
-                      <td className="px-6 py-4 text-sm text-text-primary">
+                      <td className="px-6 py-4 text-sm text-text-primary whitespace-nowrap">
                         {client.whatsapp}
                       </td>
                       {/* Email */}
