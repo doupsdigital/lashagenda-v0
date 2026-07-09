@@ -120,6 +120,31 @@ export default function LandingPage_OfertaUm() {
     return scrollY.on('change', (v) => setScrolled(v > 80));
   }, [scrollY]);
 
+  // Meta (Facebook) Pixel — rastreamento de conversão para Facebook Ads
+  useEffect(() => {
+    const w = window as typeof window & { fbq?: any; _fbq?: any };
+    if (w.fbq) {
+      w.fbq('track', 'PageView');
+      return;
+    }
+    const n: any = function (...args: any[]) {
+      n.callMethod ? n.callMethod.apply(n, args) : n.queue.push(args);
+    };
+    n.queue = [];
+    n.loaded = true;
+    n.version = '2.0';
+    w.fbq = n;
+    w._fbq = n;
+
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://connect.facebook.net/en_US/fbevents.js';
+    document.head.appendChild(script);
+
+    w.fbq('init', '1042165951490026');
+    w.fbq('track', 'PageView');
+  }, []);
+
   // Parallax blobs
   const blob1Y = useTransform(scrollYProgress, [0, 1], ['0%', '-30%']);
   const blob2Y = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
@@ -133,6 +158,15 @@ export default function LandingPage_OfertaUm() {
 
   return (
     <div style={{ background: P.bg, color: P.text, minHeight: '100vh', fontFamily: 'inherit', overflowX: 'hidden' }}>
+      <noscript>
+        <img
+          height="1"
+          width="1"
+          style={{ display: 'none' }}
+          src="https://www.facebook.com/tr?id=1042165951490026&ev=PageView&noscript=1"
+          alt=""
+        />
+      </noscript>
 
       {/* ── DECORATIVE BLOBS (parallax) ── */}
       <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
