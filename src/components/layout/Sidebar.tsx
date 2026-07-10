@@ -16,6 +16,7 @@ import {
   PlayCircle,
   MessageCircle,
   Sparkles,
+  ClipboardPen,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { FEATURES } from '../../config/features';
@@ -109,6 +110,7 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
     { name: 'Meus Horários', path: '/meus-horarios', icon: Clock },
     { name: 'Link de Agendamento', path: '/link-agendamento', icon: Link2 },
     { name: 'Relatórios', path: '/relatorios', icon: BarChart2, feature: 'crm' },
+    { name: 'Fichas de Anamnese', path: '/fichas-anamnese', icon: ClipboardPen, feature: 'crm' },
   ];
 
   const systemItems: NavItem[] = [
@@ -250,7 +252,7 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
               <span className="text-[10px] font-bold uppercase tracking-wider text-rose-600">Premium</span>
             </div>
             <p className="text-xs text-text-secondary leading-snug mb-2.5">
-              Relatórios e histórico completo das suas clientes.
+              Fichas de anamnese, relatórios e histórico completo das suas clientes.
             </p>
             <button
               onClick={() => setIsUpgradeModalOpen(true)}

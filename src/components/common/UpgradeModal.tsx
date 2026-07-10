@@ -34,15 +34,21 @@ export default function UpgradeModal({ onClose }: UpgradeModalProps) {
           </span>
 
           <h3 className="font-title font-bold text-2xl text-text-primary mb-2">
-            CRM & Relatórios Completos
+            Relatórios & Fichas de Anamnese
           </h3>
 
           <p className="text-sm text-text-secondary mb-6 leading-relaxed">
-            Faça o upgrade para o plano <strong className="text-rose-600 font-semibold">Premium</strong> e tenha controle total do seu negócio, além da agenda automática. Acompanhe relatórios, histórico e fichas completas das suas clientes.
+            Faça o upgrade para o plano <strong className="text-rose-600 font-semibold">Premium</strong> e tenha relatórios completos do seu negócio, além de fichas de anamnese profissionais para suas clientes — com curvatura, mapping e tudo que uma Lash Designer precisa registrar.
           </p>
 
           {/* Perks List */}
           <ul className="w-full space-y-3 text-left bg-rose-50/30 border border-rose-100/50 rounded-xl p-4 mb-6">
+            <li className="flex items-start gap-2.5 text-xs text-text-primary">
+              <span className="p-0.5 rounded-full bg-green-100 text-green-600 flex-shrink-0 mt-0.5">
+                <Check className="w-3 h-3" />
+              </span>
+              <span>Fichas de Anamnese completas para Lash Designers</span>
+            </li>
             <li className="flex items-start gap-2.5 text-xs text-text-primary">
               <span className="p-0.5 rounded-full bg-green-100 text-green-600 flex-shrink-0 mt-0.5">
                 <Check className="w-3 h-3" />
@@ -54,12 +60,6 @@ export default function UpgradeModal({ onClose }: UpgradeModalProps) {
                 <Check className="w-3 h-3" />
               </span>
               <span>Histórico completo de atendimentos por cliente</span>
-            </li>
-            <li className="flex items-start gap-2.5 text-xs text-text-primary">
-              <span className="p-0.5 rounded-full bg-green-100 text-green-600 flex-shrink-0 mt-0.5">
-                <Check className="w-3 h-3" />
-              </span>
-              <span>Fichas de anamnese customizadas</span>
             </li>
           </ul>
 

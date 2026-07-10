@@ -39,6 +39,8 @@ import PlanGuard from './components/common/PlanGuard';
 import BillingGuard from './components/common/BillingGuard';
 import Faturamento from './pages/profissional/Faturamento';
 import Relatorios from './pages/profissional/Relatorios';
+import FichasAnamnese from './pages/profissional/FichasAnamnese';
+import FichaAnamneseDetalhe from './pages/profissional/FichaAnamneseDetalhe';
 import { InstallPromptProvider } from './contexts/InstallPromptContext';
 
 export default function App() {
@@ -132,9 +134,11 @@ export default function App() {
                 <Route path="agendamentos" element={<Agendamentos />} />
                 <Route path="meus-horarios" element={<MeusHorarios />} />
 
-                {/* Recursos de CRM avançado (relatórios/análises) exclusivos do plano Premium */}
+                {/* Recursos de CRM avançado (relatórios/análises/fichas de anamnese) exclusivos do plano Premium */}
                 <Route element={<PlanGuard requiredFeature="crm" />}>
                   <Route path="relatorios" element={<Relatorios />} />
+                  <Route path="fichas-anamnese" element={<FichasAnamnese />} />
+                  <Route path="fichas-anamnese/:id" element={<FichaAnamneseDetalhe />} />
                 </Route>
               </Route>
             </Route>

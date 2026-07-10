@@ -482,7 +482,7 @@ export default function Faturamento() {
                     <h2 className="font-title font-bold text-lg text-text-primary flex items-center gap-2">
                       <Sparkles className="w-5 h-5 text-rose-600" /> Plano Premium
                     </h2>
-                    <p className="text-xs text-text-secondary mt-1">Para quem quer controle total: agenda, CRM completo e relatórios do negócio.</p>
+                    <p className="text-xs text-text-secondary mt-1">Para quem quer relatórios completos do negócio e fichas de anamnese profissionais para Lash Designers.</p>
                     <div className="mt-4 flex items-baseline gap-1">
                       <span className="text-2xl font-extrabold font-title text-text-primary">R$ 89,90</span>
                       <span className="text-xs font-semibold text-text-secondary">/ mês</span>
@@ -495,7 +495,7 @@ export default function Faturamento() {
                       </div>
                     )}
                     <ul className="space-y-2.5 text-xs text-text-secondary">
-                      {['TUDO do Plano Agenda', 'Relatórios e Análises completas', 'Fichas de Anamnese Customizadas', 'Histórico de Atendimentos', 'Suporte Prioritário'].map(feat => (
+                      {['TUDO do Plano Agenda', 'Fichas de Anamnese para Lash Designers', 'Relatórios e Análises completas', 'Histórico de Atendimentos', 'Suporte Prioritário'].map(feat => (
                         <li key={feat} className="flex items-start gap-2">
                           <Check className="w-3.5 h-3.5 text-green-600 shrink-0 mt-0.5" />
                           <span className={feat.startsWith('TUDO') ? 'font-semibold text-text-primary' : ''}>{feat}</span>

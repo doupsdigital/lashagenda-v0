@@ -100,15 +100,15 @@ export default function BillingGuard() {
           <ul className="space-y-2 text-xs text-text-secondary">
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+              Fichas de anamnese completas para Lash Designers
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
               Relatórios e análises completas do seu negócio
             </li>
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
               Histórico completo de atendimentos
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-              Fichas de anamnese customizadas
             </li>
           </ul>
         </div>

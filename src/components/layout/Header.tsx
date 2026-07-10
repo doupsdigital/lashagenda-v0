@@ -9,6 +9,7 @@ import {
   Settings,
   CreditCard,
   BarChart2,
+  ClipboardPen,
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -45,8 +46,11 @@ export default function Header({ setMobileOpen }: HeaderProps) {
         return { title: 'Minha Assinatura', Icon: CreditCard };
       case '/relatorios':
         return { title: 'Relatórios', Icon: BarChart2 };
+      case '/fichas-anamnese':
+        return { title: 'Fichas de Anamnese', Icon: ClipboardPen };
       default:
         if (pathname.startsWith('/clientes/')) return { title: 'Perfil do Cliente', Icon: Users };
+        if (pathname.startsWith('/fichas-anamnese/')) return { title: 'Ficha de Anamnese', Icon: ClipboardPen };
         return { title: 'Studio', Icon: LayoutGrid };
     }
   };

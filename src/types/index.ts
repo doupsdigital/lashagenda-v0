@@ -90,6 +90,24 @@ export interface Cliente {
     quimioterapia_recente?: boolean;
     queda_cabelo_alopecia?: boolean;
     alergia_produtos?: boolean;
+    // Perfil do olho e cílios naturais
+    formato_olho?: 'amendoado' | 'redondo' | 'caido' | 'fundo' | 'protruso' | 'monolid' | '';
+    espacamento_olhos?: 'proximos' | 'afastados' | 'normal' | '';
+    densidade_cilios_naturais?: 'ralos' | 'medios' | 'densos' | '';
+    comprimento_cilios_naturais?: 'curtos' | 'medios' | 'longos' | '';
+    curvatura_natural?: 'retos' | 'levemente_curvados' | 'bem_curvados' | '';
+    // Preferências técnicas
+    tecnica_preferida?: 'fio_a_fio_classico' | 'volume_russo' | 'hibrido' | 'volume_brasileiro' | 'mega_volume' | '';
+    mapping_preferido?: 'natural' | 'gatinho' | 'boneca' | 'esquilo' | 'aberto_no_meio' | '';
+    curvatura_preferida?: 'J' | 'B' | 'C' | 'CC' | 'D' | 'DD_L' | 'L_plus_M' | '';
+    espessura_preferida?: '0.03' | '0.05' | '0.07' | '0.10' | '0.15' | '0.20' | '';
+    comprimento_predominante?: string;
+    efeito_desejado?: 'natural' | 'glamouroso' | 'boneca' | 'marcante' | '';
+    // Retenção e cuidados
+    tempo_medio_retencao_dias?: number | null;
+    frequencia_manutencao_dias?: number | null;
+    tipo_adesivo?: 'sensivel' | 'padrao' | 'secagem_rapida' | '';
+    observacoes_retencao?: string;
   } | null;
   // campos legados — não existem no novo schema
   ativo?: boolean;

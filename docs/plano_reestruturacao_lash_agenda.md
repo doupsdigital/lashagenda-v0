@@ -134,15 +134,28 @@ A maior parte dos dados já existe em `Dashboard.tsx` (agendamentos de hoje, fat
 - [x] `TabBar.tsx` — trocado para 5 itens fixos: Início, Clientes, **Agenda (botão central flutuante em destaque)**, Serviços, Config. O botão "Mais" foi removido — **descoberta durante a execução**: o `Header.tsx` já tinha um ícone de hambúrguer (canto superior esquerdo, mobile) que abre a Sidebar como gaveta, então essa era uma segunda porta de entrada redundante para a mesma coisa. Configurações/Assinatura/Suporte continuam acessíveis por ali, sem necessidade de decidir um novo lugar para eles.
 - [x] `src/components/layout/Layout.tsx` — removida a prop `onMoreClick` do `<TabBar />` (não é mais necessária)
 - [x] `Sidebar.tsx` (desktop) — itens reordenados para priorizar Agendamentos logo após Meu Estúdio (cadeados já tinham sido removidos na Fase 3). **Nota de escopo:** o card de upsell Premium no rodapé fica para a Fase 6, que já é dona desse entregável — evita fazer o mesmo trabalho duas vezes.
-- [ ] Teste em mobile (viewport reduzido) e desktop — **fazer antes de aprovar o commit**
+- [x] Teste em mobile (viewport reduzido) e desktop — aprovado pelo usuário, incluindo ajuste extra do ícone de "Serviços" (`Tag` → `Eye` → `WandSparkles`, decidido junto com o usuário)
 
 ---
 
 ## Fase 6 — Upsell do Premium (substituir o modelo de cadeado)
 
-- [ ] Definir onde entra o "link/CTA" de upsell: card na Sidebar, banner na tela inicial do plano Agenda, e/ou item "Conheça o Premium" no menu que abre o `UpgradeModal` redesenhado
-- [ ] Reescrever `UpgradeModal.tsx` com o novo pitch (CRM/Relatórios/Análises em vez de Agenda Online)
-- [ ] Página `Faturamento.tsx` já serve como página de upgrade — conferir que o fluxo "clicar no upsell → ver os 2 planos → assinar Premium" funciona ponta a ponta
+- [x] Decisão do usuário (2026-07-10): **sem banner na tela inicial** do plano Agenda — não queria poluir a home simplificada. O CTA de upsell fica só na **Sidebar** (funciona tanto no menu fixo do desktop quanto na gaveta mobile aberta pelo hambúrguer — é o mesmo componente).
+- [x] `src/components/layout/Sidebar.tsx` — adicionado card "Premium" no rodapé (acima do cartão do usuário), visível apenas para quem **não** é premium e com a sidebar expandida (não aparece quando colapsada, por falta de espaço). Botão "Conhecer o Premium" abre o `UpgradeModal`.
+- [x] `UpgradeModal.tsx` — já tinha sido reescrito com o pitch novo (CRM/Relatórios/Análises) na Fase 3, quando o gatilho antigo (cadeado) foi removido; não precisou de mudança agora, só ganhou um gatilho novamente.
+- [x] Fluxo ponta a ponta: card na Sidebar → abre `UpgradeModal` → botão "Fazer Upgrade no Painel" → navega para `/assinatura` (`Faturamento.tsx`, já validado na Fase 2) → assinar Premium
+- [x] Ajustes finos pedidos durante a revisão visual: badge do ícone de coroa não sobrepõe mais a decoração de estrelas na saudação; "Fichas de anamnese" saiu da lista de "exclusivo Premium" (ver bloco abaixo, depois revertido); modal fecha a gaveta mobile junto (`setMobileOpen(false)` adicionado ao `onClose`)
+
+### Adicional — Fichas de Anamnese vira funcionalidade própria do Premium (decisão do usuário, 2026-07-10)
+
+Depois de testar, o usuário decidiu inverter o que tinha sido feito antes: em vez de fichas de anamnese fazerem parte do plano Agenda, elas viram uma **funcionalidade nova e mais completa, exclusiva do Premium**, com tela própria (não mais uma aba dentro do perfil da cliente).
+
+- [x] `src/types/index.ts` — `anamnese_lash` (JSONB, já existia no banco — **sem migração necessária**) ganhou campos novos: perfil do olho (formato, espaçamento, densidade/comprimento/curvatura dos cílios naturais), preferências técnicas (técnica, mapping, curvatura, espessura, comprimento, efeito desejado) e retenção (tempo médio de retenção, frequência de manutenção, tipo de adesivo, observações)
+- [x] `src/pages/profissional/FichasAnamnese.tsx` (nova) — lista de clientes com busca, badge "Ficha preenchida"/"Ficha pendente", clica e vai para a ficha da cliente
+- [x] `src/pages/profissional/FichaAnamneseDetalhe.tsx` (nova) — tela completa e dedicada por cliente, com as seções antigas (Histórico & Cuidados Oculares, Condições Clínicas, Alergias) reaproveitadas + 3 seções novas (Perfil do Olho & Cílios Naturais, Preferências Técnicas, Retenção & Cuidados)
+- [x] `src/pages/profissional/PerfilCliente.tsx` — removida a aba "Ficha Clínica (Anamnese)"; adicionado botão "Ficha de Anamnese" (visível só no Premium) que leva direto para a nova tela dedicada dessa cliente
+- [x] `src/App.tsx` — novas rotas `fichas-anamnese` e `fichas-anamnese/:id`, protegidas por `PlanGuard requiredFeature="crm"` (mesma proteção de Relatórios)
+- [x] `src/components/layout/Sidebar.tsx` e `Header.tsx` — novo item de menu "Fichas de Anamnese" (ícone `ClipboardPen`), só aparece pro Premium, mesmo padrão do Relatórios. Não entrou na TabBar (ela é fixa em 5 itens para os dois planos, igual Relatórios também não entrou)
 
 ---
 
