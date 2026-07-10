@@ -76,8 +76,8 @@ serve(async (req) => {
     }
 
     // 2. Cria a assinatura
-    const valor     = plano === 'premium' ? 99.90 : 59.90
-    const descricao = plano === 'premium' ? 'Lash Agenda — Plano Premium' : 'Lash Agenda — Plano Básico'
+    const valor     = plano === 'premium' ? 89.90 : 59.90
+    const descricao = plano === 'premium' ? 'Lash Agenda — Plano Premium' : 'Lash Agenda — Plano Agenda'
     const hoje      = new Date().toISOString().split('T')[0]
 
     const createSubRes = await fetch(`${ASAAS_BASE_URL}/subscriptions`, {

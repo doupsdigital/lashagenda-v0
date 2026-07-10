@@ -91,12 +91,13 @@ Em todos os arquivos acima, mantive intactos identificadores técnicos que conti
 
 Mudança visual/textual isolada, ainda sem tocar em `useSubscription`/gating. Assim dá pra validar preço e copy antes de mexer em permissão.
 
-- [ ] `src/pages/profissional/Faturamento.tsx` — renomear cards de plano: "Plano Básico (CRM)" → **"Plano Agenda"**, "Plano Premium (Agenda)" → **"Plano Premium"**; atualizar preços: R$ 59,90 (Agenda) e R$ 89,90 (Premium, era 99,90); reescrever a lista de benefícios de cada card conforme a nova divisão de features (ver Fase 3)
-- [ ] `supabase/functions/asaas-checkout/index.ts:79-80` — atualizar `valor` do premium de `99.90` para `89.90` e a `descricao` para `Lash Agenda — Plano ...`
-- [ ] Redeploy da Edge Function (`npx supabase functions deploy asaas-checkout`)
-- [ ] Teste manual: gerar um checkout Pix de cada plano em ambiente de teste do Asaas e conferir o valor cobrado
+- [x] `src/pages/profissional/Faturamento.tsx` — renomeado "Plano Básico (CRM)" → **"Plano Agenda"** (ícone trocado de `Users` para `Calendar`), "Plano Premium (Agenda)" → **"Plano Premium"**; preços atualizados: R$ 59,90 (Agenda) e R$ 89,90 (Premium, era 99,90); benefícios de cada card reescritos refletindo a nova divisão (Agenda = agendamento + cadastro básico; Premium = tudo + relatórios/anamnese/histórico); rótulos "Básico"/"Premium" no painel de status e nas telas de checkout/sucesso também atualizados
+- [x] `supabase/functions/asaas-checkout/index.ts:79-80` — `valor` do premium alterado de `99.90` para `89.90`; `descricao` atualizada para `Lash Agenda — Plano Agenda` / `Lash Agenda — Plano Premium`
+- [x] `src/components/layout/Layout.tsx` — texto do toast de boas-vindas pós-checkout ("Plano Básico ativo!" → "Plano Agenda ativo!") — adicional encontrado durante a execução, não estava listado originalmente
+- [ ] ~~Redeploy da Edge Function~~ — **adiado de propósito.** Decisão do usuário (2026-07-10): não redeployar Edge Functions a cada etapa; isso fica para o final do projeto, quando o sistema inteiro já estiver ajustado. Ver checklist consolidado em **"Lembretes — Deploy final de Edge Functions"** no fim deste documento.
+- [ ] ~~Teste manual de checkout Pix~~ — depende do redeploy acima, também adiado para o final.
 
-> **Nota:** como confirmado, não há assinantes reais hoje, então não existe assinatura antiga em valor divergente para se preocupar.
+> **Nota:** como confirmado, não há assinantes reais hoje, então não existe assinatura antiga em valor divergente para se preocupar. Até o redeploy final, o código local já está correto (R$ 89,90), mas a Edge Function rodando ao vivo no Supabase ainda cobra o valor antigo (R$ 99,90) — sem risco, pois não há cobranças reais em andamento.
 
 ---
 
@@ -166,3 +167,15 @@ Depende de quanto você quer simplificar a experiência de Clientes/Serviços pa
 ## Fora de escopo deste plano (tratar depois, separadamente)
 - Landing pages (`LandingPage_*.tsx`) — não serão alteradas nem apagadas neste plano; o usuário vai editá-las pessoalmente depois, quando tiver os vídeos/criativos novos prontos
 - Migração de assinantes reais — não aplicável (confirmado: sem clientes pagantes no básico hoje)
+
+---
+
+## Lembretes — Deploy final de Edge Functions
+
+**Decisão do usuário (2026-07-10):** não fazer redeploy de Edge Functions do Supabase a cada etapa deste plano. O código-fonte é ajustado normalmente a cada fase (e commitado), mas o redeploy real no Supabase (que exige `supabase login` com credenciais do usuário) fica concentrado para **o final**, quando todo o sistema já estiver ajustado. Até lá, a versão rodando ao vivo no Supabase continua com o comportamento antigo — sem risco, pois não há assinantes reais hoje.
+
+Checklist a executar no final (revisar e marcar conforme cada Edge Function for de fato alterada ao longo das fases):
+- [ ] `asaas-checkout` — valor do Premium (R$ 89,90) e descrição ("Lash Agenda — Plano ...") — alterado na Fase 2
+- [ ] Conferir se alguma outra Edge Function foi tocada nas Fases 3-8 e incluir aqui antes do deploy final
+- [ ] Rodar `npx supabase functions deploy <nome-da-funcao>` para cada uma
+- [ ] Teste manual pós-deploy: gerar um checkout Pix de cada plano em ambiente de teste do Asaas e conferir o valor cobrado

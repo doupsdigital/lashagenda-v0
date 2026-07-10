@@ -9,7 +9,6 @@ import {
   Calendar,
   AlertTriangle,
   ShieldCheck,
-  Users,
   Copy,
   CheckCircle2,
   Loader2,
@@ -345,7 +344,7 @@ export default function Faturamento() {
                 <p className="text-xs text-text-secondary">Plano Ativo</p>
                 <div className="flex items-center gap-2 mt-1">
                   <span className={`text-lg font-bold font-title ${isPremium ? 'text-rose-600' : 'text-text-primary'}`}>
-                    {isPremium ? 'Premium (Agenda Digital)' : 'Básico (Apenas CRM)'}
+                    {isPremium ? 'Premium (Completo)' : 'Agenda'}
                   </span>
                   {isPremium && <Sparkles className="w-4 h-4 text-rose-500 animate-pulse" />}
                 </div>
@@ -437,9 +436,9 @@ export default function Faturamento() {
                 <div>
                   <div className="p-6 bg-gradient-to-tr from-rose-500/10 via-pink-500/5 to-transparent border-b border-border">
                     <h2 className="font-title font-bold text-lg text-text-primary flex items-center gap-2">
-                      <Users className="w-5 h-5 text-text-secondary" /> Plano Básico (CRM)
+                      <Calendar className="w-5 h-5 text-text-secondary" /> Plano Agenda
                     </h2>
-                    <p className="text-xs text-text-secondary mt-1">Ideal para organizar a carteira de clientes e prontuários.</p>
+                    <p className="text-xs text-text-secondary mt-1">Ideal para automatizar sua agenda e nunca mais perder um horário no WhatsApp.</p>
                     <div className="mt-4 flex items-baseline gap-1">
                       <span className="text-2xl font-extrabold font-title text-text-primary">R$ 59,90</span>
                       <span className="text-xs font-semibold text-text-secondary">/ mês</span>
@@ -452,7 +451,7 @@ export default function Faturamento() {
                       </div>
                     )}
                     <ul className="space-y-2.5 text-xs text-text-secondary">
-                      {['Cadastro de Clientes ilimitado', 'Fichas de Anamnese Customizadas', 'Meu Estúdio (Relatórios)', 'Histórico de Atendimentos', 'Suporte por E-mail'].map(feat => (
+                      {['Agendamento automático online', 'Portal exclusivo para suas clientes', 'Cadastro de Clientes e Serviços', 'Confirmação manual ou automática', 'Suporte por E-mail'].map(feat => (
                         <li key={feat} className="flex items-start gap-2">
                           <Check className="w-3.5 h-3.5 text-green-600 shrink-0 mt-0.5" />{feat}
                         </li>
@@ -481,11 +480,11 @@ export default function Faturamento() {
                 <div>
                   <div className="p-6 bg-gradient-to-tr from-rose-500/10 via-pink-500/5 to-transparent border-b border-border">
                     <h2 className="font-title font-bold text-lg text-text-primary flex items-center gap-2">
-                      <Sparkles className="w-5 h-5 text-rose-600" /> Plano Premium (Agenda)
+                      <Sparkles className="w-5 h-5 text-rose-600" /> Plano Premium
                     </h2>
-                    <p className="text-xs text-text-secondary mt-1">Para quem quer automatizar o agendamento 24h por dia.</p>
+                    <p className="text-xs text-text-secondary mt-1">Para quem quer controle total: agenda, CRM completo e relatórios do negócio.</p>
                     <div className="mt-4 flex items-baseline gap-1">
-                      <span className="text-2xl font-extrabold font-title text-text-primary">R$ 99,90</span>
+                      <span className="text-2xl font-extrabold font-title text-text-primary">R$ 89,90</span>
                       <span className="text-xs font-semibold text-text-secondary">/ mês</span>
                     </div>
                   </div>
@@ -496,7 +495,7 @@ export default function Faturamento() {
                       </div>
                     )}
                     <ul className="space-y-2.5 text-xs text-text-secondary">
-                      {['TUDO do Plano Básico', 'Portal de Agendamento Online', 'Horários Dinâmicos', 'Bloqueios Rápidos de Agenda', 'Aprovação Manual/Automática', 'Suporte Prioritário'].map(feat => (
+                      {['TUDO do Plano Agenda', 'Relatórios e Análises completas', 'Fichas de Anamnese Customizadas', 'Histórico de Atendimentos', 'Suporte Prioritário'].map(feat => (
                         <li key={feat} className="flex items-start gap-2">
                           <Check className="w-3.5 h-3.5 text-green-600 shrink-0 mt-0.5" />
                           <span className={feat.startsWith('TUDO') ? 'font-semibold text-text-primary' : ''}>{feat}</span>
@@ -591,7 +590,7 @@ export default function Faturamento() {
             <div className="bg-white border border-border rounded-2xl shadow-sm p-6 md:p-8 animate-fade-in">
               <h2 className="font-title font-bold text-xl text-text-primary mb-1 flex items-center gap-2">
                 <PixIcon className="w-5 h-5 text-rose-600" />
-                Pague via Pix — Plano {selectedPlanToBuy === 'premium' ? 'Premium' : 'Básico'}
+                Pague via Pix — Plano {selectedPlanToBuy === 'premium' ? 'Premium' : 'Agenda'}
               </h2>
               <p className="text-sm text-text-secondary mb-6">Escaneie o QR Code ou copie o código Pix abaixo. O acesso é liberado automaticamente após a confirmação.</p>
 
@@ -651,7 +650,7 @@ export default function Faturamento() {
               </div>
               <h2 className="font-title font-bold text-xl text-text-primary mb-1">Pagamento Confirmado!</h2>
               <p className="text-sm text-text-secondary mb-1">
-                Seu Plano {selectedPlanToBuy === 'premium' ? 'Premium' : 'Básico'} está ativo. Bem-vinda!
+                Seu Plano {selectedPlanToBuy === 'premium' ? 'Premium' : 'Agenda'} está ativo. Bem-vinda!
               </p>
               <p className="text-xs text-text-muted mb-6">
                 Redirecionando para{' '}

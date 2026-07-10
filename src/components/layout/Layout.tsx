@@ -28,7 +28,7 @@ export default function Layout() {
     if (!state?.welcomePlano) return null;
     return state.welcomePlano === 'premium'
       ? 'Plano Premium ativo! Configure seus horários e comece a receber agendamentos.'
-      : 'Plano Básico ativo! Seus clientes e serviços estão prontos para uso.';
+      : 'Plano Agenda ativo! Seus clientes e serviços estão prontos para uso.';
   });
 
   // Auto-dismiss do toast de boas-vindas após 5 segundos
