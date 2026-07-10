@@ -10,8 +10,7 @@ export default function PortalLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, profile, isProfissional, signOut } = useAuth();
-  const { nomeNegocio, logoUrl, slug, loading, nomeProfissional, plano, telefoneProfissional, descricao, instagram, endereco } = usePortal();
-  const isBasico = plano === 'basico';
+  const { nomeNegocio, logoUrl, slug, loading, nomeProfissional, telefoneProfissional, descricao, instagram, endereco } = usePortal();
   const isAuthPage = location.pathname.endsWith('/login') || location.pathname.endsWith('/cadastro');
   const isAgendar = location.pathname.endsWith('/agendar');
 
@@ -39,7 +38,7 @@ export default function PortalLayout() {
 
   const navItems = [
     { name: 'Catálogo', shortName: 'Catálogo', path: `/portal/${slug}/catalogo`, icon: BookOpen },
-    ...(!isBasico && user ? [
+    ...(user ? [
       { name: 'Agendar', shortName: 'Agendar', path: `/portal/${slug}/agendar`, icon: Calendar },
       { name: 'Meus Agendamentos', shortName: 'Agendamentos', path: `/portal/${slug}/meus-agendamentos`, icon: ClipboardList },
       { name: 'Meu Perfil', shortName: 'Perfil', path: `/portal/${slug}/perfil`, icon: User },
@@ -99,7 +98,7 @@ export default function PortalLayout() {
                 <span>Painel</span>
               </button>
             </>
-          ) : !isAuthPage && !isBasico && (user ? (
+          ) : !isAuthPage && (user ? (
             <>
               {profile?.avatar_url ? (
                 <img

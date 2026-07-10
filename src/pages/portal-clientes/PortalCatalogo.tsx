@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOnboarding } from '../../hooks/useOnboarding';
 import { useAuth } from '../../contexts/AuthContext';
-import { Clock, Tag, Calendar, AlertCircle, Sparkles, RefreshCw, MessageSquare, ChevronDown, HelpCircle, MapPin, AtSign } from 'lucide-react';
+import { Clock, Tag, Calendar, AlertCircle, Sparkles, RefreshCw, ChevronDown, HelpCircle, MapPin, AtSign } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import type { CategoriaServico, Servico, VariacaoServico } from '../../types';
 import { usePortal } from '../../contexts/PortalContext';
@@ -68,75 +68,9 @@ function SkeletonCard() {
 interface ServicoCardProps {
   servico: ServicoComVariacoes;
   onAgendar: () => void;
-  isBasico: boolean;
-  nomeNegocio: string | null;
-  telefoneProfissional: string | null;
 }
 
-function ServicoCard({ servico, onAgendar, isBasico, nomeNegocio, telefoneProfissional }: ServicoCardProps) {
-  if (isBasico) {
-    const phone = telefoneProfissional?.replace(/\D/g, '') ?? '';
-    const whatsappText = `Olá! Gostaria de agendar o serviço *${servico.nome}* (${formatValor(servico.valor)}) no *${nomeNegocio || 'Estúdio'}*.`;
-    const whatsappUrl = phone ? `https://wa.me/55${phone}?text=${encodeURIComponent(whatsappText)}` : '#';
-    
-    return (
-      <div className="bg-white border border-border rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col overflow-hidden">
-        {servico.imagem_url && (
-          <img src={servico.imagem_url} alt={servico.nome} className="w-full aspect-video object-cover" />
-        )}
-        <div className="p-5 flex flex-col gap-3 flex-1">
-        <h3 className="font-title font-semibold text-xl text-text-primary leading-snug">
-          {servico.nome}
-        </h3>
-
-        {servico.descricao && (
-          <p className="text-sm text-text-secondary leading-relaxed">{servico.descricao}</p>
-        )}
-
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="flex items-center gap-1.5 text-sm text-text-secondary">
-            <Clock className="w-4 h-4 text-rose-400" />
-            {formatDuracao(servico.duracao_minutos)}
-          </span>
-          <span className="flex items-center gap-1.5 text-base font-semibold text-text-primary">
-            <Tag className="w-4 h-4 text-gold" />
-            {formatValor(servico.valor)}
-          </span>
-        </div>
-
-        {servico.variacoes.length > 0 && (
-          <div className="border-t border-border pt-3 space-y-1.5">
-            <p className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-2">Opções</p>
-            {servico.variacoes.map(v => (
-              <div key={v.id} className="flex items-center justify-between gap-2 text-sm">
-                <span className="text-text-secondary">{v.nome}</span>
-                <div className="flex items-center gap-1.5 text-text-secondary shrink-0">
-                  {v.valor != null && (
-                    <span className="font-medium text-text-primary">{formatValor(v.valor)}</span>
-                  )}
-                  {v.duracao_minutos != null && (
-                    <span className="text-xs text-text-muted">• {formatDuracao(v.duracao_minutos)}</span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <a
-          href={whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-auto w-full py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-semibold transition-colors duration-200 flex items-center justify-center gap-2 text-center"
-        >
-          <MessageSquare className="w-4 h-4" />
-          Agendar via WhatsApp
-        </a>
-        </div>
-      </div>
-    );
-  }
-
+function ServicoCard({ servico, onAgendar }: ServicoCardProps) {
   return (
     <div className="bg-white border border-border rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col overflow-hidden">
       {servico.imagem_url && (
@@ -196,7 +130,7 @@ function ServicoCard({ servico, onAgendar, isBasico, nomeNegocio, telefoneProfis
 export default function PortalCatalogo() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { establishmentId, slug, plano, nomeNegocio, logoUrl, descricao, instagram, endereco, telefoneProfissional } = usePortal();
+  const { establishmentId, slug, nomeNegocio, logoUrl, descricao, instagram, endereco } = usePortal();
   const catalogoKey = user ? 'portal_catalogo' : 'portal_catalogo_anonimo';
   const { autoStart, loading: onboardingLoading } = useOnboarding(catalogoKey, { studioName: nomeNegocio });
   const tourStartedRef = useRef(false);
@@ -212,8 +146,6 @@ export default function PortalCatalogo() {
   const [error, setError] = useState(false);
   const [categoriaAtiva, setCategoriaAtiva] = useState<string>('todas');
   const [faqAberto, setFaqAberto] = useState<number | null>(null);
-
-  const isBasico = plano === 'basico';
 
   const fetchData = async () => {
     if (!establishmentId) return;
@@ -387,34 +319,6 @@ export default function PortalCatalogo() {
         </button>
       </div>
 
-      {/* WhatsApp banner if studio is on basic plan */}
-      {isBasico && (
-        <div className="bg-green-50 border border-green-200 rounded-2xl p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-in">
-          <div className="flex gap-3 items-start flex-1">
-            <div className="w-10 h-10 rounded-xl bg-green-600 flex items-center justify-center shrink-0 mt-0.5">
-              <MessageSquare className="w-5 h-5 text-white" />
-            </div>
-            <div className="space-y-1">
-              <h3 className="font-title font-semibold text-base text-green-900">
-                Agendamentos via WhatsApp
-              </h3>
-              <p className="text-sm text-green-800 leading-relaxed">
-                Neste estúdio, os horários são marcados diretamente via WhatsApp. Escolha o serviço abaixo para solicitar ou clique no botão para conversar conosco.
-              </p>
-            </div>
-          </div>
-          <a
-            href={telefoneProfissional ? `https://wa.me/55${telefoneProfissional.replace(/\D/g, '')}?text=${encodeURIComponent(`Olá! Gostaria de agendar um serviço no *${nomeNegocio || 'Estúdio'}*.`)}` : '#'}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-colors shrink-0 self-start md:self-auto"
-          >
-            <MessageSquare className="w-4 h-4" />
-            Conversar no WhatsApp
-          </a>
-        </div>
-      )}
-
       {/* Pills de categoria */}
       <div id="ob-portal-filtros" className="flex gap-2 overflow-x-auto pb-2">
         <button
@@ -455,9 +359,6 @@ export default function PortalCatalogo() {
                   key={serv.id}
                   servico={serv}
                   onAgendar={() => navigate(`/portal/${slug}/agendar?servico=${serv.id}`)}
-                  isBasico={isBasico}
-                  nomeNegocio={nomeNegocio}
-                  telefoneProfissional={telefoneProfissional}
                 />
               ))}
             </div>

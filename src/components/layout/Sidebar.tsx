@@ -10,7 +10,6 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
-  Lock,
   CreditCard,
   BarChart2,
   Link2,
@@ -21,7 +20,6 @@ import { useAuth } from '../../contexts/AuthContext';
 import { FEATURES } from '../../config/features';
 import { supabase } from '../../lib/supabase';
 import { useSubscription } from '../../hooks/useSubscription';
-import UpgradeModal from '../common/UpgradeModal';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -37,7 +35,6 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   
   const { hasFeature } = useSubscription();
-  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
 
   useEffect(() => {
     if (!estabelecimentoId) return;
@@ -105,10 +102,10 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
     { name: 'Meu Estúdio', path: '/meu-estudio', icon: LayoutGrid },
     { name: 'Clientes', path: '/clientes', icon: Users },
     { name: 'Serviços', path: '/servicos', icon: Tag },
-    { name: 'Agendamentos', path: '/agendamentos', icon: Calendar, feature: 'scheduling' },
-    { name: 'Meus Horários', path: '/meus-horarios', icon: Clock, feature: 'scheduling' },
+    { name: 'Agendamentos', path: '/agendamentos', icon: Calendar },
+    { name: 'Meus Horários', path: '/meus-horarios', icon: Clock },
     { name: 'Link de Agendamento', path: '/link-agendamento', icon: Link2 },
-    { name: 'Relatórios', path: '/relatorios', icon: BarChart2 },
+    { name: 'Relatórios', path: '/relatorios', icon: BarChart2, feature: 'crm' },
   ];
 
   const systemItems: NavItem[] = [
@@ -125,51 +122,30 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
   };
 
   const renderNavItems = (items: NavItem[]) => {
-    return items.map((item) => {
-      const Icon = item.icon;
-      const isLocked = item.feature === 'scheduling' && !hasFeature('scheduling');
-      
-      const handleClick = (e: React.MouseEvent) => {
-        if (isLocked) {
-          e.preventDefault();
-          setIsUpgradeModalOpen(true);
-        } else {
-          setMobileOpen(false);
-        }
-      };
-
-      return (
-        <NavLink
-          key={item.path}
-          to={isLocked ? '#' : item.path}
-          onClick={handleClick}
-          className={({ isActive }) => `
-            relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group
-            ${isLocked 
-              ? 'text-text-muted hover:bg-rose-50/50 hover:text-rose-600/70 cursor-pointer' 
-              : isActive 
-                ? 'bg-rose-600 text-white font-medium' 
+    return items
+      .filter((item) => !item.feature || hasFeature(item.feature))
+      .map((item) => {
+        const Icon = item.icon;
+        return (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            onClick={() => setMobileOpen(false)}
+            className={({ isActive }) => `
+              relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group
+              ${isActive
+                ? 'bg-rose-600 text-white font-medium'
                 : 'text-text-secondary hover:bg-rose-50 hover:text-rose-600'
-            }
-            ${collapsed ? 'justify-center' : ''}
-          `}
-          title={collapsed ? `${item.name} ${isLocked ? '(Premium)' : ''}` : undefined}
-        >
-          <div className="relative">
-            <Icon className={`w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-105`} />
-            {isLocked && collapsed && (
-              <span className="absolute -top-1.5 -right-1.5 bg-rose-600 text-white p-0.5 rounded-full shadow-sm animate-pulse">
-                <Lock className="w-2.5 h-2.5" />
-              </span>
-            )}
-          </div>
-          {!collapsed && <span className="text-sm font-sans flex-1">{item.name}</span>}
-          {isLocked && !collapsed && (
-            <Lock className="w-3.5 h-3.5 text-text-muted group-hover:text-rose-600 transition-colors" />
-          )}
-        </NavLink>
-      );
-    });
+              }
+              ${collapsed ? 'justify-center' : ''}
+            `}
+            title={collapsed ? item.name : undefined}
+          >
+            <Icon className="w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-105" />
+            {!collapsed && <span className="text-sm font-sans flex-1">{item.name}</span>}
+          </NavLink>
+        );
+      });
   };
 
   return (
@@ -306,11 +282,6 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
           )}
         </div>
       </aside>
-
-      {/* Upgrade Modal */}
-      {isUpgradeModalOpen && (
-        <UpgradeModal onClose={() => setIsUpgradeModalOpen(false)} />
-      )}
     </>
   );
 }

@@ -105,18 +105,15 @@ Mudança visual/textual isolada, ainda sem tocar em `useSubscription`/gating. As
 
 Esta é a fase que efetivamente muda quem vê o quê. Fazer com atenção e testar cada plano (crie/edite um estabelecimento de teste em cada `plano`).
 
-- [ ] `src/hooks/useSubscription.ts` — reescrever `hasFeature`:
-  - `scheduling` → `true` para **ambos** os planos (agenda automática deixa de ser exclusiva)
-  - novo caso `'crm'` (ou `'relatorios'`) → `true` **somente** para `premium` (cobre Relatórios e qualquer análise avançada)
-  - manter `dashboard` como está (ambos têm alguma tela inicial, só muda o conteúdo dela)
-- [ ] `src/components/common/PlanGuard.tsx` — trocar a rota protegida: em vez de proteger `agendamentos`/`meus-horarios` com `requiredFeature="scheduling"`, proteger `relatorios` (e outras rotas de CRM avançado que definirmos) com `requiredFeature="crm"`
-- [ ] `src/App.tsx` — mover `<Route path="agendamentos">` e `<Route path="meus-horarios">` para fora do `<PlanGuard requiredFeature="scheduling">` (viram acessíveis a todos os planos, só atrás do `BillingGuard`); envolver `<Route path="relatorios">` com `<PlanGuard requiredFeature="crm">`
-- [ ] `src/pages/portal-clientes/PortalAgendar.tsx:168` — remover o redirect que bloqueia clientes de estabelecimentos `plano === 'basico'` de agendar online
-- [ ] `src/pages/portal-clientes/PortalCatalogo.tsx:216` — remover/ajustar a flag `isBasico` que hoje esconde o CTA de agendar para clientes do plano básico
-- [ ] `src/components/layout/Sidebar.tsx` e `src/components/layout/TabBar.tsx` — remover toda a lógica de `isLocked`/cadeado; itens de CRM avançado (Relatórios) somem do menu para quem é `basico` em vez de aparecer bloqueados
-- [ ] `src/components/common/BillingGuard.tsx` — atualizar a lista de benefícios "O plano Premium inclui" (hoje cita "Portal de agendamento online" e "histórico financeiro" como exclusivos — isso muda)
-- [ ] `src/components/common/UpgradeModal.tsx` — reescrever completamente: hoje vende "Agenda & Horários Online" como o gancho do Premium; o novo gancho é CRM/Relatórios/Análises
-- [ ] Teste manual completo: criar 1 estabelecimento de teste `plano='basico'` e 1 `plano='premium'`, navegar por todas as rotas, confirmar que agendamento funciona nos dois e que CRM avançado só aparece no premium
+- [x] `src/hooks/useSubscription.ts` — `hasFeature` invertida: `scheduling`/`dashboard` → `true` para ambos os planos; `crm` → `true` somente para `premium`
+- [x] `src/App.tsx` — `agendamentos` e `meus-horarios` saíram do `PlanGuard`, ficam só atrás do `BillingGuard` (acessíveis a todos os planos); `relatorios` agora está dentro de `<PlanGuard requiredFeature="crm">`
+- [x] `src/pages/portal-clientes/PortalAgendar.tsx` — removido o redirect que bloqueava clientes de estabelecimentos `plano === 'basico'`
+- [x] `src/pages/portal-clientes/PortalCatalogo.tsx` — removida a flag `isBasico`, o banner de WhatsApp e a variante do card de serviço só-WhatsApp; agora todo mundo vê o botão "Agendar" normal
+- [x] `src/components/layout/PortalLayout.tsx` — **adicional encontrado durante a execução, não estava no plano original**: essa tela também escondia os itens "Agendar"/"Meus Agendamentos"/"Meu Perfil" e até o botão "Entrar" para clientes de estúdios básico. Removida a mesma restrição aqui.
+- [x] `src/components/layout/Sidebar.tsx` e `src/components/layout/TabBar.tsx` — removida toda a lógica de cadeado/`UpgradeModal` disparado por clique; Sidebar agora filtra os itens de menu (Relatórios exige `feature: 'crm'`, some do menu para quem é básico em vez de aparecer bloqueado); TabBar simplificado (não tinha nenhum item exigindo `crm`, então perdeu toda a lógica de bloqueio)
+- [x] `src/components/common/BillingGuard.tsx` — lista de benefícios do Premium atualizada para citar Relatórios/Histórico/Anamnese em vez de "Portal de agendamento" e "histórico financeiro"
+- [x] `src/components/common/UpgradeModal.tsx` — pitch reescrito para CRM/Relatórios/Análises (o gatilho visual que abria esse modal foi removido nesta fase junto com os cadeados; ele volta a ser usado na Fase 6, com um ponto de entrada novo)
+- [ ] Teste manual completo — **fazer antes de aprovar o commit**, ver instruções no chat
 
 ---
 

@@ -10,11 +10,11 @@ export function useSubscription() {
     if (loading || !profile) return false;
     
     switch (feature) {
-      case 'crm':
+      case 'scheduling':
       case 'dashboard':
         return true; // Ambos os planos têm acesso
-      case 'scheduling':
-        return isPremium; // Apenas plano Premium
+      case 'crm':
+        return isPremium; // Relatórios e análises avançadas — apenas plano Premium
       default:
         return false;
     }

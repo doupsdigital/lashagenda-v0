@@ -126,15 +126,15 @@ export default function App() {
               <Route element={<BillingGuard />}>
                 <Route path="meu-estudio" element={<Dashboard />} />
                 <Route path="link-agendamento" element={<LinkAgendamento />} />
-                <Route path="relatorios" element={<Relatorios />} />
                 <Route path="clientes" element={<Clientes />} />
                 <Route path="clientes/:id" element={<PerfilCliente />} />
                 <Route path="servicos" element={<Servicos />} />
+                <Route path="agendamentos" element={<Agendamentos />} />
+                <Route path="meus-horarios" element={<MeusHorarios />} />
 
-                {/* Recursos Premium/Agendamento protegidos por plano */}
-                <Route element={<PlanGuard requiredFeature="scheduling" />}>
-                  <Route path="agendamentos" element={<Agendamentos />} />
-                  <Route path="meus-horarios" element={<MeusHorarios />} />
+                {/* Recursos de CRM avançado (relatórios/análises) exclusivos do plano Premium */}
+                <Route element={<PlanGuard requiredFeature="crm" />}>
+                  <Route path="relatorios" element={<Relatorios />} />
                 </Route>
               </Route>
             </Route>

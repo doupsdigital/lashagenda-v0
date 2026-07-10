@@ -96,19 +96,19 @@ export default function BillingGuard() {
 
         {/* Caixa de Benefícios em Destaque */}
         <div className="bg-rose-50/30 border border-rose-100/50 rounded-xl p-4 mb-8 text-left">
-          <p className="text-xs font-semibold text-text-primary mb-2.5">O plano Premium inclui:</p>
+          <p className="text-xs font-semibold text-text-primary mb-2.5">Assinando, você recupera acesso à sua agenda, clientes e serviços. O plano Premium ainda inclui:</p>
           <ul className="space-y-2 text-xs text-text-secondary">
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-              Portal de agendamento online personalizado
+              Relatórios e análises completas do seu negócio
             </li>
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-              Controle de agenda completo e histórico financeiro
+              Histórico completo de atendimentos
             </li>
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-              Prontuários e fichas de anamnese ilimitadas
+              Fichas de anamnese customizadas
             </li>
           </ul>
         </div>
