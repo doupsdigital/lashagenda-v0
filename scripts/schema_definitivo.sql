@@ -177,7 +177,7 @@ CREATE TABLE IF NOT EXISTS public.configuracao_negocio (
   aprovacao_automatica            BOOLEAN     DEFAULT false,
   antecedencia_cancelamento_horas INTEGER     DEFAULT 24,
   mensagem_pos_agendamento        TEXT        DEFAULT 'Seu agendamento foi recebido! Aguarde a confirmação.',
-  paleta_cores                    TEXT        DEFAULT 'rosa_rose',
+  paleta_cores                    TEXT        DEFAULT 'pink_classico',
   modo_escuro                     BOOLEAN     DEFAULT false,
   created_at                      TIMESTAMPTZ DEFAULT now()
 );

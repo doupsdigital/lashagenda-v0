@@ -67,7 +67,7 @@ export default function Configuracoes() {
   const [aprovacaoAutomatica, setAprovacaoAutomatica] = useState(false);
   const [antecedenciaHoras, setAntecedenciaHoras] = useState<number | ''>(24);
   const [mensagemPosAgendamento, setMensagemPosAgendamento] = useState('');
-  const [paletaCores, setPaletaCores] = useState('rosa_rose');
+  const [paletaCores, setPaletaCores] = useState('pink_classico');
   const [modoEscuro, setModoEscuro] = useState(false);
   const [loadingNegocio, setLoadingNegocio] = useState(true);
   const [uploadingLogo, setUploadingLogo] = useState(false);
@@ -123,7 +123,7 @@ export default function Configuracoes() {
         setAprovacaoAutomatica(data.aprovacao_automatica ?? false);
         setAntecedenciaHoras(data.antecedencia_cancelamento_horas ?? 24);
         setMensagemPosAgendamento(data.mensagem_pos_agendamento || '');
-        setPaletaCores(data.paleta_cores || 'rosa_rose');
+        setPaletaCores(data.paleta_cores || 'pink_classico');
         setModoEscuro(data.modo_escuro ?? false);
       }
       

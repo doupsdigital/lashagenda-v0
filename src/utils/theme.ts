@@ -200,12 +200,12 @@ export interface PaletteOption {
 
 export const PALETTES_LIST: PaletteOption[] = [
   {
-    id: 'rosa_rose',
-    name: 'Rosé Premium (Padrão)',
-    description: 'Blush rose clássico e aconchegante com fundo creme.',
-    primaryColor: '#A85560',
+    id: 'pink_classico',
+    name: 'Romance Cherry (Padrão)',
+    description: 'Rosa vivo romântico com toques florais delicados.',
+    primaryColor: '#D14175',
     accentColor: '#C9A96E',
-    bgColor: '#F7F3EE',
+    bgColor: '#FAF0F3',
   },
   {
     id: 'roxo_ametista',
@@ -216,12 +216,12 @@ export const PALETTES_LIST: PaletteOption[] = [
     bgColor: '#F4EFF7',
   },
   {
-    id: 'pink_classico',
-    name: 'Romance Cherry',
-    description: 'Rosa vivo romântico com toques florais delicados.',
-    primaryColor: '#D14175',
+    id: 'rosa_rose',
+    name: 'Rosé Premium',
+    description: 'Blush rose clássico e aconchegante com fundo creme.',
+    primaryColor: '#A85560',
     accentColor: '#C9A96E',
-    bgColor: '#FAF0F3',
+    bgColor: '#F7F3EE',
   },
   {
     id: 'terracota_nude',
@@ -243,7 +243,7 @@ export const PALETTES_LIST: PaletteOption[] = [
 
 // Aplica a paleta de cores no elemento raiz (:root)
 export const applyPalette = (paletteName: string, isDarkMode: boolean) => {
-  const selectedName = PALETTES[paletteName] ? paletteName : 'rosa_rose';
+  const selectedName = PALETTES[paletteName] ? paletteName : 'pink_classico';
   const mode = isDarkMode ? 'dark' : 'light';
   const palette = PALETTES[selectedName][mode];
   const root = document.documentElement;

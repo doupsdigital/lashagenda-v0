@@ -70,15 +70,15 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
 
         if (!configError && config) {
           setLogoUrl(config.logo_url);
-          setPaletaCores(config.paleta_cores || 'rosa_rose');
+          setPaletaCores(config.paleta_cores || 'pink_classico');
           setDescricao(config.descricao || null);
           setInstagram(config.instagram || null);
           setEndereco(config.endereco || null);
-          applyPalette(config.paleta_cores || 'rosa_rose', config.modo_escuro || false);
+          applyPalette(config.paleta_cores || 'pink_classico', config.modo_escuro || false);
         } else {
           setLogoUrl(null);
-          setPaletaCores('rosa_rose');
-          applyPalette('rosa_rose', false);
+          setPaletaCores('pink_classico');
+          applyPalette('pink_classico', false);
         }
 
         // 3. Buscar nome e telefone da profissional via RPC (contorna RLS para anon)

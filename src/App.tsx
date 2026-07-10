@@ -46,7 +46,7 @@ import { InstallPromptProvider } from './contexts/InstallPromptContext';
 export default function App() {
   useEffect(() => {
     // 1. Aplica o tema salvo localmente de forma imediata (carregamento rápido)
-    const cachedPalette = localStorage.getItem('app_theme_palette') || 'rosa_rose';
+    const cachedPalette = localStorage.getItem('app_theme_palette') || 'pink_classico';
     const cachedDarkMode = localStorage.getItem('app_theme_dark_mode') === 'true';
     applyPalette(cachedPalette, cachedDarkMode);
 
@@ -71,7 +71,7 @@ export default function App() {
             .maybeSingle();
 
           if (!error && data) {
-            const dbPalette = data.paleta_cores || 'rosa_rose';
+            const dbPalette = data.paleta_cores || 'pink_classico';
             const dbDarkMode = data.modo_escuro ?? false;
             applyPalette(dbPalette, dbDarkMode);
 
