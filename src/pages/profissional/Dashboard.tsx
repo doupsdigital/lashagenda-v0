@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { useSubscription } from '../../hooks/useSubscription';
 import { useOnboarding } from '../../hooks/useOnboarding';
 import PushPermissionBanner from '../../components/common/PushPermissionBanner';
 import InstallBanner from '../../components/common/InstallBanner';
@@ -17,6 +18,10 @@ import {
   Tag,
   UserPlus,
   Clock,
+  Copy,
+  Check,
+  Crown,
+  ArrowRight,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -49,7 +54,8 @@ const getDateString = () => {
 };
 
 export default function Dashboard() {
-  const { estabelecimentoId, profile } = useAuth();
+  const { estabelecimentoId, estabelecimentoSlug, profile } = useAuth();
+  const { isPremium } = useSubscription();
   const navigate = useNavigate();
   const { autoStart } = useOnboarding('meu_estudio');
 
@@ -63,6 +69,8 @@ export default function Dashboard() {
   const [last7DaysRevData, setLast7DaysRevData] = useState<{ name: string; Valor: number }[]>([]);
   const [revenueGrowth, setRevenueGrowth] = useState<number | null>(null);
   const [heroLoading, setHeroLoading] = useState(true);
+
+  const [linkCopied, setLinkCopied] = useState(false);
 
   const firstName = profile?.nome?.split(' ')[0] || '';
 
@@ -104,7 +112,7 @@ export default function Dashboard() {
         supabase.from('agendamentos').select('data_hora, valor_cobrado').eq('estabelecimento_id', estabelecimentoId).eq('status', 'concluido').gte('data_hora', last7Start.toISOString()).lte('data_hora', last7End.toISOString()),
         supabase.from('agendamentos').select('valor_cobrado').eq('estabelecimento_id', estabelecimentoId).eq('status', 'concluido').gte('data_hora', prev7Start.toISOString()).lte('data_hora', prev7End.toISOString()),
         supabase.from('agendamentos').select('id', { count: 'exact', head: true }).eq('estabelecimento_id', estabelecimentoId).eq('status', 'pendente'),
-        supabase.from('agendamentos').select(`id, data_hora, status, cliente:clientes(id, nome, sobrenome), agendamento_servicos(servico:servicos(nome))`).eq('estabelecimento_id', estabelecimentoId).gte('data_hora', todayStart).lte('data_hora', todayEnd).neq('status', 'cancelado').order('data_hora', { ascending: true }),
+        supabase.from('agendamentos').select(`id, data_hora, status, valor_cobrado, cliente:clientes(id, nome, sobrenome), agendamento_servicos(servico:servicos(nome))`).eq('estabelecimento_id', estabelecimentoId).gte('data_hora', todayStart).lte('data_hora', todayEnd).neq('status', 'cancelado').order('data_hora', { ascending: true }),
         supabase.from('atendimentos').select('valor_cobrado').eq('estabelecimento_id', estabelecimentoId).gte('data_atendimento', monthStartDate).lte('data_atendimento', monthEndDate),
         supabase.from('atendimentos').select('data_atendimento, valor_cobrado').eq('estabelecimento_id', estabelecimentoId).gte('data_atendimento', last7StartDate).lte('data_atendimento', last7EndDate),
         supabase.from('atendimentos').select('valor_cobrado').eq('estabelecimento_id', estabelecimentoId).gte('data_atendimento', prev7StartDate).lte('data_atendimento', prev7EndDate),
@@ -159,12 +167,103 @@ export default function Dashboard() {
     if (estabelecimentoId) fetchData();
   }, [estabelecimentoId]);
 
+  const todayRevenue = todayAppointments
+    .filter((a: any) => a.status === 'concluido')
+    .reduce((sum: number, a: any) => sum + Number(a.valor_cobrado || 0), 0);
+
+  const handleCopyLink = async () => {
+    if (!estabelecimentoSlug) return;
+    const portalUrl = `${window.location.origin}/portal/${estabelecimentoSlug}`;
+    try {
+      await navigator.clipboard.writeText(portalUrl);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2500);
+    } catch {
+      const el = document.createElement('textarea');
+      el.value = portalUrl;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2500);
+    }
+  };
+
   const quickActions = [
     { label: 'Novo Agendamento', id: 'onboarding-btn-novo-agendamento', Icon: CalendarCheck, to: '/agendamentos', state: {} },
     { label: 'Bloquear Horário', id: 'onboarding-btn-bloquear', Icon: CalendarX, to: '/meus-horarios', state: {} },
     { label: 'Novo Serviço', id: 'onboarding-btn-novo-servico', Icon: Tag, to: '/servicos', state: {} },
     { label: 'Ver Agenda do Dia', id: 'onboarding-btn-agenda-dia', Icon: CalendarDays, to: '/agendamentos', state: { filterToday: true } },
   ];
+
+  const proximosClientesCard = (
+    <div className="bg-white border border-border rounded-2xl p-5 shadow-sm flex flex-col">
+      <div className="flex items-center justify-between gap-2 mb-4 flex-shrink-0">
+        <h2 className="font-sans font-semibold text-base text-text-primary flex items-center gap-2">
+          <CalendarDays className="w-4 h-4 text-rose-600" />
+          Próximas clientes
+        </h2>
+        <button
+          onClick={() => navigate('/agendamentos')}
+          className="flex items-center gap-1 text-xs font-semibold text-rose-600 hover:text-rose-800 transition-colors cursor-pointer shrink-0"
+        >
+          Ver agenda <ArrowRight className="w-3.5 h-3.5" />
+        </button>
+      </div>
+      {loading ? (
+        <div className="flex-1 flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-rose-600" />
+        </div>
+      ) : todayAppointments.length === 0 ? (
+        <div className="flex-1 flex flex-col items-center justify-center py-10 text-center text-text-muted border border-dashed border-border/60 rounded-xl">
+          <Sparkles className="w-6 h-6 text-rose-200 mb-2" />
+          <p className="text-xs font-semibold">Nenhum atendimento hoje.</p>
+        </div>
+      ) : (
+        <div className="space-y-2 overflow-y-auto">
+          {todayAppointments.map((appt: any) => {
+            const hora = new Date(appt.data_hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            const cliente = appt.cliente;
+            const servicos = (appt.agendamento_servicos || []).map((as: any) => as.servico?.nome).filter(Boolean).join(', ');
+            const isPending = appt.status === 'pendente';
+            const isFalta = appt.status === 'falta';
+            return (
+              <div
+                key={appt.id}
+                className={`flex items-center gap-3 p-3 rounded-xl border transition-colors
+                  ${isPending ? 'border-amber-200 bg-amber-50/40' :
+                    isFalta ? 'border-red-200 bg-red-50/30 hover:bg-red-50/50' :
+                    'border-border bg-bg/30 hover:bg-bg/60'}`}
+              >
+                <span className={`text-sm font-title font-bold w-11 flex-shrink-0
+                  ${isPending ? 'text-amber-700' : isFalta ? 'text-red-700' : 'text-rose-600'}`}
+                >
+                  {hora}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-text-primary truncate">
+                    {cliente?.nome} {cliente?.sobrenome}
+                  </p>
+                  <p className="text-[11px] text-text-secondary truncate">{servicos || 'Sem serviços'}</p>
+                </div>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 whitespace-nowrap
+                  ${appt.status === 'confirmado' ? 'bg-green-100 text-green-700' : ''}
+                  ${appt.status === 'pendente' ? 'bg-amber-100 text-amber-700' : ''}
+                  ${appt.status === 'concluido' ? 'bg-blue-100 text-blue-700' : ''}
+                  ${appt.status === 'falta' ? 'bg-red-100 text-red-700' : ''}
+                `}>
+                  {appt.status === 'confirmado' ? 'Confirmado' :
+                   appt.status === 'pendente' ? 'Aguardando' :
+                   appt.status === 'falta' ? 'Falta' : 'Concluído'}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -184,196 +283,204 @@ export default function Dashboard() {
         <div className="absolute top-4 right-5 text-white/50 pointer-events-none select-none leading-none text-lg font-light">
           ✦<br /><span className="text-sm">✦</span>
         </div>
-        <h1 className="font-title font-bold text-3xl md:text-4xl">
-          {getGreeting()}{firstName ? `, ${firstName}!` : '!'}
-        </h1>
-        <p className="text-sm text-white/70 mt-1.5">
-          Aqui está o resumo do seu dia — {getDateString()}.
-        </p>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="font-title font-bold text-3xl md:text-4xl">
+              {getGreeting()}{firstName ? `, ${firstName}!` : '!'}
+            </h1>
+            <p className="text-sm text-white/70 mt-1.5">
+              Aqui está o resumo do seu dia — {getDateString()}.
+            </p>
+          </div>
+          {isPremium && (
+            <span className="flex items-center gap-1.5 px-3 py-1.5 mr-6 rounded-full bg-white/15 backdrop-blur-sm text-xs font-bold tracking-wide shrink-0">
+              <Crown className="w-3.5 h-3.5" />
+              PREMIUM
+            </span>
+          )}
+        </div>
       </div>
 
       {/* ── KPI CARDS ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      {isPremium ? (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
 
-        <div id="onboarding-card-faturamento" className="bg-white border border-border rounded-2xl p-4 flex items-start justify-between shadow-sm">
-          <div className="min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted leading-tight">Faturamento do Mês</p>
-            <p className="font-title font-semibold text-2xl text-rose-600 mt-1.5">
-              {heroLoading ? '—' : `R$ ${heroRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-            </p>
-          </div>
-          <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
-            <Coins className="w-4 h-4" />
-          </div>
-        </div>
-
-        <div
-          id="onboarding-card-hoje"
-          onClick={() => navigate('/agendamentos', { state: { filterToday: true } })}
-          className="bg-white border border-border rounded-2xl p-4 flex items-start justify-between shadow-sm cursor-pointer hover:border-rose-200 hover:shadow-md transition-all"
-        >
-          <div className="min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted leading-tight">Agendamentos Hoje</p>
-            <p className="font-title font-semibold text-2xl text-text-primary mt-1.5">
-              {loading ? '—' : todayAppointments.length}
-            </p>
-          </div>
-          <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
-            <CalendarDays className="w-4 h-4" />
-          </div>
-        </div>
-
-        <div
-          id="onboarding-card-pendentes"
-          onClick={() => pendingAppointments > 0 && navigate('/agendamentos', { state: { openPending: true } })}
-          className={`bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start justify-between shadow-sm ${pendingAppointments > 0 ? 'cursor-pointer hover:bg-amber-100/60 transition-colors' : ''}`}
-        >
-          <div className="min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-amber-600 leading-tight">Aguardando Confirmação</p>
-            <p className="font-title font-semibold text-2xl text-amber-700 mt-1.5">
-              {loading ? '—' : pendingAppointments}
-            </p>
-          </div>
-          <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center text-amber-500 flex-shrink-0 ml-2">
-            <Clock className="w-4 h-4" />
-          </div>
-        </div>
-
-        <div id="onboarding-card-clientes" className="bg-white border border-border rounded-2xl p-4 flex items-start justify-between shadow-sm">
-          <div className="min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted leading-tight">Novas Clientes</p>
-            <p className="font-title font-semibold text-2xl text-text-primary mt-1.5">
-              {heroLoading ? '—' : heroNewClients}
-            </p>
-          </div>
-          <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
-            <UserPlus className="w-4 h-4" />
-          </div>
-        </div>
-
-      </div>
-
-      {/* ── AÇÕES RÁPIDAS + PRÓXIMOS ATENDIMENTOS ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-5">
-
-        {/* Left column */}
-        <div className="space-y-5">
-
-          {/* Quick Actions */}
-          <div>
-            <h2 className="font-sans font-semibold text-base text-text-primary mb-3">Ações Rápidas</h2>
-            <div className="grid grid-cols-2 gap-3">
-              {quickActions.map(({ label, id, Icon, to, state }) => (
-                <button
-                  key={label}
-                  id={id}
-                  onClick={() => navigate(to, { state })}
-                  className="hover:brightness-95 active:brightness-90 text-white rounded-2xl p-5 flex flex-col items-start gap-4 transition-all cursor-pointer shadow-sm text-left"
-                  style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
-                >
-                  <Icon className="w-5 h-5 opacity-90" />
-                  <span className="font-semibold text-sm leading-snug">{label}</span>
-                </button>
-              ))}
+          <div id="onboarding-card-faturamento" className="bg-white border border-border rounded-2xl p-4 flex items-start justify-between shadow-sm">
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted leading-tight">Faturamento do Mês</p>
+              <p className="font-title font-semibold text-2xl text-rose-600 mt-1.5">
+                {heroLoading ? '—' : `R$ ${heroRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+              </p>
+            </div>
+            <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
+              <Coins className="w-4 h-4" />
             </div>
           </div>
 
-          {/* Mini Revenue Chart */}
-          <div className="bg-white border border-border rounded-2xl p-5 shadow-sm">
-            <div className="flex items-center justify-between mb-3">
-              <span className="font-sans font-semibold text-sm text-text-primary">Receita · últimos 7 dias</span>
-              {revenueGrowth !== null && (
-                <span className={`text-xs font-bold flex items-center gap-1 ${revenueGrowth >= 0 ? 'text-green-600' : 'text-red-500'}`}>
-                  {revenueGrowth >= 0
-                    ? <TrendingUp className="w-3.5 h-3.5" />
-                    : <TrendingDown className="w-3.5 h-3.5" />
-                  }
-                  {revenueGrowth >= 0 ? '+' : ''}{revenueGrowth.toFixed(0)}%
-                </span>
+          <div
+            id="onboarding-card-hoje"
+            onClick={() => navigate('/agendamentos', { state: { filterToday: true } })}
+            className="bg-white border border-border rounded-2xl p-4 flex items-start justify-between shadow-sm cursor-pointer hover:border-rose-200 hover:shadow-md transition-all"
+          >
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted leading-tight">Agendamentos Hoje</p>
+              <p className="font-title font-semibold text-2xl text-text-primary mt-1.5">
+                {loading ? '—' : todayAppointments.length}
+              </p>
+            </div>
+            <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
+              <CalendarDays className="w-4 h-4" />
+            </div>
+          </div>
+
+          <div
+            id="onboarding-card-pendentes"
+            onClick={() => pendingAppointments > 0 && navigate('/agendamentos', { state: { openPending: true } })}
+            className={`bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start justify-between shadow-sm ${pendingAppointments > 0 ? 'cursor-pointer hover:bg-amber-100/60 transition-colors' : ''}`}
+          >
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-amber-600 leading-tight">Aguardando Confirmação</p>
+              <p className="font-title font-semibold text-2xl text-amber-700 mt-1.5">
+                {loading ? '—' : pendingAppointments}
+              </p>
+            </div>
+            <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center text-amber-500 flex-shrink-0 ml-2">
+              <Clock className="w-4 h-4" />
+            </div>
+          </div>
+
+          <div id="onboarding-card-clientes" className="bg-white border border-border rounded-2xl p-4 flex items-start justify-between shadow-sm">
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted leading-tight">Novas Clientes</p>
+              <p className="font-title font-semibold text-2xl text-text-primary mt-1.5">
+                {heroLoading ? '—' : heroNewClients}
+              </p>
+            </div>
+            <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
+              <UserPlus className="w-4 h-4" />
+            </div>
+          </div>
+
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-3">
+
+          <div
+            id="onboarding-card-hoje"
+            onClick={() => pendingAppointments > 0 && navigate('/agendamentos', { state: { openPending: true } })}
+            className={`bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start justify-between shadow-sm ${pendingAppointments > 0 ? 'cursor-pointer hover:bg-amber-100/60 transition-colors' : ''}`}
+          >
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-amber-600 leading-tight">Aguardando Confirmação</p>
+              <p className="font-title font-semibold text-2xl text-amber-700 mt-1.5">
+                {loading ? '—' : pendingAppointments}
+              </p>
+            </div>
+            <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center text-amber-500 flex-shrink-0 ml-2">
+              <Clock className="w-4 h-4" />
+            </div>
+          </div>
+
+          <div id="onboarding-card-faturamento" className="bg-white border border-border rounded-2xl p-4 flex items-start justify-between shadow-sm">
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-text-muted leading-tight">Faturado Hoje</p>
+              <p className="font-title font-semibold text-2xl text-rose-600 mt-1.5">
+                {loading ? '—' : `R$ ${todayRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+              </p>
+            </div>
+            <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
+              <Coins className="w-4 h-4" />
+            </div>
+          </div>
+
+        </div>
+      )}
+
+      {/* ── COMPARTILHAR AGENDA ── */}
+      <div className="rounded-2xl p-6 text-white relative overflow-hidden shadow-sm flex flex-col items-center text-center" style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}>
+        <h2 className="font-title font-bold text-lg md:text-xl mb-1">Compartilhe sua Agenda</h2>
+        <p className="text-sm text-white/75 mb-4 max-w-md">
+          Envie o link do seu portal exclusivo para suas clientes agendarem sozinhas, a qualquer hora do dia.
+        </p>
+        <button
+          onClick={handleCopyLink}
+          disabled={!estabelecimentoSlug}
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/15 hover:bg-white/25 disabled:opacity-50 backdrop-blur-sm border border-white/20 rounded-xl text-sm font-semibold transition-all cursor-pointer"
+        >
+          {linkCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+          {linkCopied ? 'Link copiado!' : 'Copiar Link Público'}
+        </button>
+      </div>
+
+      {/* ── AÇÕES RÁPIDAS + PRÓXIMOS CLIENTES (apenas Premium) ── */}
+      {isPremium ? (
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-5">
+
+          {/* Left column */}
+          <div className="space-y-5">
+
+            {/* Quick Actions */}
+            <div>
+              <h2 className="font-sans font-semibold text-base text-text-primary mb-3">Ações Rápidas</h2>
+              <div className="grid grid-cols-2 gap-3">
+                {quickActions.map(({ label, id, Icon, to, state }) => (
+                  <button
+                    key={label}
+                    id={id}
+                    onClick={() => navigate(to, { state })}
+                    className="hover:brightness-95 active:brightness-90 text-white rounded-2xl p-5 flex flex-col items-start gap-4 transition-all cursor-pointer shadow-sm text-left"
+                    style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
+                  >
+                    <Icon className="w-5 h-5 opacity-90" />
+                    <span className="font-semibold text-sm leading-snug">{label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Mini Revenue Chart */}
+            <div className="bg-white border border-border rounded-2xl p-5 shadow-sm">
+              <div className="flex items-center justify-between mb-3">
+                <span className="font-sans font-semibold text-sm text-text-primary">Receita · últimos 7 dias</span>
+                {revenueGrowth !== null && (
+                  <span className={`text-xs font-bold flex items-center gap-1 ${revenueGrowth >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                    {revenueGrowth >= 0
+                      ? <TrendingUp className="w-3.5 h-3.5" />
+                      : <TrendingDown className="w-3.5 h-3.5" />
+                    }
+                    {revenueGrowth >= 0 ? '+' : ''}{revenueGrowth.toFixed(0)}%
+                  </span>
+                )}
+              </div>
+              {heroLoading ? (
+                <div className="h-[100px] flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-rose-600" />
+                </div>
+              ) : (
+                <div className="h-[100px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={last7DaysRevData} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
+                      <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fontSize: 10, fill: 'var(--text-muted)' }} />
+                      <Tooltip
+                        formatter={(v: any) => [`R$ ${Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 'Receita']}
+                        contentStyle={{ backgroundColor: 'white', borderRadius: '8px', border: '1px solid rgba(180,150,130,0.2)', fontSize: 11 }}
+                      />
+                      <Line type="monotone" dataKey="Valor" stroke="var(--rose-600)" strokeWidth={2} dot={false} activeDot={{ r: 4, fill: 'var(--rose-600)' }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
               )}
             </div>
-            {heroLoading ? (
-              <div className="h-[100px] flex items-center justify-center">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-rose-600" />
-              </div>
-            ) : (
-              <div className="h-[100px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={last7DaysRevData} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
-                    <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fontSize: 10, fill: 'var(--text-muted)' }} />
-                    <Tooltip
-                      formatter={(v: any) => [`R$ ${Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 'Receita']}
-                      contentStyle={{ backgroundColor: 'white', borderRadius: '8px', border: '1px solid rgba(180,150,130,0.2)', fontSize: 11 }}
-                    />
-                    <Line type="monotone" dataKey="Valor" stroke="var(--rose-600)" strokeWidth={2} dot={false} activeDot={{ r: 4, fill: 'var(--rose-600)' }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            )}
+
           </div>
 
-        </div>
+          {/* Right column: Próximos clientes */}
+          {proximosClientesCard}
 
-        {/* Right column: Próximos atendimentos */}
-        <div className="bg-white border border-border rounded-2xl p-5 shadow-sm flex flex-col">
-          <h2 className="font-sans font-semibold text-base text-text-primary flex items-center gap-2 mb-4 flex-shrink-0">
-            <CalendarDays className="w-4 h-4 text-rose-600" />
-            Próximos atendimentos de hoje
-          </h2>
-          {loading ? (
-            <div className="flex-1 flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-rose-600" />
-            </div>
-          ) : todayAppointments.length === 0 ? (
-            <div className="flex-1 flex flex-col items-center justify-center py-10 text-center text-text-muted border border-dashed border-border/60 rounded-xl">
-              <Sparkles className="w-6 h-6 text-rose-200 mb-2" />
-              <p className="text-xs font-semibold">Nenhum atendimento hoje.</p>
-            </div>
-          ) : (
-            <div className="space-y-2 overflow-y-auto">
-              {todayAppointments.map((appt: any) => {
-                const hora = new Date(appt.data_hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                const cliente = appt.cliente;
-                const servicos = (appt.agendamento_servicos || []).map((as: any) => as.servico?.nome).filter(Boolean).join(', ');
-                const isPending = appt.status === 'pendente';
-                const isFalta = appt.status === 'falta';
-                return (
-                  <div
-                    key={appt.id}
-                    className={`flex items-center gap-3 p-3 rounded-xl border transition-colors 
-                      ${isPending ? 'border-amber-200 bg-amber-50/40' : 
-                        isFalta ? 'border-red-200 bg-red-50/30 hover:bg-red-50/50' : 
-                        'border-border bg-bg/30 hover:bg-bg/60'}`}
-                  >
-                    <span className={`text-sm font-title font-bold w-11 flex-shrink-0 
-                      ${isPending ? 'text-amber-700' : isFalta ? 'text-red-700' : 'text-rose-600'}`}
-                    >
-                      {hora}
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-text-primary truncate">
-                        {cliente?.nome} {cliente?.sobrenome}
-                      </p>
-                      <p className="text-[11px] text-text-secondary truncate">{servicos || 'Sem serviços'}</p>
-                    </div>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 whitespace-nowrap
-                      ${appt.status === 'confirmado' ? 'bg-green-100 text-green-700' : ''}
-                      ${appt.status === 'pendente' ? 'bg-amber-100 text-amber-700' : ''}
-                      ${appt.status === 'concluido' ? 'bg-blue-100 text-blue-700' : ''}
-                      ${appt.status === 'falta' ? 'bg-red-100 text-red-700' : ''}
-                    `}>
-                      {appt.status === 'confirmado' ? 'Confirmado' : 
-                       appt.status === 'pendente' ? 'Aguardando' : 
-                       appt.status === 'falta' ? 'Falta' : 'Concluído'}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
         </div>
-
-      </div>
+      ) : (
+        proximosClientesCard
+      )}
 
     </div>
   );

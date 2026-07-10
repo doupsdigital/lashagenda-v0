@@ -121,11 +121,11 @@ Esta é a fase que efetivamente muda quem vê o quê. Fazer com atenção e test
 
 A maior parte dos dados já existe em `Dashboard.tsx` (agendamentos de hoje, faturamento, próximos atendimentos) — é reorganização de layout, não nova lógica de dados.
 
-- [ ] Adicionar card "Compartilhe sua Agenda" em destaque (cor da marca), com botão "Copiar Link Público" — reaproveitar a lógica de cópia que já existe em `LinkAgendamento.tsx` (`handleCopyLink`)
-- [ ] Simplificar os KPIs no topo para o essencial do plano Agenda: "Agendas hoje" + "Caixa hoje" (faturamento do dia, não do mês — ajustar a query de `heroRevenue` para escopo diário quando for o plano Agenda, ou manter mensal se preferir manter como está — **decidir com o usuário na hora**)
-- [ ] Reaproveitar a seção "Próximos atendimentos de hoje" já existente, renomeando para "Próximos Clientes" com link "Ver agenda →"
-- [ ] Diferenciar o dashboard por plano: versão simplificada (Agenda) esconde gráfico de receita/crescimento de 7 dias e ações rápidas de CRM; versão completa (Premium) mantém o que já existe hoje
-- [ ] Adicionar badge de plano ("AGENDA" / "PRO") ao lado da saudação, no estilo do print
+- [x] Adicionado card "Compartilhe sua Agenda" em destaque (cor da marca), com botão "Copiar Link Público" (mesma lógica de cópia + fallback do `LinkAgendamento.tsx`) — aparece para os dois planos, logo abaixo dos KPIs
+- [x] KPIs simplificados para o plano Agenda: "Agendas Hoje" (contagem) + "Caixa Hoje" (soma dos agendamentos concluídos **do dia**, nova query separada da mensal). Plano Premium manteve os 4 cards originais (Faturamento do Mês, Agendamentos Hoje, Aguardando Confirmação, Novas Clientes) sem alteração
+- [x] Seção renomeada para "Próximos Clientes" com link "Ver agenda →" ao lado do título, presente nos dois planos
+- [x] Dashboard diferenciado por plano: Agenda esconde Ações Rápidas e o gráfico de receita/crescimento de 7 dias; Premium mantém tudo como estava
+- [x] Badge de plano adicionado ao lado da saudação ("AGENDA" ou "PRO" com ícone de coroa)
 
 ---
 
