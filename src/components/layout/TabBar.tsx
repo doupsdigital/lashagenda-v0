@@ -1,26 +1,25 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Calendar, Users, Tag, Menu } from 'lucide-react';
+import { Home, Users, WandSparkles, Settings, CalendarCheck } from 'lucide-react';
 
-interface TabBarProps {
-  onMoreClick: () => void;
-}
-
-const tabs = [
+const sideTabsLeft = [
   { label: 'Início', icon: Home, to: '/meu-estudio' },
-  { label: 'Agenda', icon: Calendar, to: '/agendamentos' },
   { label: 'Clientes', icon: Users, to: '/clientes' },
-  { label: 'Serviços', icon: Tag, to: '/servicos' },
 ];
 
-export default function TabBar({ onMoreClick }: TabBarProps) {
+const sideTabsRight = [
+  { label: 'Serviços', icon: WandSparkles, to: '/servicos' },
+  { label: 'Config', icon: Settings, to: '/configuracoes' },
+];
+
+export default function TabBar() {
   return (
     <nav
       id="onboarding-tabbar"
       className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-border md:hidden"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
-      <div className="flex items-stretch h-[60px]">
-        {tabs.map(({ label, icon: Icon, to }) => (
+      <div className="relative flex items-stretch h-[60px]">
+        {sideTabsLeft.map(({ label, icon: Icon, to }) => (
           <NavLink
             key={to}
             to={to}
@@ -38,14 +37,37 @@ export default function TabBar({ onMoreClick }: TabBarProps) {
           </NavLink>
         ))}
 
-        {/* Mais — abre sidebar */}
-        <button
-          onClick={onMoreClick}
-          className="flex-1 flex flex-col items-center justify-center gap-0.5 text-[10px] font-semibold text-text-muted hover:text-text-secondary transition-colors cursor-pointer"
+        {/* Espaço reservado para o botão central flutuante */}
+        <div className="flex-1" />
+
+        {sideTabsRight.map(({ label, icon: Icon, to }) => (
+          <NavLink
+            key={to}
+            to={to}
+            className={({ isActive }) =>
+              `flex-1 flex flex-col items-center justify-center gap-0.5 text-[10px] font-semibold transition-colors
+              ${isActive ? 'text-rose-600' : 'text-text-muted hover:text-text-secondary'}`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5px]' : 'stroke-[1.75px]'}`} />
+                <span>{label}</span>
+              </>
+            )}
+          </NavLink>
+        ))}
+
+        {/* Botão central em destaque — Agenda */}
+        <NavLink
+          to="/agendamentos"
+          className={({ isActive }) =>
+            `absolute left-1/2 -translate-x-1/2 -top-5 w-14 h-14 rounded-full flex items-center justify-center text-white shadow-lg shadow-rose-600/30 border-4 border-white transition-colors
+            ${isActive ? 'bg-rose-700' : 'bg-rose-600'}`
+          }
         >
-          <Menu className="w-5 h-5 stroke-[1.75px]" />
-          <span>Mais</span>
-        </button>
+          <CalendarCheck className="w-6 h-6" />
+        </NavLink>
       </div>
     </nav>
   );

@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutGrid,
   Users,
-  Tag,
+  WandSparkles,
   Calendar,
   Clock,
   Settings,
@@ -100,9 +100,9 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
 
   const menuItems: NavItem[] = [
     { name: 'Meu Estúdio', path: '/meu-estudio', icon: LayoutGrid },
-    { name: 'Clientes', path: '/clientes', icon: Users },
-    { name: 'Serviços', path: '/servicos', icon: Tag },
     { name: 'Agendamentos', path: '/agendamentos', icon: Calendar },
+    { name: 'Clientes', path: '/clientes', icon: Users },
+    { name: 'Serviços', path: '/servicos', icon: WandSparkles },
     { name: 'Meus Horários', path: '/meus-horarios', icon: Clock },
     { name: 'Link de Agendamento', path: '/link-agendamento', icon: Link2 },
     { name: 'Relatórios', path: '/relatorios', icon: BarChart2, feature: 'crm' },

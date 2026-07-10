@@ -85,7 +85,7 @@ export default function Layout() {
       </div>
 
       {/* TabBar — mobile only */}
-      <TabBar onMoreClick={() => setMobileOpen(true)} />
+      <TabBar />
 
       {/* Botão de ajuda flutuante */}
       <FloatingHelpButton />

@@ -131,9 +131,10 @@ A maior parte dos dados já existe em `Dashboard.tsx` (agendamentos de hoje, fat
 
 ## Fase 5 — Navegação mobile (TabBar) e Sidebar reorganizados
 
-- [ ] `TabBar.tsx` — trocar para 5 itens fixos: Início, Clientes, **Agenda (botão central em destaque/FAB)**, Serviços, Config — remover o botão "Mais" atual ou decidir onde ficam Assinatura/Suporte (sugestão: dentro da própria tela de Configurações, como sub-itens, em vez de um menu "Mais" separado — **validar com o usuário**)
-- [ ] `Sidebar.tsx` (desktop) — mesma reorganização de itens, remover ícones de cadeado, adicionar card de upsell Premium no rodapé em vez de item bloqueado
-- [ ] Teste em mobile (viewport reduzido) e desktop
+- [x] `TabBar.tsx` — trocado para 5 itens fixos: Início, Clientes, **Agenda (botão central flutuante em destaque)**, Serviços, Config. O botão "Mais" foi removido — **descoberta durante a execução**: o `Header.tsx` já tinha um ícone de hambúrguer (canto superior esquerdo, mobile) que abre a Sidebar como gaveta, então essa era uma segunda porta de entrada redundante para a mesma coisa. Configurações/Assinatura/Suporte continuam acessíveis por ali, sem necessidade de decidir um novo lugar para eles.
+- [x] `src/components/layout/Layout.tsx` — removida a prop `onMoreClick` do `<TabBar />` (não é mais necessária)
+- [x] `Sidebar.tsx` (desktop) — itens reordenados para priorizar Agendamentos logo após Meu Estúdio (cadeados já tinham sido removidos na Fase 3). **Nota de escopo:** o card de upsell Premium no rodapé fica para a Fase 6, que já é dona desse entregável — evita fazer o mesmo trabalho duas vezes.
+- [ ] Teste em mobile (viewport reduzido) e desktop — **fazer antes de aprovar o commit**
 
 ---
 

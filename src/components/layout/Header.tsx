@@ -3,7 +3,7 @@ import {
   Menu,
   LayoutGrid,
   Users,
-  Tag,
+  WandSparkles,
   Calendar,
   Clock,
   Settings,
@@ -30,7 +30,7 @@ export default function Header({ setMobileOpen }: HeaderProps) {
       case '/clientes':
         return { title: 'Clientes', Icon: Users };
       case '/servicos':
-        return { title: 'Serviços', Icon: Tag };
+        return { title: 'Serviços', Icon: WandSparkles };
       case '/agendamentos':
         return { title: 'Agendamentos', Icon: Calendar };
       case '/meus-horarios':
