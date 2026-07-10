@@ -15,11 +15,13 @@ import {
   Link2,
   PlayCircle,
   MessageCircle,
+  Sparkles,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { FEATURES } from '../../config/features';
 import { supabase } from '../../lib/supabase';
 import { useSubscription } from '../../hooks/useSubscription';
+import UpgradeModal from '../common/UpgradeModal';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -34,7 +36,8 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
   const [businessName, setBusinessName] = useState<string>('...');
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   
-  const { hasFeature } = useSubscription();
+  const { hasFeature, isPremium } = useSubscription();
+  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
 
   useEffect(() => {
     if (!estabelecimentoId) return;
@@ -239,6 +242,25 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
           </nav>
         </div>
 
+        {/* Upsell do Premium — apenas para quem está no plano Agenda */}
+        {!isPremium && !collapsed && (
+          <div className="mx-3 mb-3 p-3.5 rounded-xl bg-gradient-to-br from-rose-50 to-pink-50 border border-rose-100 flex-shrink-0">
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-rose-600" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-rose-600">Premium</span>
+            </div>
+            <p className="text-xs text-text-secondary leading-snug mb-2.5">
+              Relatórios e histórico completo das suas clientes.
+            </p>
+            <button
+              onClick={() => setIsUpgradeModalOpen(true)}
+              className="w-full py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+            >
+              Conhecer o Premium
+            </button>
+          </div>
+        )}
+
         {/* Footer: Logged in User Card */}
         <div className="p-3 border-t border-border bg-rose-50/30 flex flex-col gap-2">
           <div className={`flex items-center gap-2.5 ${collapsed ? 'justify-center' : 'justify-between'}`}>
@@ -282,6 +304,11 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
           )}
         </div>
       </aside>
+
+      {/* Upgrade Modal */}
+      {isUpgradeModalOpen && (
+        <UpgradeModal onClose={() => { setIsUpgradeModalOpen(false); setMobileOpen(false); }} />
+      )}
     </>
   );
 }
