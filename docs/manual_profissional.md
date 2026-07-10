@@ -1,8 +1,8 @@
-# Guia de Uso Completo: LashCenter (Painel da Profissional)
+# Guia de Uso Completo: Lash Agenda (Painel da Profissional)
 
-Bem-vinda ao **LashCenter**! Este manual foi projetado para ajudar você, profissional da beleza e estética (Lash Designers, Micropigmentadoras, Esteticistas, etc.), a dominar todas as funcionalidades da sua nova plataforma de gestão.
+Bem-vinda ao **Lash Agenda**! Este manual foi projetado para ajudar você, profissional da beleza e estética (Lash Designers, Micropigmentadoras, Esteticistas, etc.), a dominar todas as funcionalidades da sua nova plataforma de gestão.
 
-Com o LashCenter, você centraliza seu controle de clientes, serviços, faturamento, agenda e ainda oferece um portal de agendamentos online para as suas clientes marcarem sozinhas, reduzindo o tempo gasto respondendo mensagens no WhatsApp.
+Com o Lash Agenda, você centraliza seu controle de clientes, serviços, faturamento, agenda e ainda oferece um portal de agendamentos online para as suas clientes marcarem sozinhas, reduzindo o tempo gasto respondendo mensagens no WhatsApp.
 
 ---
 
@@ -10,7 +10,7 @@ Com o LashCenter, você centraliza seu controle de clientes, serviços, faturame
 1. [Primeiro Acesso e Onboarding](#1-primeiro-acesso-e-onboarding)
 2. [Configurações Iniciais do Estúdio](#2-configurações-iniciais-do-estúdio)
 3. [Gestão de Serviços](#3-gestão-de-serviços)
-4. [Gestão de Clientes e Ficha Cadastral](#4-gestão-de-clientes-e-ficha-cadastral)
+4. [Gestão de Clientes e Ficha Cadastral](#4-gestão-de-clientes-e-ficha-cadastral) (inclui Fichas de Anamnese, exclusivo Premium)
 5. [Configuração de Expediente (Meus Horários)](#5-configuração-de-expediente-meus-horários)
 6. [Controle da Agenda (Agendamentos)](#6-controle-da-agenda-agendamentos)
 7. [Entendendo o Dashboard (Métricas)](#7-entendendo-o-dashboard-métricas)
@@ -21,7 +21,7 @@ Com o LashCenter, você centraliza seu controle de clientes, serviços, faturame
 
 ## 1. Primeiro Acesso e Onboarding
 
-O primeiro passo para utilizar o LashCenter é criar sua conta de acesso como administradora do estúdio.
+O primeiro passo para utilizar o Lash Agenda é criar sua conta de acesso como administradora do estúdio.
 
 ### Passo a Passo:
 1. Acesse a tela de cadastro em `/cadastro`.
@@ -35,7 +35,7 @@ O primeiro passo para utilizar o LashCenter é criar sua conta de acesso como ad
 5. Você será redirecionada automaticamente para a página de **Configurações** para preencher as informações do seu negócio.
 
 > [!NOTE]
-> O LashCenter separa os dados de cada estúdio de forma totalmente segura. Nenhuma outra profissional cadastrada no sistema terá acesso às suas clientes, serviços ou faturamento.
+> O Lash Agenda separa os dados de cada estúdio de forma totalmente segura. Nenhuma outra profissional cadastrada no sistema terá acesso às suas clientes, serviços ou faturamento.
 
 ---
 
@@ -56,7 +56,7 @@ Antes de começar a atender ou enviar o link para suas clientes, você precisa c
 * **Logotipo**: Clique em **Carregar Logo** para enviar uma foto quadrada com o logotipo da sua marca. Ela aparecerá no menu lateral e no portal de agendamentos.
 
 ### C. Identidade Visual (Design Personalizado)
-* **Paleta de Cores**: Escolha a cor que melhor combina com a sua marca. O LashCenter oferece cores elegantes pensadas no ramo da estética (como *Rosa Rose*, *Nude Clássico*, *Cereja Intenso*, *Lavanda Suave*, etc.).
+* **Paleta de Cores**: Escolha a cor que melhor combina com a sua marca. O Lash Agenda oferece cores elegantes pensadas no ramo da estética (como *Rosa Rose*, *Nude Clássico*, *Cereja Intenso*, *Lavanda Suave*, etc.).
 * **Modo Escuro**: Ative para visualizar o painel em um layout escuro e moderno, ideal para reduzir a fadiga visual.
 
 ### D. Regras de Agendamento Online
@@ -74,7 +74,7 @@ Antes de começar a atender ou enviar o link para suas clientes, você precisa c
 Para que a agenda funcione, você precisa definir quais serviços oferece, quanto cobra e qual a duração de cada um.
 
 ### Facilitador de Início:
-* Ao acessar a tela de serviços pela primeira vez, o LashCenter pode vir com alguns serviços comuns pré-carregados (como *Extensão Fio a Fio*, *Volume Russo*, *Lash Lifting*). Você pode usá-los como base, editando-os ou removendo-os.
+* Ao acessar a tela de serviços pela primeira vez, o Lash Agenda pode vir com alguns serviços comuns pré-carregados (como *Extensão Fio a Fio*, *Volume Russo*, *Lash Lifting*). Você pode usá-los como base, editando-os ou removendo-os.
 
 ### Como Cadastrar um Novo Serviço:
 1. No canto superior direito, clique em **Novo Serviço**.
@@ -112,19 +112,30 @@ Aqui fica o seu banco de dados de clientes, que funciona como um CRM dedicado.
 ### Visualizando o Histórico Detalhado (Perfil da Cliente):
 Clique sobre o nome de qualquer cliente na tabela para abrir o perfil avançado dela, que é organizado da seguinte forma:
 * **Resumo Rápido (Painel Lateral)**: Exibe rapidamente os principais dados cadastrais (WhatsApp, e-mail, idade/data de nascimento, canal de origem/como conheceu o estúdio e a data/hora exata do cadastro).
-* **Aba Dados Pessoais**: Permite visualizar e editar as informações cadastrais básicas da cliente (nome, sobrenome, contato, CPF e origem). Também há um botão rápido no topo da página para criar um **Novo Agendamento** direto para ela.
-* **Aba Ficha Clínica (Anamnese)**: Ficha com perguntas fundamentais para a segurança do procedimento, dividida entre:
-  * *Histórico & Cuidados Oculares*: Informações sobre procedimentos anteriores, uso de lentes de contato, sensibilidade nos olhos ou infecções recentes.
-  * *Hábitos & Retenção*: Detalhes como posição ao dormir (como costuma dormir), uso de maquiagem à prova d'água e contato com fontes de vapor/calor.
+* **Aba Dados Pessoais**: Permite visualizar e editar as informações cadastrais básicas da cliente (nome, sobrenome, contato, CPF e origem). Também há um botão rápido no topo da página para criar um **Novo Agendamento** direto para ela, e (no Plano Premium) um botão **Ficha de Anamnese** que leva direto para a ficha completa dessa cliente.
 * **Aba Histórico de Atendimentos**: Lista de todos os registros de procedimentos realizados e cobrados. Através do botão **+ Registrar Atendimento**, você pode lançar manualmente novos atendimentos, adicionando o relatório detalhado e os valores cobrados.
+
+### Fichas de Anamnese — Exclusivo do Plano Premium
+*Rota: `/fichas-anamnese` (Menu Lateral -> Fichas de Anamnese)*
+
+> [!IMPORTANT]
+> Esta funcionalidade está disponível apenas no **Plano Premium**.
+
+Deixou de ser uma aba dentro do perfil da cliente e virou uma área própria, pensada para Lash Designers registrarem tudo que importa para um atendimento seguro e consistente:
+
+* **Lista de clientes**: com busca pelo nome e um selo indicando se a ficha está **preenchida** ou **pendente**, para você saber rapidamente quem ainda falta atualizar.
+* **Perfil do Olho & Cílios Naturais**: formato do olho, espaçamento entre os olhos, densidade, comprimento e curvatura dos cílios naturais.
+* **Preferências Técnicas**: técnica (Fio a Fio Clássico, Volume Russo, Híbrido, Volume Brasileiro, Mega Volume), mapping (Gatinho, Boneca, Esquilo, Natural, Aberto no Meio), curvatura (J, B, C, CC, D, D+/L), espessura (0.03mm a 0.20mm), comprimento predominante e efeito desejado.
+* **Retenção & Cuidados**: tempo médio de retenção observado, frequência ideal de manutenção, tipo de adesivo mais adequado e hábitos que afetam a retenção (posição ao dormir, maquiagem à prova d'água, exposição a calor/vapor).
+* **Histórico & Cuidados Oculares**, **Condições Clínicas & Fatores Hormonais** e **Alergias & Detalhes Clínicos**: os mesmos campos clínicos que já existiam, preservados aqui.
 
 ---
 
 ## 5. Configuração de Expediente (Meus Horários)
 *Rota: `/meus-horarios` (Menu Lateral -> Meus Horários)*
 
-> [!IMPORTANT]
-> Esta funcionalidade está disponível apenas no **Plano Premium**.
+> [!NOTE]
+> Disponível nos dois planos (Agenda e Premium).
 
 Para que suas clientes agendem online de forma correta, você precisa definir os dias e horários em que trabalha.
 
@@ -150,8 +161,8 @@ Precisa ir ao médico na próxima terça à tarde ou vai tirar férias de uma se
 ## 6. Controle da Agenda (Agendamentos)
 *Rota: `/agendamentos` (Menu Lateral -> Agendamentos)*
 
-> [!IMPORTANT]
-> Esta funcionalidade está disponível apenas no **Plano Premium**.
+> [!NOTE]
+> Disponível nos dois planos (Agenda e Premium) — é a funcionalidade principal do sistema.
 
 Esta é a tela principal de operação do dia a dia do estúdio.
 
@@ -177,9 +188,13 @@ Clique sobre o card de um agendamento no calendário para abrir os detalhes e al
 ---
 
 ## 7. Entendendo o Dashboard (Métricas)
-*Rota: `/dashboard` (Menu Lateral -> Dashboard)*
+*Rota: `/meu-estudio` (tela inicial do sistema)*
 
-O Dashboard consolida a saúde financeira e operacional do seu negócio. Ele atualiza em tempo real sempre que você altera o status dos agendamentos.
+A tela inicial é diferente conforme o seu plano:
+* **Plano Agenda**: versão simplificada, com "Aguardando Confirmação", "Faturado Hoje", o card para compartilhar o link do seu portal e a lista de próximas clientes.
+* **Plano Premium**: além do que já tem no Agenda, ganha os indicadores completos abaixo, Ações Rápidas e o gráfico de receita.
+
+O Dashboard consolida a saúde financeira e operacional do seu negócio (recursos abaixo exclusivos do Premium). Ele atualiza em tempo real sempre que você altera o status dos agendamentos.
 
 ### Filtro de Período
 No topo do dashboard há atalhos para filtrar os dados por período: **Hoje**, **Ontem**, **Últimos 7 dias**, **Este mês**, **Mês passado**, **Este ano** e **Personalizado** (onde você define um intervalo de datas livremente). Todos os cards e gráficos respondem ao período selecionado.
@@ -215,7 +230,7 @@ Gráfico de pizza com a distribuição percentual do faturamento por tipo de ser
 ## 8. Minha Assinatura
 *Rota: `/assinatura` (Menu Lateral -> Minha Assinatura)*
 
-Nesta tela você gerencia seu plano ativo e visualiza os planos disponíveis do Lashly.
+Nesta tela você gerencia seu plano ativo e visualiza os planos disponíveis do Lash Agenda.
 
 ### Painel de Assinatura Atual
 À esquerda da tela fica o resumo do seu plano vigente, com o nome do plano e o status da assinatura. Os possíveis status são:
@@ -226,28 +241,29 @@ Nesta tela você gerencia seu plano ativo e visualiza os planos disponíveis do 
 
 ### Comparativo de Planos
 
-**Plano Básico (CRM) — R$ 59,90/mês**
-Ideal para profissionais que querem organizar a carteira de clientes e prontuários:
-* Cadastro de Clientes ilimitado
-* Fichas de Anamnese Customizadas
-* Dashboard de Relatórios
-* Histórico de Atendimentos
+**Plano Agenda — R$ 59,90/mês**
+Ideal para quem quer resolver a dor do agendamento, sem complicação:
+* Agendamento automático online
+* Portal exclusivo para suas clientes
+* Cadastro de Clientes e Serviços
+* Confirmação manual ou automática
 * Suporte por E-mail
 
-**Plano Premium (Agenda) — R$ 99,90/mês**
-Para quem quer automatizar a recepção de agendamentos 24h por dia:
-* Tudo do Plano Básico
-* Portal de Agendamento Online (link exclusivo do seu estúdio)
-* Horários Dinâmicos
-* Bloqueios Rápidos de Agenda
-* Aprovação Manual ou Automática de agendamentos
+**Plano Premium — R$ 89,90/mês**
+Para quem quer controle total: agenda, relatórios do negócio e Fichas de Anamnese profissionais:
+* Tudo do Plano Agenda
+* Fichas de Anamnese para Lash Designers
+* Relatórios e Análises completas
+* Histórico de Atendimentos
 * Suporte Prioritário
+
+Não há cadeados nos menus: os recursos exclusivos do Premium simplesmente não aparecem para quem está no plano Agenda. Se quiser conhecer o Premium, há um card de destaque no rodapé do menu lateral com um botão para ver os benefícios e assinar.
 
 ### Como Assinar ou Trocar de Plano
 1. Na tela de **Minha Assinatura**, localize o card do plano desejado.
-2. Clique em **Assinar via Pix**.
-3. O sistema exibirá o código Pix (copia e cola). Realize o pagamento pelo aplicativo do seu banco.
-4. Clique em **Confirmar Pagamento Pix**. O plano é ativado imediatamente após a confirmação.
+2. Clique em **Pagar com Pix** ou em **Pagar com Cartão de Crédito**.
+3. No Pix, o sistema exibirá o código (copia e cola) — realize o pagamento pelo aplicativo do seu banco. No cartão, você será direcionada para uma página segura de pagamento do Asaas.
+4. O plano é ativado automaticamente assim que o pagamento é confirmado.
 
 ### Em caso de Suspensão
 Caso sua assinatura fique suspensa por falta de pagamento, o sistema exibirá uma tela de bloqueio total — você não conseguirá acessar a agenda, clientes ou serviços. Para regularizar, acesse **Minha Assinatura** pela própria tela de bloqueio, realize o pagamento via Pix e confirme. O desbloqueio é imediato.
@@ -263,10 +279,10 @@ Copie e cole os textos abaixo nas suas ferramentas de IA favoritas (ChatGPT, Cla
 Com base no manual do Lash Agenda para profissionais de cílios e estética, crie um roteiro de vídeo narrado de 3 minutos. O vídeo deve mostrar a tela do sistema.
 O roteiro deve conter:
 1. Uma introdução chamativa focando na dor da profissional ("Cansada de passar horas respondendo cliente no WhatsApp para marcar horário?").
-2. Demonstração prática do painel: cadastrando uma cliente com ficha de anamnese, criando um serviço de Extensão de Cílios e configurando os horários de trabalho em Meus Horários.
+2. Demonstração prática do painel: cadastrando uma cliente, criando um serviço de Extensão de Cílios e configurando os horários de trabalho em Meus Horários.
 3. Demonstração de como a cliente acessa o portal exclusivo do estúdio, escolhe o serviço, seleciona o horário disponível e agenda em segundos.
-4. Demonstração do painel de agendamentos: aprovando um agendamento pendente, concluindo um atendimento e visualizando as métricas no Dashboard.
-5. Conclusão destacando o ganho de tempo, o controle financeiro pelo dashboard e chamada para ação para assinar o Lash Agenda (Plano Básico R$ 59,90/mês ou Premium R$ 99,90/mês).
+4. Demonstração do painel de agendamentos: aprovando um agendamento pendente e concluindo um atendimento.
+5. Conclusão destacando o ganho de tempo com o agendamento automático e chamada para ação para assinar o Lash Agenda (Plano Agenda R$ 59,90/mês ou Premium R$ 89,90/mês, com relatórios e Fichas de Anamnese profissionais).
 Use uma linguagem leve, dinâmica, feminina e profissional.
 ```
 
@@ -279,13 +295,13 @@ A página de vendas deve ter:
 - Sessão de "Dores Comuns" (clientes que desistem por demora no atendimento, agenda confusa no papel, esquecimento de horários, falta de histórico das clientes).
 - Sessão de Recursos com base nas funcionalidades reais do sistema:
   * Portal de agendamento online com link exclusivo do estúdio
-  * Ficha clínica de anamnese completa com histórico de atendimentos
-  * Dashboard financeiro com gráficos de receita, serviços mais realizados e clientes novas vs recorrentes
   * Calendário com visualização mensal, semanal e diária
   * Bloqueios de agenda para férias, feriados e horários indisponíveis
   * Aprovação manual ou automática de agendamentos
   * Registro de faltas (no-show) no histórico da cliente
-- Tabela comparativa de planos: Básico CRM (R$ 59,90/mês — gestão de clientes e fichas) e Premium Agenda (R$ 99,90/mês — tudo do básico mais portal e agenda completa).
+  * (Premium) Relatórios com gráficos de receita, serviços mais realizados e clientes novas vs recorrentes
+  * (Premium) Fichas de Anamnese completas para Lash Designers — curvatura, mapping, retenção e mais
+- Tabela comparativa de planos: Agenda (R$ 59,90/mês — agendamento automático + cadastro de clientes e serviços) e Premium (R$ 89,90/mês — tudo do Agenda mais relatórios e Fichas de Anamnese).
 - Seção de FAQ (Perguntas Frequentes) curta.
 ```
 

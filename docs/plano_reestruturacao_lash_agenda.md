@@ -159,19 +159,17 @@ Depois de testar, o usuário decidiu inverter o que tinha sido feito antes: em v
 
 ---
 
-## Fase 7 — Simplificação adicional do plano Agenda (opcional, avaliar necessidade)
+## Fase 7 — Simplificação adicional do plano Agenda ✅ **Concluída/desnecessária**
 
-Depende de quanto você quer simplificar a experiência de Clientes/Serviços para quem está no plano de entrada. Não decidir agora — revisar depois que as Fases 1-6 estiverem testadas e você tiver visto o app funcionando na nova estrutura.
-
-- [ ] Avaliar se `PerfilCliente.tsx` (ficha de anamnese completa) deve ter uma versão reduzida no plano Agenda ou se fica igual para os dois
-- [ ] Avaliar se `Clientes.tsx` deve esconder histórico de `atendimentos` (registro manual de atendimento, distinto do agendamento online) para o plano Agenda
+**Decisão do usuário (2026-07-10):** depois de ver o app funcionando com as Fases 1-6, não quer simplificar mais nada por enquanto no plano Agenda. O primeiro item (ficha de anamnese completa) já ficou resolvido naturalmente pela Fase 6 — a ficha de anamnese virou funcionalidade própria e exclusiva do Premium, então nem existe mais dentro do plano Agenda para simplificar. O segundo item (esconder histórico de `atendimentos` em `Clientes.tsx`) fica como está, sem alteração.
 
 ---
 
 ## Fase 8 — Documentação final
 
-- [ ] Atualizar `docs/PRD - Lash Agenda.md` com a tabela de planos definitiva (renomeada na Fase 1)
-- [ ] Atualizar `docs/manual_profissional.md` e `docs/manual_cliente.md` com o novo fluxo
+- [x] `docs/PRD - Lash Agenda.md` — reescrito: tabela de planos definitiva (Agenda R$ 59,90 / Premium R$ 89,90), tela inicial diferenciada por plano, módulo de Fichas de Anamnese, navegação (Sidebar reordenada + TabBar de 5 posições), upsell sem cadeados, estrutura de projeto atualizada com as páginas novas
+- [x] `docs/manual_profissional.md` — removidas as marcações "exclusivo Premium" de Agendamentos/Meus Horários (agora são de ambos os planos); nova seção "Fichas de Anamnese — Exclusivo do Plano Premium" descrevendo os campos técnicos novos; comparativo de planos e prompts de marketing (seção 9) reescritos com os nomes/preços corretos; corrigido resquício do nome antigo "LashCenter"
+- [x] `docs/manual_cliente.md` — removida a menção ao modo "só WhatsApp" do plano básico no catálogo e no FAQ, já que hoje o agendamento online está disponível para clientes de qualquer plano da profissional
 
 ---
 

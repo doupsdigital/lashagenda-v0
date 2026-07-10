@@ -27,9 +27,6 @@ Cada profissional cadastrada no Lash Agenda possui um link único e exclusivo pa
 
 Você pode navegar livremente pelo catálogo para ver os serviços disponíveis, preços e a duração média de cada um antes de decidir agendar.
 
-> [!NOTE]
-> Se o estúdio ainda não tiver o agendamento online ativado (Plano Básico), o portal exibirá um botão de **contato via WhatsApp** para você solicitar o horário diretamente com a profissional.
-
 ---
 
 ## 2. Criando Sua Conta (Cadastro Rápido)
@@ -112,9 +109,6 @@ Na aba **Meu Perfil** você pode:
 
 * **Por que o botão de cancelar sumiu?**
   * O cancelamento online só é permitido com uma antecedência mínima definida pela profissional (ex: 24h antes). Se o prazo já passou, entre em contato diretamente com ela.
-
-* **Não consigo agendar online, só aparece um botão de WhatsApp. Por quê?**
-  * Isso significa que o estúdio utiliza o agendamento via WhatsApp. Entre em contato com a profissional pelo botão exibido no portal para solicitar seu horário.
 
 ---
 
