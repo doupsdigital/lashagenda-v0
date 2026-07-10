@@ -77,7 +77,7 @@ export default function InstallAppCard() {
           <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
           <div>
             <p className="text-sm font-semibold text-green-700">App instalado com sucesso!</p>
-            <p className="text-xs text-green-600 mt-0.5">Agora você pode abrir o Lash Hub direto pela tela inicial do seu celular.</p>
+            <p className="text-xs text-green-600 mt-0.5">Agora você pode abrir o Lash Agenda direto pela tela inicial do seu celular.</p>
           </div>
         </div>
       ) : installState === 'installing' ? (
@@ -91,7 +91,7 @@ export default function InstallAppCard() {
       ) : (
         <>
           <p className="text-sm text-text-secondary mb-4 leading-relaxed">
-            Instale o Lash Hub na tela inicial do seu celular para acessar com um toque, sem precisar abrir o navegador.
+            Instale o Lash Agenda na tela inicial do seu celular para acessar com um toque, sem precisar abrir o navegador.
           </p>
 
           {device === 'android-chrome' && deferredPrompt ? (

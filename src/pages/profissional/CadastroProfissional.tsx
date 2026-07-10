@@ -178,12 +178,12 @@ export default function CadastroProfissional() {
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-rose-600 to-rose-400 text-white flex items-center justify-center shadow-lg mb-4 hover:scale-105 transition-transform duration-300 overflow-hidden">
             <img
               src="/logo-login.png"
-              alt="Lash Hub"
+              alt="Lash Agenda"
               className="w-full h-full object-contain"
             />
           </div>
           <h1 className="font-title font-bold text-3xl tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-rose-400">
-            Lash Hub
+            Lash Agenda
           </h1>
           
           <h2 className="font-title font-bold text-2xl text-text-primary mt-2.5">
@@ -366,13 +366,13 @@ export default function CadastroProfissional() {
             <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-rose-600 to-rose-400 flex items-center justify-center shadow-lg mb-5 overflow-hidden">
               <img
                 src="/logo-login.png"
-                alt="Lash Hub"
+                alt="Lash Agenda"
                 className="w-full h-full object-contain"
               />
             </div>
 
             <h2 className="font-title font-bold text-2xl text-text-primary mb-1">
-              Bem-vinda ao Lash Hub!
+              Bem-vinda ao Lash Agenda!
             </h2>
             <p className="text-sm text-text-secondary mb-5 leading-relaxed">
               Seu espaço <span className="font-semibold text-rose-600">{form.nome}</span> foi criado com sucesso. Agora é só configurar e começar a receber agendamentos.
@@ -391,7 +391,7 @@ export default function CadastroProfissional() {
                     frameBorder={0}
                     allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
                     allowFullScreen
-                    title="Tutorial de Boas-vindas - Lash Hub"
+                    title="Tutorial de Boas-vindas - Lash Agenda"
                   />
                 </div>
               </div>

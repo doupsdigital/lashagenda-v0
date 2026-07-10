@@ -121,7 +121,7 @@ $$;
    - **Redirect URLs**: mesma URL + `/auth/callback`
 
 2. **Authentication → Email Templates** (opcional)
-   - Personalizar o email de confirmação de cadastro com a identidade visual do Lash Hub
+   - Personalizar o email de confirmação de cadastro com a identidade visual do Lash Agenda
 
 ---
 
@@ -175,6 +175,6 @@ Antes de divulgar para clientes:
 
 Quando for ligar o prod, abra uma conversa e diga:
 
-> "Vou ativar o banco de produção do Lash Hub. Me ajuda a seguir o guia em docs/guia_deploy_producao.md e verificar se tem alguma atualização pendente no schema_definitivo.sql."
+> "Vou ativar o banco de produção do Lash Agenda. Me ajuda a seguir o guia em docs/guia_deploy_producao.md e verificar se tem alguma atualização pendente no schema_definitivo.sql."
 
 O Claude vai verificar o arquivo, comparar com mudanças recentes no código e te guiar pelo checklist.

@@ -1,5 +1,5 @@
 # Plano de Migração Asaas Sandbox → Produção
-## Lash Hub v03 — Pagamentos Reais
+## Lash Agenda v03 — Pagamentos Reais
 
 **Status:** ✅ CONCLUÍDO  
 **Repositório de produção:** `doupsdigital/lashhub-v03`  

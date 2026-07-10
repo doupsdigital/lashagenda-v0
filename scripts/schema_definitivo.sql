@@ -1,5 +1,5 @@
 -- =========================================================================
--- LASH HUB — SCHEMA DEFINITIVO v1.3
+-- LASH AGENDA — SCHEMA DEFINITIVO v1.3
 -- =========================================================================
 -- Execute este script completo no SQL Editor de qualquer novo projeto
 -- Supabase para recriar toda a estrutura do banco do zero.

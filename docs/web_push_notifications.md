@@ -1,4 +1,4 @@
-# Web Push Notifications — Lash Hub
+# Web Push Notifications — Lash Agenda
 
 **Status:** Implementado e funcionando  
 **Data:** Junho 2026
@@ -9,7 +9,7 @@
 
 Web Push Notifications permite que o sistema notifique a profissional no celular quando uma cliente faz um agendamento pelo portal — sem depender de WhatsApp, sem API paga, sem risco de banimento.
 
-Funciona via **PWA (Progressive Web App)**: quando a profissional instala o Lash Hub na tela inicial do celular e ativa as notificações, o sistema envia alertas diretamente no dispositivo dela, mesmo com o app fechado.
+Funciona via **PWA (Progressive Web App)**: quando a profissional instala o Lash Agenda na tela inicial do celular e ativa as notificações, o sistema envia alertas diretamente no dispositivo dela, mesmo com o app fechado.
 
 ### Compatibilidade
 | Plataforma | Suporte |
@@ -159,7 +159,7 @@ Cada usuário só pode ver e modificar as próprias subscriptions.
 
 ## Como ativar as notificações (fluxo da profissional)
 
-1. Instalar o Lash Hub como PWA na tela inicial do celular
+1. Instalar o Lash Agenda como PWA na tela inicial do celular
 2. Abrir o painel → **Meu Estúdio**
 3. O banner "Ative as notificações" aparece automaticamente
 4. Clicar em **Ativar notificações**
@@ -185,7 +185,7 @@ Ao ativar o banco de produção, os seguintes passos adicionais são necessário
 
 ## Personalizar o ícone da notificação (a fazer)
 
-Atualmente a notificação exibe um **ícone quadrado** com o logo do Lash Hub sobre fundo colorido. Isso acontece porque o Android usa o `icon-192.png` (ícone do PWA) como ícone da notificação, e este tem fundo.
+Atualmente a notificação exibe um **ícone quadrado** com o logo do Lash Agenda sobre fundo colorido. Isso acontece porque o Android usa o `icon-192.png` (ícone do PWA) como ícone da notificação, e este tem fundo.
 
 ### Por que parece quadrado
 
@@ -202,7 +202,7 @@ Criar um arquivo `public/notification-badge.png` com as seguintes especificaçõ
 | Tamanho | 96×96 px |
 | Fundo | Transparente |
 | Cor do ícone | Branco (#FFFFFF) |
-| Conteúdo | Símbolo simples do Lash Hub (ex: só o símbolo dos cílios, sem texto) |
+| Conteúdo | Símbolo simples do Lash Agenda (ex: só o símbolo dos cílios, sem texto) |
 
 Depois atualizar o `public/sw.js`:
 
@@ -216,7 +216,7 @@ self.registration.showNotification(data.title, {
 });
 ```
 
-O resultado: a barra de status do Android mostrará um ícone pequeno e limpo do Lash Hub, sem o fundo colorido.
+O resultado: a barra de status do Android mostrará um ícone pequeno e limpo do Lash Agenda, sem o fundo colorido.
 
 **Ferramentas sugeridas para criar o badge:**
 - [Figma](https://figma.com) — exportar como PNG 96×96 transparente

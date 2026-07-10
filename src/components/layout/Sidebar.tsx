@@ -87,7 +87,7 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
 
   const displayName = businessName && businessName !== '...'
     ? businessName
-    : (profile?.nome || 'Lash Hub');
+    : (profile?.nome || 'Lash Agenda');
 
   // Persistence of sidebar state
   useEffect(() => {

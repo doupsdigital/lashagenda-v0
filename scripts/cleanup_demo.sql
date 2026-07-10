@@ -1,5 +1,5 @@
 -- =========================================================================
--- LASH HUB — LIMPEZA DOS DADOS DEMO
+-- LASH AGENDA — LIMPEZA DOS DADOS DEMO
 --
 -- Apaga tudo que foi criado pelo seed_demo.sql.
 --

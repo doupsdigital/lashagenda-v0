@@ -2,7 +2,7 @@
 
 ## Contexto
 
-Hoje o LashHub só autentica via Supabase Auth com email/senha, em dois fluxos independentes: Profissional (`/login`, `/cadastro`) e Portal do Cliente (`/portal/:slug/login`, `/portal/:slug/cadastro`). O objetivo é reduzir fricção no cadastro/login oferecendo "Continuar com Google" nos dois fluxos, sem quebrar o fluxo de senha existente.
+Hoje o Lash Agenda só autentica via Supabase Auth com email/senha, em dois fluxos independentes: Profissional (`/login`, `/cadastro`) e Portal do Cliente (`/portal/:slug/login`, `/portal/:slug/cadastro`). O objetivo é reduzir fricção no cadastro/login oferecendo "Continuar com Google" nos dois fluxos, sem quebrar o fluxo de senha existente.
 
 **Risco arquitetural identificado (verificado no código):** o onboarding hoje depende 100% de um trigger no banco (`handle_new_user_onboarding`, `scripts/schema_definitivo.sql:242-372`) que lê `role`, `nome_negocio`, `slug`, `cliente_id`, `estabelecimento_id` do `raw_user_meta_data` — dados que só existem porque `supabase.auth.signUp()` aceita `options.data`. O login OAuth do Google **não tem equivalente**: o Supabase popula `raw_user_meta_data` só com o que o Google devolve (nome, email, foto), então:
 - O trigger hoje faz `user_role := COALESCE(raw_user_meta_data->>'role', 'profissional')` — para um login Google puro, cairia em `'profissional'`, mas como `negocio_nome` é `NULL`, a condição do bloco `IF` falha e **nada é inserido em `usuarios`** — o usuário fica com um `auth.users` órfão, sem perfil.

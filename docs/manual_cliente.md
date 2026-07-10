@@ -1,6 +1,6 @@
-# Guia de Uso Completo: Portal da Cliente (LashHub)
+# Guia de Uso Completo: Portal da Cliente (Lash Agenda)
 
-Bem-vinda ao seu guia do **Portal da Cliente** do **LashHub**!
+Bem-vinda ao seu guia do **Portal da Cliente** do **Lash Agenda**!
 
 Este manual foi elaborado para que você (cliente final) entenda como é simples, rápido e prático agendar seus atendimentos de beleza e estética diretamente pelo celular ou computador. Esqueça as mensagens demoradas no WhatsApp esperando a profissional responder com os horários disponíveis. Com a agenda online, você marca seu horário em menos de 1 minuto!
 
@@ -18,7 +18,7 @@ Este manual foi elaborado para que você (cliente final) entenda como é simples
 
 ## 1. Como Acessar o Portal do Estúdio
 
-Cada profissional cadastrada no LashHub possui um link único e exclusivo para o seu próprio estúdio.
+Cada profissional cadastrada no Lash Agenda possui um link único e exclusivo para o seu próprio estúdio.
 
 ### Como funciona:
 * A profissional enviará para você um link no formato: `https://lashhub.com/portal/nome-do-estudio` (por exemplo: `https://lashhub.com/portal/brunalash`).
@@ -63,7 +63,7 @@ Marcar o seu horário é extremamente intuitivo:
 2. Se o serviço tiver variações (ex: Volume Russo, Clássico, Híbrido), selecione a opção desejada.
 3. O sistema te levará para o calendário de horários:
    * **Escolha da Data**: Clique no dia desejado. Apenas os dias em que a profissional trabalha e que ainda têm horários disponíveis estarão selecionáveis.
-   * **Escolha do Horário**: Selecione um dos horários listados para aquela data. O LashHub calcula automaticamente se o tempo total do procedimento cabe naquele espaço, evitando conflitos na agenda da profissional.
+   * **Escolha do Horário**: Selecione um dos horários listados para aquela data. O Lash Agenda calcula automaticamente se o tempo total do procedimento cabe naquele espaço, evitando conflitos na agenda da profissional.
 4. Clique em **Confirmar Agendamento**.
 5. Uma tela de confirmação será exibida com o resumo (serviço, data, hora e valor).
 6. Se o estúdio usar **Aprovação Automática**, seu horário estará garantido imediatamente com o status **Confirmado**. Caso contrário, o agendamento constará como **Pendente** até a profissional aprovar.
@@ -120,11 +120,11 @@ Na aba **Meu Perfil** você pode:
 
 ## 6. Prompts de Apoio (Material Educativo para Clientes)
 
-Esses prompts podem ser usados pela profissional para gerar materiais que ensinam as clientes a usar o portal do LashHub.
+Esses prompts podem ser usados pela profissional para gerar materiais que ensinam as clientes a usar o portal do Lash Agenda.
 
 ### Prompt A: Roteiro para Vídeo Rápido nos Stories (Ensinando a Agendar)
 ```text
-Escreva um roteiro dinâmico de vídeo gravado em formato Stories/Reels (máximo de 60 segundos) focado nas clientes de um estúdio de cílios/estética que usa o LashHub.
+Escreva um roteiro dinâmico de vídeo gravado em formato Stories/Reels (máximo de 60 segundos) focado nas clientes de um estúdio de cílios/estética que usa o Lash Agenda.
 O vídeo deve mostrar a tela do celular navegando pelo portal do estúdio.
 O roteiro deve ter:
 - Gancho inicial animado ("Chega de esperar eu responder no WhatsApp para marcar os seus cílios!").
@@ -135,7 +135,7 @@ Linguagem super leve, descontraída e amigável.
 
 ### Prompt B: Carrossel para Instagram (Passo a Passo Visual)
 ```text
-Crie o roteiro de slides para um post no formato Carrossel do Instagram direcionado para as clientes de um estúdio de cílios/estética que usa o LashHub.
+Crie o roteiro de slides para um post no formato Carrossel do Instagram direcionado para as clientes de um estúdio de cílios/estética que usa o Lash Agenda.
 O tema é: "Como agendar seu horário em 3 passos simples".
 Detalhe o conteúdo de cada um dos 5 slides:
 Slide 1 (Capa): Título atraente (ex: "Sua agenda nas suas mãos: marque seus cílios em 1 minuto").

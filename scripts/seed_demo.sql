@@ -1,5 +1,5 @@
 -- =========================================================================
--- LASH HUB — SEED DE DADOS DEMO
+-- LASH AGENDA — SEED DE DADOS DEMO
 -- Popula o banco com 5 profissionais e 10 clientes cada para marketing.
 -- Execute no SQL Editor do Supabase (será ignorado pelo RLS pois roda
 -- como service_role no editor).

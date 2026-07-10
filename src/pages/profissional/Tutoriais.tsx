@@ -25,7 +25,7 @@ const CATEGORIES: Category[] = [
     title: 'Primeiros Passos',
     tutorials: [
       { id: 'visao-geral', title: 'Visão geral do sistema', ...V },
-      { id: 'como-comecar', title: 'Como começar a usar o Lash Hub', ...V },
+      { id: 'como-comecar', title: 'Como começar a usar o Lash Agenda', ...V },
     ],
   },
   {
@@ -144,7 +144,7 @@ function VideoCard({ tutorial, onClick }: { tutorial: Tutorial; onClick: () => v
 
         {/* Logo */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <img src="/logo-login.png" alt="Lash Hub" className="w-14 h-14 object-contain opacity-85" />
+          <img src="/logo-login.png" alt="Lash Agenda" className="w-14 h-14 object-contain opacity-85" />
         </div>
 
         {/* Play button — sempre visível, ganha destaque no hover */}

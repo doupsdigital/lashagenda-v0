@@ -1,5 +1,5 @@
 -- =========================================================================
--- LASH HUB — STUDIO M LASH (MARIANA): DADOS DE JULHO 2026
+-- LASH AGENDA — STUDIO M LASH (MARIANA): DADOS DE JULHO 2026
 --
 -- Popula dados realistas para gravação de tutoriais em todas as telas:
 --   • Dashboard  — faturamento do mês, novas clientes, agenda do dia

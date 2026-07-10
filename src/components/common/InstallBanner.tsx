@@ -100,7 +100,7 @@ export default function InstallBanner({ inline = false, onVisibilityChange }: In
       <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-rose-600 to-rose-400 flex items-center justify-center flex-shrink-0 border border-border overflow-hidden">
         <img
           src="/logo-login.png"
-          alt="Lash Hub"
+          alt="Lash Agenda"
           className="w-full h-full object-contain"
         />
       </div>
@@ -114,7 +114,7 @@ export default function InstallBanner({ inline = false, onVisibilityChange }: In
                 App instalado com sucesso!
               </p>
               <p className="text-xs text-text-secondary mt-1 leading-relaxed">
-                Agora você pode abrir o <span className="font-semibold text-text-primary">Lash Hub</span> direto pela tela inicial do seu celular, sem precisar do navegador.
+                Agora você pode abrir o <span className="font-semibold text-text-primary">Lash Agenda</span> direto pela tela inicial do seu celular, sem precisar do navegador.
               </p>
             </>
           ) : installState === 'installing' ? (
@@ -124,13 +124,13 @@ export default function InstallBanner({ inline = false, onVisibilityChange }: In
                 Instalando o app...
               </p>
               <p className="text-xs text-text-secondary mt-1 leading-relaxed">
-                Pode levar alguns segundos. Em breve o <span className="font-semibold text-text-primary">Lash Hub</span> aparecerá na sua tela inicial 📲
+                Pode levar alguns segundos. Em breve o <span className="font-semibold text-text-primary">Lash Agenda</span> aparecerá na sua tela inicial 📲
               </p>
             </>
           ) : deferredPrompt ? (
             <>
               <p className="text-sm font-semibold text-text-primary leading-snug">
-                Instale o Lash Hub no seu celular
+                Instale o Lash Agenda no seu celular
               </p>
               <p className="text-xs text-text-secondary mt-1 leading-relaxed">
                 Adicione à tela de início para acesso rápido, sem precisar abrir o navegador.
@@ -146,7 +146,7 @@ export default function InstallBanner({ inline = false, onVisibilityChange }: In
           ) : (
             <>
               <p className="text-sm font-semibold text-text-primary leading-snug">
-                Instale o Lash Hub no seu celular
+                Instale o Lash Agenda no seu celular
               </p>
               <p className="text-xs text-text-secondary mt-1 leading-relaxed">
                 Toque no menu{' '}
@@ -159,7 +159,7 @@ export default function InstallBanner({ inline = false, onVisibilityChange }: In
         ) : device === 'android' ? (
           <>
             <p className="text-sm font-semibold text-text-primary leading-snug">
-              Instale o Lash Hub no seu celular
+              Instale o Lash Agenda no seu celular
             </p>
             <p className="text-xs text-text-secondary mt-1 leading-relaxed">
               Procure a opção{' '}
@@ -170,7 +170,7 @@ export default function InstallBanner({ inline = false, onVisibilityChange }: In
         ) : device === 'ios-safari' ? (
           <>
             <p className="text-sm font-semibold text-text-primary leading-snug">
-              Instale o Lash Hub no seu iPhone
+              Instale o Lash Agenda no seu iPhone
             </p>
             <p className="text-xs text-text-secondary mt-1 leading-relaxed">
               Toque em{' '}

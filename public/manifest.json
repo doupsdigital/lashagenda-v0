@@ -1,6 +1,6 @@
 {
-  "name": "Lash Hub",
-  "short_name": "Lash Hub",
+  "name": "Lash Agenda",
+  "short_name": "Lash Agenda",
   "description": "Sistema de agendamentos para profissionais de cílios e estética",
   "start_url": "/",
   "display": "standalone",

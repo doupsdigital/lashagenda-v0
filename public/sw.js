@@ -1,4 +1,4 @@
-// Service Worker — Lash Hub
+// Service Worker — Lash Agenda
 // Estratégia network-first + suporte a Web Push Notifications
 
 const CACHE_NAME = 'lashhub-v1';
@@ -31,7 +31,7 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('push', (event) => {
   if (!event.data) return;
 
-  let data = { title: 'Lash Hub', body: 'Nova notificação', url: '/' };
+  let data = { title: 'Lash Agenda', body: 'Nova notificação', url: '/' };
   try { data = { ...data, ...event.data.json() }; } catch (_) { /* ignora */ }
 
   event.waitUntil(

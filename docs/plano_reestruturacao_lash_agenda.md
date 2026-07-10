@@ -33,44 +33,53 @@ Para cada etapa (ou subgrupo de etapas) executada:
 Não mexe em regra de negócio nenhuma, só em texto/branding. Baixo risco.
 
 ### 1.1 — Casca do app / PWA
-- [ ] `index.html` — `<title>` e `apple-mobile-web-app-title`
-- [ ] `public/manifest.json` — `name`/`short_name`
-- [ ] `public/sw.js` — textos de notificação push, se houver
-- [ ] `src/index.css` — comentários/referências, se houver
+- [x] `index.html` — `<title>` e `apple-mobile-web-app-title`
+- [x] `public/manifest.json` — `name`/`short_name`
+- [x] `public/sw.js` — comentário do cabeçalho e título padrão da notificação push
+- [x] `src/index.css` — comentário do bloco de estilos do onboarding
 
 ### 1.2 — Telas da profissional
-- [ ] `src/components/layout/Sidebar.tsx:90` — fallback `'Lash Hub'` quando não há nome de negócio configurado
-- [ ] `src/pages/profissional/Login.tsx`
-- [ ] `src/pages/profissional/CadastroProfissional.tsx`
-- [ ] `src/pages/profissional/RecuperarSenha.tsx`
-- [ ] `src/pages/profissional/RedefinirSenha.tsx`
-- [ ] `src/pages/profissional/Tutoriais.tsx`
+- [x] `src/components/layout/Sidebar.tsx:90` — fallback `'Lash Hub'` quando não há nome de negócio configurado
+- [x] `src/pages/profissional/Login.tsx`
+- [x] `src/pages/profissional/CadastroProfissional.tsx`
+- [x] `src/pages/profissional/RecuperarSenha.tsx`
+- [x] `src/pages/profissional/RedefinirSenha.tsx`
+- [x] `src/pages/profissional/Tutoriais.tsx`
+- [x] `src/components/common/ProfissionalRoute.tsx` — encontrado durante a execução (tela de loading), não estava listado originalmente
 
 ### 1.3 — Portal da cliente
-- [ ] `src/pages/portal-clientes/PortalLogin.tsx`
-- [ ] `src/pages/portal-clientes/CadastroCliente.tsx`
-- [ ] `src/components/layout/PortalLayout.tsx`
-- [ ] `src/components/common/ClienteRoute.tsx`
+- [x] `src/pages/portal-clientes/PortalLogin.tsx`
+- [x] `src/pages/portal-clientes/CadastroCliente.tsx`
+- [x] `src/components/layout/PortalLayout.tsx`
+- [x] `src/components/common/ClienteRoute.tsx`
 
 ### 1.4 — Componentes comuns
-- [ ] `src/components/common/PushPermissionBanner.tsx`
-- [ ] `src/components/common/InstallBanner.tsx`
-- [ ] `src/components/common/InstallAppCard.tsx`
-- [ ] `src/hooks/useOnboarding.ts`
+- [x] `src/components/common/PushPermissionBanner.tsx` — só tinha uma chave de `localStorage` (`lashhub_push_banner_dismissed`), nenhum texto visível; mantida como está (ver nota abaixo)
+- [x] `src/components/common/InstallBanner.tsx`
+- [x] `src/components/common/InstallAppCard.tsx`
+- [x] `src/hooks/useOnboarding.ts`
 
 ### 1.5 — Backend (Edge Functions)
-- [ ] `supabase/functions/send-push/index.ts` — texto das notificações
-- [ ] `supabase/functions/asaas-checkout/index.ts:80` — descrição enviada ao Asaas (`'Lash Hub — Plano...'`) — **atenção**: só afeta assinaturas novas, ver Fase 3
+- [x] `supabase/functions/send-push/index.ts` — verificado; só tinha o e-mail `lashhubapp@gmail.com` no `VAPID_SUBJECT` (identificador técnico, não texto de marca — mantido, ver nota abaixo). O título da notificação em si está em `public/sw.js`, já atualizado.
+- [x] `supabase/functions/asaas-checkout/index.ts:80` — descrição enviada ao Asaas atualizada para `'Lash Agenda — Plano...'` (o valor cobrado continua igual, isso é Fase 2)
 
 ### 1.6 — Scripts e seeds (impacto zero em produção, mas mantém consistência)
-- [ ] `scripts/seed_demo.sql`, `scripts/seed_mariana_extra.sql`, `scripts/seed_mariana_julho.sql`
-- [ ] `scripts/schema_definitivo.sql` (comentários)
-- [ ] `scripts/create_demo_auth_users.mjs`
-- [ ] `scripts/cleanup_demo.sql`
+- [x] `scripts/seed_demo.sql`, `scripts/seed_mariana_extra.sql`, `scripts/seed_mariana_julho.sql`
+- [x] `scripts/schema_definitivo.sql` (comentário do cabeçalho)
+- [x] `scripts/cleanup_demo.sql`
+- [x] `scripts/create_demo_auth_users.mjs` — comentário do cabeçalho atualizado; a senha padrão `'LashHubDemo123!'` (linha 39) foi **mantida de propósito** (ver nota abaixo)
 
 ### 1.7 — Documentação interna
-- [ ] `docs/PRD - Lash Hub.md` → renomear arquivo para `docs/PRD - Lash Agenda.md` e atualizar conteúdo (também recebe a tabela de planos nova na Fase 3)
-- [ ] `docs/web_push_notifications.md`, `docs/manual_profissional.md`, `docs/manual_cliente.md`, `docs/guia_deploy_producao.md`, `docs/dados_videos.md`, `docs/dados_teste_manual.md`, `docs/processo_integracao_asaas.md`, `docs/plano_notificacoes_trial.md`, `docs/plano_migracao_asaas_producao.md`, `docs/plano_login_google.md`, `docs/plano-notificacoes-telegram.md`, `docs/prompt agente.md`
+- [x] `docs/PRD - Lash Hub.md` → renomeado para `docs/PRD - Lash Agenda.md` e conteúdo atualizado (a tabela de planos em si só muda na Fase 3)
+- [x] `docs/web_push_notifications.md`, `docs/manual_profissional.md`, `docs/manual_cliente.md`, `docs/guia_deploy_producao.md`, `docs/dados_videos.md`, `docs/dados_teste_manual.md`, `docs/processo_integracao_asaas.md`, `docs/plano_notificacoes_trial.md`, `docs/plano_migracao_asaas_producao.md`, `docs/plano_login_google.md`, `docs/plano-notificacoes-telegram.md`, `docs/prompt agente.md`
+
+### Nota sobre o que foi deliberadamente NÃO alterado nesta fase
+Em todos os arquivos acima, mantive intactos identificadores técnicos que continham "lashhub" mas não são texto de marca visível — mudá-los exigiria ações fora do código (renomear projeto no Supabase, recriar contas demo, etc.) ou causaria efeitos colaterais desnecessários:
+- Refs de projeto Supabase: `lashhub-desenv`, `lashhub-prod`, `lashhub-prd`
+- Domínios/e-mails: `lashhub.com`, `lashhub.com.br`, `lashhubapp@gmail.com`, e-mails de contas demo (`mariana.silva@lashhub.com`, etc.)
+- Chaves internas sem exibição: classe CSS `.lashhub-onboarding-popover`, chaves de `localStorage` (`lashhub-app-card-dismissed`, `lashhub-install-banner-snoozed`, `lashhub_push_banner_dismissed`), nome de cache do service worker (`lashhub-v1`)
+- Senha padrão de conta demo (`LashHubDemo123!`) — já pode estar em uso em contas já criadas
+- Nome antigo do repositório GitHub mencionado em docs históricos (`lashhub-v03`) — registro histórico, não uma ação pendente
 
 ### Explicitamente FORA da Fase 1 (não tocar, não apagar — ficam exatamente como estão)
 - `src/pages/LandingPage_*.tsx` (todas as variações) — o usuário vai editar essas páginas pessoalmente depois (vídeos, criativos, textos), por isso não sofrem nenhuma alteração agora, nem de branding. Nenhum arquivo é removido do projeto.

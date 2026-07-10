@@ -1,5 +1,5 @@
 -- =========================================================================
--- LASH HUB — DADOS EXTRA PARA MARIANA LIMA (Studio M Lash)
+-- LASH AGENDA — DADOS EXTRA PARA MARIANA LIMA (Studio M Lash)
 -- 5 agendamentos hoje + 5 amanhã, espaçados durante o expediente (09–18h)
 -- com folgas de 30/45/60 min entre atendimentos.
 --

@@ -106,7 +106,7 @@ Deno.serve(async () => {
     // Dia 3 — onboarding
     if (diasDeTrial >= 3 && !est.trial_day3_notified_at) {
       await resend.emails.send({
-        from: 'Lash Hub <contato@lashhub.com.br>',
+        from: 'Lash Agenda <contato@lashhub.com.br>',
         to: est.usuarios[0].email,
         subject: 'Como está indo sua configuração? 💜',
         html: emailDia3(est.usuarios[0].nome, est.nome_negocio)
@@ -124,7 +124,7 @@ Deno.serve(async () => {
 
     if (diasDeTrial >= 12 && !est.trial_day12_notified_at && trialNaoExpirou) {
       await resend.emails.send({
-        from: 'Lash Hub <contato@lashhub.com.br>',
+        from: 'Lash Agenda <contato@lashhub.com.br>',
         to: est.usuarios[0].email,
         subject: 'Seu teste grátis expira em 2 dias ⏳',
         html: emailDia12(est.usuarios[0].nome, est.nome_negocio, est.trial_ends_at)
@@ -151,7 +151,7 @@ Deno.serve(async () => {
 **Corpo:**
 > Olá, [Nome]!
 >
-> Já faz 3 dias que você criou o **[Nome do Estúdio]** no Lash Hub. Estamos felizes em te ter aqui!
+> Já faz 3 dias que você criou o **[Nome do Estúdio]** no Lash Agenda. Estamos felizes em te ter aqui!
 >
 > Você já conseguiu configurar seus serviços, horários e testar o portal das clientes?
 >
@@ -160,7 +160,7 @@ Deno.serve(async () => {
 > 🔗 [Acessar meu painel]
 >
 > Um abraço,
-> Equipe Lash Hub
+> Equipe Lash Agenda
 
 ---
 
@@ -171,7 +171,7 @@ Deno.serve(async () => {
 **Corpo:**
 > Olá, [Nome]!
 >
-> Seu período de testes do **[Nome do Estúdio]** no Lash Hub encerra no dia **[Data]**.
+> Seu período de testes do **[Nome do Estúdio]** no Lash Agenda encerra no dia **[Data]**.
 >
 > Para continuar usando o sistema sem interrupções — e não perder seus dados de clientes e agendamentos — escolha um plano antes dessa data.
 >
@@ -182,7 +182,7 @@ Deno.serve(async () => {
 >
 > Qualquer dúvida, estamos à disposição.
 >
-> Equipe Lash Hub
+> Equipe Lash Agenda
 
 ---
 

@@ -1,5 +1,5 @@
 // =========================================================================
-// LASH HUB — CRIAÇÃO DE CONTAS DE AUTH PARA OS PROFISSIONAIS DEMO
+// LASH AGENDA — CRIAÇÃO DE CONTAS DE AUTH PARA OS PROFISSIONAIS DEMO
 //
 // Cria, via Supabase Admin API, as 5 contas de autenticação (auth.users)
 // correspondentes aos profissionais do seed_demo.sql, com senha definida

@@ -1,6 +1,6 @@
 # Processo Prático — Integração Asaas (O que fizemos)
 
-Este documento descreve passo a passo tudo o que foi feito para implementar e testar a integração de pagamentos Pix via Asaas no Lash Hub. Serve como referência para replicar o processo em outros projetos.
+Este documento descreve passo a passo tudo o que foi feito para implementar e testar a integração de pagamentos Pix via Asaas no Lash Agenda. Serve como referência para replicar o processo em outros projetos.
 
 ---
 

@@ -3,7 +3,7 @@
 ## Objetivo
 
 O dono do sistema (Doni) recebe uma mensagem no Telegram sempre que uma nova
-Lash Designer se cadastrar no Lash Hub — independente de ter vindo da landing
+Lash Designer se cadastrar no Lash Agenda — independente de ter vindo da landing
 page, link direto ou qualquer outra origem.
 
 Exemplo da mensagem recebida:
@@ -188,7 +188,7 @@ Após criar o webhook, copie o **Webhook Secret** gerado e adicione como secret
 
 Depois de tudo configurado:
 
-1. Acesse `/cadastro` no Lash Hub e crie uma conta de profissional de teste
+1. Acesse `/cadastro` no Lash Agenda e crie uma conta de profissional de teste
 2. Em ~2–5 segundos a mensagem deve aparecer no Telegram do dono
 3. Se não aparecer, verificar os **logs da Edge Function** em:
    Supabase Dashboard → Edge Functions → `notify-new-professional` → Logs
@@ -209,7 +209,7 @@ Depois de tudo configurado:
 ```bash
 curl -X POST "https://api.telegram.org/bot<BOT_TOKEN>/sendMessage" \
   -H "Content-Type: application/json" \
-  -d '{"chat_id": "<CHAT_ID>", "text": "Teste Lash Hub ✅"}'
+  -d '{"chat_id": "<CHAT_ID>", "text": "Teste Lash Agenda ✅"}'
 ```
 
 ---
@@ -229,7 +229,7 @@ Usando a mesma estrutura, é simples adicionar depois:
 
 ### Contexto
 
-Cada profissional tem seu próprio painel no Lash Hub e suas clientes fazem
+Cada profissional tem seu próprio painel no Lash Agenda e suas clientes fazem
 agendamentos nele. A ideia é que cada profissional receba uma mensagem no
 Telegram quando uma cliente agendar um serviço.
 
@@ -409,7 +409,7 @@ CREATE TRIGGER on_new_appointment_notify
 
 ### Contexto do projeto
 
-- **Projeto:** Lash Hub — SaaS para Lash Designers solo
+- **Projeto:** Lash Agenda — SaaS para Lash Designers solo
 - **Stack:** React + Vite + TypeScript + Supabase + Tailwind CSS
 - **Repositório:** `https://github.com/doupsdigital/lashhub-v03`
 - **Working directory:** raiz do projeto (onde está `package.json`)

@@ -256,23 +256,23 @@ Caso sua assinatura fique suspensa por falta de pagamento, o sistema exibirá um
 
 ## 9. Prompts de Apoio (Vídeos e Marketing)
 
-Copie e cole os textos abaixo nas suas ferramentas de IA favoritas (ChatGPT, Claude, Gemini) para gerar os materiais de marketing e treinamento do LashHub.
+Copie e cole os textos abaixo nas suas ferramentas de IA favoritas (ChatGPT, Claude, Gemini) para gerar os materiais de marketing e treinamento do Lash Agenda.
 
 ### Prompt A: Roteiro para Vídeo de Demonstração (YouTube/Instagram)
 ```text
-Com base no manual do LashHub para profissionais de cílios e estética, crie um roteiro de vídeo narrado de 3 minutos. O vídeo deve mostrar a tela do sistema.
+Com base no manual do Lash Agenda para profissionais de cílios e estética, crie um roteiro de vídeo narrado de 3 minutos. O vídeo deve mostrar a tela do sistema.
 O roteiro deve conter:
 1. Uma introdução chamativa focando na dor da profissional ("Cansada de passar horas respondendo cliente no WhatsApp para marcar horário?").
 2. Demonstração prática do painel: cadastrando uma cliente com ficha de anamnese, criando um serviço de Extensão de Cílios e configurando os horários de trabalho em Meus Horários.
 3. Demonstração de como a cliente acessa o portal exclusivo do estúdio, escolhe o serviço, seleciona o horário disponível e agenda em segundos.
 4. Demonstração do painel de agendamentos: aprovando um agendamento pendente, concluindo um atendimento e visualizando as métricas no Dashboard.
-5. Conclusão destacando o ganho de tempo, o controle financeiro pelo dashboard e chamada para ação para assinar o LashHub (Plano Básico R$ 59,90/mês ou Premium R$ 99,90/mês).
+5. Conclusão destacando o ganho de tempo, o controle financeiro pelo dashboard e chamada para ação para assinar o Lash Agenda (Plano Básico R$ 59,90/mês ou Premium R$ 99,90/mês).
 Use uma linguagem leve, dinâmica, feminina e profissional.
 ```
 
 ### Prompt B: Copy para Página de Vendas (Landing Page)
 ```text
-Atue como um Copywriter especialista em lançamentos de ferramentas SaaS. Escreva os textos estruturados de uma página de vendas para o "LashHub".
+Atue como um Copywriter especialista em lançamentos de ferramentas SaaS. Escreva os textos estruturados de uma página de vendas para o "Lash Agenda".
 A página de vendas deve ter:
 - Headline chamativa conectando controle de agenda + aumento de faturamento.
 - Sub-headline focando na liberdade de ter um portal agendando para você 24h por dia, sem precisar responder WhatsApp.
@@ -291,7 +291,7 @@ A página de vendas deve ter:
 
 ### Prompt C: Mensagem de Lançamento da Agenda para Clientes (WhatsApp)
 ```text
-Crie 3 modelos de mensagens de WhatsApp para a profissional enviar para sua lista de clientes anunciando que agora ela usa o LashHub e que as clientes podem agendar sozinhas pelo portal online.
+Crie 3 modelos de mensagens de WhatsApp para a profissional enviar para sua lista de clientes anunciando que agora ela usa o Lash Agenda e que as clientes podem agendar sozinhas pelo portal online.
 Modelo 1: Mensagem curta e direta para clientes recorrentes.
 Modelo 2: Mensagem detalhada com benefícios (ex: ver todos os horários disponíveis, escolher o serviço, agendar a qualquer hora do dia ou da noite).
 Modelo 3: Mensagem de incentivo (ex: "Agende seu primeiro horário pelo portal e ganhe um mimo/desconto no dia do atendimento").

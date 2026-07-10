@@ -6,7 +6,7 @@
 ⏱️ ~14s
 "Agora iremos apresentar uma visão geral do sistema, passando por todas as telas disponíveis. Para saber os detalhes de cada tela e de cada funcionalidade, temos vídeos separados para ajudar no seu entendimento."
 ⏱️ ~32s
-"Essa é a tela inicial do LashHub, é o seu 'Estúdio'. Sempre que você abrir o app, essa será a tela que você verá. Nela você tem um resumo de tudo que é importante pra você, como o faturamento do mês, os agendamentos do dia, agendamentos aguardando sua confirmação, entre outras informações. Também estão disponíveis links rápidos para ações do seu dia a dia, como cadastrar um novo agendamento, bloquear um horário, entre outras opções."
+"Essa é a tela inicial do Lash Agenda, é o seu 'Estúdio'. Sempre que você abrir o app, essa será a tela que você verá. Nela você tem um resumo de tudo que é importante pra você, como o faturamento do mês, os agendamentos do dia, agendamentos aguardando sua confirmação, entre outras informações. Também estão disponíveis links rápidos para ações do seu dia a dia, como cadastrar um novo agendamento, bloquear um horário, entre outras opções."
 ⏱️ ~19s
 "Perceba que, ao clicar no botão 'Ajuda', são mostrados quadros de 'dicas' de utilização do sistema, mostrando o que é a funcionalidade e para que serve. Sempre que você tiver alguma dúvida, pode clicar nesse botão. Ele está disponível para todas as telas do sistema."
 ⏱️ ~21s
@@ -87,7 +87,7 @@ Tempo total do bloco: ~34s
 # 10. Encerramento
 (Voltando para a tela inicial ou permanecendo na tela de Configurações)
 ⏱️ ~13s
-"É isso, essa é uma visão geral do Lash Hub, onde mostramos tudo que ele pode te oferecer para facilitar e te ajudar no seu dia a dia."
+"É isso, essa é uma visão geral do Lash Agenda, onde mostramos tudo que ele pode te oferecer para facilitar e te ajudar no seu dia a dia."
 ⏱️ ~10s
 "Na seção de Tutoriais, você pode acessar os vídeos de cada menu de forma individual, onde te mostramos como usar cada uma."
 
@@ -102,35 +102,35 @@ BlocoTelaTempo1Visão geral / abertura~1min26s2Clientes~9s3Serviços~13s4Agendam
 # Vídeo 2A — Instalando o App no Android
 1. Introdução
 ⏱️ ~7s
-"Agora vamos te mostrar como instalar o Lash Hub no seu celular Android, pra você acessar o sistema como se fosse um aplicativo, direto da tela inicial."
+"Agora vamos te mostrar como instalar o Lash Agenda no seu celular Android, pra você acessar o sistema como se fosse um aplicativo, direto da tela inicial."
 2. Instalação pelo banner (primeiro cadastro)
 (Mostrando a tela de onboarding com o banner de instalação)
 ⏱️ ~16s
-"Quando você faz o seu cadastro pela primeira vez, logo abaixo do vídeo de boas-vindas aparece um banner com o botão para instalar o app. Basta clicar nele e confirmar a instalação. Pronto, o Lash Hub já aparece na sua tela inicial, como qualquer outro aplicativo."
+"Quando você faz o seu cadastro pela primeira vez, logo abaixo do vídeo de boas-vindas aparece um banner com o botão para instalar o app. Basta clicar nele e confirmar a instalação. Pronto, o Lash Agenda já aparece na sua tela inicial, como qualquer outro aplicativo."
 3. Instalação manual (caso não tenha instalado na hora)
 (Mostrando o Chrome aberto no sistema, com o menu de três pontinhos)
 ⏱️ ~20s
-"Se você não instalou nesse momento, não tem problema. Você pode instalar depois pelo navegador Chrome. Basta abrir o Lash Hub, clicar nos três pontinhos no canto superior direito, e selecionar a opção 'Instalar aplicativo' ou 'Adicionar à tela inicial'. Confirme, e o app será instalado normalmente."
+"Se você não instalou nesse momento, não tem problema. Você pode instalar depois pelo navegador Chrome. Basta abrir o Lash Agenda, clicar nos três pontinhos no canto superior direito, e selecionar a opção 'Instalar aplicativo' ou 'Adicionar à tela inicial'. Confirme, e o app será instalado normalmente."
 4. Encerramento
 ⏱️ ~7s
-"Pronto! Agora você tem o Lash Hub sempre à mão, direto na tela do seu celular."
+"Pronto! Agora você tem o Lash Agenda sempre à mão, direto na tela do seu celular."
 Tempo total estimado: ~50s
 
 # Vídeo 2B — Instalando o App no iPhone
 1. Introdução
 ⏱️ ~7s
-"Agora vamos te mostrar como instalar o Lash Hub no seu iPhone, pra você acessar o sistema como se fosse um aplicativo, direto da tela inicial."
+"Agora vamos te mostrar como instalar o Lash Agenda no seu iPhone, pra você acessar o sistema como se fosse um aplicativo, direto da tela inicial."
 2. Instalação pelo banner (primeiro cadastro)
 (Mostrando a tela de onboarding com o banner de instalação)
 ⏱️ ~16s
-"Quando você faz o seu cadastro pela primeira vez, logo abaixo do vídeo de boas-vindas aparece um banner com o botão para instalar o app. Basta clicar nele e seguir as instruções na tela. Pronto, o Lash Hub já aparece na tela inicial do seu iPhone, como qualquer outro aplicativo."
+"Quando você faz o seu cadastro pela primeira vez, logo abaixo do vídeo de boas-vindas aparece um banner com o botão para instalar o app. Basta clicar nele e seguir as instruções na tela. Pronto, o Lash Agenda já aparece na tela inicial do seu iPhone, como qualquer outro aplicativo."
 3. Instalação manual (caso não tenha instalado na hora)
 (Mostrando o Safari aberto no sistema, com o botão de compartilhar)
 ⏱️ ~22s
-"Se você não instalou nesse momento, não tem problema. No iPhone, é importante lembrar que a instalação precisa ser feita pelo navegador Safari. Basta abrir o Lash Hub, clicar no ícone de compartilhar, na parte de baixo da tela, e selecionar a opção 'Adicionar à Tela de Início'. Confirme, e o app será instalado normalmente."
+"Se você não instalou nesse momento, não tem problema. No iPhone, é importante lembrar que a instalação precisa ser feita pelo navegador Safari. Basta abrir o Lash Agenda, clicar no ícone de compartilhar, na parte de baixo da tela, e selecionar a opção 'Adicionar à Tela de Início'. Confirme, e o app será instalado normalmente."
 4. Encerramento
 ⏱️ ~7s
-"Pronto! Agora você tem o Lash Hub sempre à mão, direto na tela do seu iPhone."
+"Pronto! Agora você tem o Lash Agenda sempre à mão, direto na tela do seu iPhone."
 Tempo total estimado: ~52s
 
 
@@ -166,7 +166,7 @@ Uma sugestão prática: como essa tela tem harta informação, vale gravar a nav
 1. Introdução
 (Mostrando a tela de Clientes)
 ⏱️ ~6s
-"Agora vamos te mostrar como cadastrar uma nova cliente no Lash Hub."
+"Agora vamos te mostrar como cadastrar uma nova cliente no Lash Agenda."
 2. Abrindo o cadastro
 (Clicando em "Adicionar Cliente")
 ⏱️ ~5s
@@ -260,7 +260,7 @@ Como você ainda não tem o print da tela preenchida com dados reais, esse rotei
 1. Introdução
 (Mostrando a tela de Serviços)
 ⏱️ ~8s
-"Agora vamos te mostrar como cadastrar um serviço no Lash Hub, com todos os seus detalhes."
+"Agora vamos te mostrar como cadastrar um serviço no Lash Agenda, com todos os seus detalhes."
 2. Organizando por categorias
 (Mostrando o botão "Nova Categoria")
 ⏱️ ~10s
@@ -563,13 +563,13 @@ Esse é um vídeo mais denso porque são 6 blocos de dados diferentes — mas ca
 "Se precisar, você também pode cancelar sua assinatura a qualquer momento, clicando em 'Cancelar Assinatura'."
 5. Encerramento
 ⏱️ ~6s
-"Assim, você sempre sabe exatamente qual é a situação do seu plano no Lash Hub."
+"Assim, você sempre sabe exatamente qual é a situação do seu plano no Lash Agenda."
 
 ## Vídeo 15 — Configurando suas Informações
 1. Introdução
 (Mostrando a tela de Configurações)
 ⏱️ ~7s
-"Agora vamos te mostrar como configurar suas informações de perfil no Lash Hub."
+"Agora vamos te mostrar como configurar suas informações de perfil no Lash Agenda."
 2. Foto de perfil
 (Mostrando o avatar "ML" e o botão "Alterar Foto")
 ⏱️ ~8s
@@ -600,7 +600,7 @@ Tempo total estimado: ~1min06s
 1. Introdução
 (Mostrando a seção "Dados do Meu Negócio")
 ⏱️ ~8s
-"Agora vamos te mostrar como configurar as informações do seu negócio dentro do Lash Hub."
+"Agora vamos te mostrar como configurar as informações do seu negócio dentro do Lash Agenda."
 2. Logo do estúdio
 (Mostrando "Logo / Foto do Estúdio" e o botão "Alterar Logo")
 ⏱️ ~8s
@@ -693,7 +693,7 @@ Tempo total estimado: ~59s
 ⏱️ ~14s
 "Pronto! Sua conta foi criada. Por aqui você pode agendar seus horários online, acompanhar seus agendamentos e cancelar quando precisar."
 4. Instalando o app
-(Mostrando o banner "Instale o Lash Hub no seu iPhone")
+(Mostrando o banner "Instale o Lash Agenda no seu iPhone")
 ⏱️ ~14s
 "Uma dica importante: você pode instalar o portal na tela do seu celular, como se fosse um aplicativo. É só tocar em 'Compartilhar' e depois em 'Adicionar à Tela de Início'. Assim, fica muito mais fácil acessar quando quiser."
 5. Conhecendo o catálogo

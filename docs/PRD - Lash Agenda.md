@@ -1,4 +1,4 @@
-# PRD — Lash Hub
+# PRD — Lash Agenda
 **Versão:** 1.0 (v0)
 **Data:** Junho 2026
 **Status:** MVP Concluído
@@ -7,7 +7,7 @@
 
 ## 1. Visão Geral do Produto
 
-**Lash Hub** é um SaaS (Software as a Service) de gestão e agendamento online voltado para profissionais autônomas de cílios e estética (lash designers, designers de sobrancelhas, etc.). A plataforma elimina a dependência do WhatsApp para marcação de horários, oferecendo à profissional um painel administrativo completo e às clientes um portal de autoatendimento exclusivo do estúdio.
+**Lash Agenda** é um SaaS (Software as a Service) de gestão e agendamento online voltado para profissionais autônomas de cílios e estética (lash designers, designers de sobrancelhas, etc.). A plataforma elimina a dependência do WhatsApp para marcação de horários, oferecendo à profissional um painel administrativo completo e às clientes um portal de autoatendimento exclusivo do estúdio.
 
 ### Proposta de Valor
 
@@ -154,7 +154,7 @@ Cada estabelecimento tem seus dados completamente isolados via `estabelecimento_
 - Alteração de senha
 
 #### Autenticação do Portal
-- Tela de login com identidade visual da plataforma (Lash Hub)
+- Tela de login com identidade visual da plataforma (Lash Agenda)
 - Cadastro com validação de e-mail único + rollback em falha
 - Navegação simplificada no Plano Básico (só Catálogo, sem login)
 

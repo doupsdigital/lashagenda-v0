@@ -23,7 +23,7 @@ const STEPS: Record<OnboardingPageKey, DriveStep[]> = {
   meu_estudio: [
     {
       popover: {
-        title: 'Bem-vinda ao Lash Hub! 👋',
+        title: 'Bem-vinda ao Lash Agenda! 👋',
         description: 'Vamos te mostrar rapidinho como o sistema funciona. São só alguns passos e você já estará pronta para usar tudo. Pode pular a qualquer momento.',
         side: 'over' as any, align: 'center',
       },
@@ -94,7 +94,7 @@ const STEPS: Record<OnboardingPageKey, DriveStep[]> = {
     {
       popover: {
         title: 'Tudo pronto! 🎉',
-        description: 'Você já conhece o essencial do Lash Hub. Agora é só começar a usar. Qualquer dúvida, clique em Ajuda em qualquer tela.',
+        description: 'Você já conhece o essencial do Lash Agenda. Agora é só começar a usar. Qualquer dúvida, clique em Ajuda em qualquer tela.',
         side: 'over' as any, align: 'center',
       },
     },

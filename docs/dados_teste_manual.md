@@ -1,6 +1,6 @@
 # Massa de Dados Fictícios para Testes Manuais
 
-Este documento contém uma lista estruturada de dados fictícios para apoiar testes manuais no **LashHub**. Foram gerados dados para **5 profissionais (estúdios)** e **10 clientes exclusivas para cada uma**, totalizando 50 registros de clientes.
+Este documento contém uma lista estruturada de dados fictícios para apoiar testes manuais no **Lash Agenda**. Foram gerados dados para **5 profissionais (estúdios)** e **10 clientes exclusivas para cada uma**, totalizando 50 registros de clientes.
 
 Os dados contemplam todos os campos do sistema: **Nome, Sobrenome, WhatsApp, E-mail, CPF, Endereço, Data de Nascimento** e observações voltadas para a **Ficha de Anamnese**.
 
