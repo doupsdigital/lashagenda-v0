@@ -5,6 +5,9 @@ import Header from './Header';
 import TabBar from './TabBar';
 import TrialBanner from '../common/TrialBanner';
 import FloatingHelpButton from '../common/FloatingHelpButton';
+import TrialWhatsAppButton from '../common/TrialWhatsAppButton';
+import { useSubscription } from '../../hooks/useSubscription';
+import { useInstallPrompt } from '../../contexts/InstallPromptContext';
 import { Sparkles } from 'lucide-react';
 
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -18,6 +21,9 @@ const iosRepaint = () => {
 
 export default function Layout() {
   const location = useLocation();
+  const { status } = useSubscription();
+  const isTrial = status === 'trial';
+  const { bannerVisible: installBannerVisible } = useInstallPrompt();
   const [collapsed, setCollapsed] = useState<boolean>(() => {
     const saved = localStorage.getItem('rosae-sidebar-collapsed');
     return saved ? JSON.parse(saved) : false;
@@ -88,7 +94,10 @@ export default function Layout() {
       <TabBar />
 
       {/* Botão de ajuda flutuante */}
-      <FloatingHelpButton />
+      <FloatingHelpButton whatsAppVisible={isTrial} installBannerVisible={installBannerVisible} />
+
+      {/* Botão flutuante de WhatsApp — somente durante o período de trial */}
+      {isTrial && <TrialWhatsAppButton installBannerVisible={installBannerVisible} />}
     </div>
   );
 }

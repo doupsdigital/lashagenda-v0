@@ -23,6 +23,7 @@ import { FEATURES } from '../../config/features';
 import { supabase } from '../../lib/supabase';
 import { useSubscription } from '../../hooks/useSubscription';
 import UpgradeModal from '../common/UpgradeModal';
+import SupportModal from '../common/SupportModal';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -39,6 +40,7 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
   
   const { hasFeature, isPremium } = useSubscription();
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
 
   useEffect(() => {
     if (!estabelecimentoId) return;
@@ -121,9 +123,7 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
 
   const handleSupportClick = () => {
     setMobileOpen(false);
-    const message = 'Olá, preciso de ajuda.';
-    const url = `https://wa.me/5562991083435?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
+    setIsSupportModalOpen(true);
   };
 
   const renderNavItems = (items: NavItem[]) => {
@@ -310,6 +310,11 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
       {/* Upgrade Modal */}
       {isUpgradeModalOpen && (
         <UpgradeModal onClose={() => { setIsUpgradeModalOpen(false); setMobileOpen(false); }} />
+      )}
+
+      {/* Support Modal */}
+      {isSupportModalOpen && (
+        <SupportModal onClose={() => setIsSupportModalOpen(false)} />
       )}
     </>
   );

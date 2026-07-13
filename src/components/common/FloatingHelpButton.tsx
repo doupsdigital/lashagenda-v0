@@ -14,17 +14,27 @@ function getPageKey(pathname: string): OnboardingPageKey | null {
   return null;
 }
 
-function HelpButtonInner({ pageKey }: { pageKey: OnboardingPageKey }) {
+interface HelpButtonInnerProps {
+  pageKey: OnboardingPageKey;
+  whatsAppVisible?: boolean;
+  installBannerVisible?: boolean;
+}
+
+function HelpButtonInner({ pageKey, whatsAppVisible, installBannerVisible }: HelpButtonInnerProps) {
   const { startTour } = useOnboarding(pageKey);
+  const isDesktop = window.matchMedia('(min-width: 768px)').matches;
+  // Empilha os deslocamentos: abre espaço para o botão de WhatsApp do trial
+  // e, por cima disso, para o banner de instalação do app quando ambos aparecem.
+  let rem = isDesktop ? 1.5 : 5;
+  if (whatsAppVisible) rem += isDesktop ? 4.5 : 4;
+  if (installBannerVisible) rem += 5;
+  const bottom = `calc(${rem}rem + env(safe-area-inset-bottom, 0px))`;
   return (
     <button
       onClick={startTour}
       title="Ajuda — ver tutorial desta tela"
       className="fixed right-4 z-50 flex items-center gap-1.5 px-3 py-2 bg-white border border-border rounded-full shadow-md text-text-secondary hover:text-rose-600 hover:border-rose-300 text-xs font-medium transition-all hover:shadow-lg cursor-pointer"
-      style={{ bottom: window.matchMedia('(min-width: 768px)').matches
-        ? '1.5rem'
-        : 'calc(5rem + env(safe-area-inset-bottom, 0px))'
-      }}
+      style={{ bottom }}
     >
       <HelpCircle className="w-4 h-4" />
       <span>Ajuda</span>
@@ -32,9 +42,14 @@ function HelpButtonInner({ pageKey }: { pageKey: OnboardingPageKey }) {
   );
 }
 
-export default function FloatingHelpButton() {
+interface FloatingHelpButtonProps {
+  whatsAppVisible?: boolean;
+  installBannerVisible?: boolean;
+}
+
+export default function FloatingHelpButton({ whatsAppVisible, installBannerVisible }: FloatingHelpButtonProps) {
   const { pathname } = useLocation();
   const pageKey = getPageKey(pathname);
   if (!pageKey) return null;
-  return <HelpButtonInner pageKey={pageKey} />;
+  return <HelpButtonInner pageKey={pageKey} whatsAppVisible={whatsAppVisible} installBannerVisible={installBannerVisible} />;
 }

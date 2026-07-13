@@ -35,10 +35,17 @@ interface InstallBannerProps {
 }
 
 export default function InstallBanner({ inline = false, onVisibilityChange }: InstallBannerProps) {
-  const { deferredPrompt, triggerInstall } = useInstallPrompt();
+  const { deferredPrompt, triggerInstall, setBannerVisible } = useInstallPrompt();
   const [visible, setVisible] = useState(false);
   const [device, setDevice] = useState<DeviceType>(null);
   const [installState, setInstallState] = useState<'idle' | 'installing' | 'installed'>('idle');
+
+  // Reporta a visibilidade do banner flutuante para o contexto global,
+  // para que layouts fixos (botões de Ajuda/WhatsApp) possam abrir espaço para ele.
+  const notifyVisibility = (isVisible: boolean) => {
+    onVisibilityChange?.(isVisible);
+    if (!inline) setBannerVisible(isVisible);
+  };
 
   useEffect(() => {
     if (isAlreadyInstalled()) return;
@@ -54,11 +61,11 @@ export default function InstallBanner({ inline = false, onVisibilityChange }: In
     if (detected !== 'other') {
       setDevice(detected);
       setVisible(true);
-      onVisibilityChange?.(true);
+      notifyVisibility(true);
     }
 
     // Cleanup: notifica o pai quando o componente desmonta (ex: navegação para login)
-    return () => { onVisibilityChange?.(false); };
+    return () => { notifyVisibility(false); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const dismiss = () => {
@@ -69,7 +76,7 @@ export default function InstallBanner({ inline = false, onVisibilityChange }: In
       localStorage.setItem(STORAGE_KEY, String(until));
     }
     setVisible(false);
-    onVisibilityChange?.(false);
+    notifyVisibility(false);
   };
 
   useEffect(() => {
@@ -89,7 +96,7 @@ export default function InstallBanner({ inline = false, onVisibilityChange }: In
     } else {
       // Usuário cancelou o diálogo nativo — esconde só nesta sessão (sem snooze)
       setVisible(false);
-      onVisibilityChange?.(false);
+      notifyVisibility(false);
     }
   };
 

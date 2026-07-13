@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useSubscription } from '../../hooks/useSubscription';
@@ -22,6 +23,8 @@ import {
   Check,
   Crown,
   ArrowRight,
+  Info,
+  X,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -71,6 +74,7 @@ export default function Dashboard() {
   const [heroLoading, setHeroLoading] = useState(true);
 
   const [linkCopied, setLinkCopied] = useState(false);
+  const [isStatusInfoOpen, setIsStatusInfoOpen] = useState(false);
 
   const firstName = profile?.nome?.split(' ')[0] || '';
 
@@ -200,10 +204,19 @@ export default function Dashboard() {
   const proximosClientesCard = (
     <div className="bg-white border border-border rounded-2xl p-5 shadow-sm flex flex-col">
       <div className="flex items-center justify-between gap-2 mb-4 flex-shrink-0">
-        <h2 className="font-sans font-semibold text-base text-text-primary flex items-center gap-2">
-          <CalendarDays className="w-4 h-4 text-rose-600" />
-          Próximas clientes
-        </h2>
+        <div className="flex items-center gap-1.5">
+          <h2 className="font-sans font-semibold text-base text-text-primary flex items-center gap-2">
+            <CalendarDays className="w-4 h-4 text-rose-600" />
+            Próximas clientes
+          </h2>
+          <button
+            onClick={() => setIsStatusInfoOpen(true)}
+            title="Como ler os status"
+            className="w-5 h-5 rounded-full bg-bg text-text-muted hover:text-rose-600 hover:bg-rose-100 flex items-center justify-center transition-colors cursor-pointer flex-shrink-0"
+          >
+            <Info className="w-3.5 h-3.5" />
+          </button>
+        </div>
         <button
           onClick={() => navigate('/agendamentos')}
           className="flex items-center gap-1 text-xs font-semibold text-rose-600 hover:text-rose-800 transition-colors cursor-pointer shrink-0"
@@ -480,6 +493,54 @@ export default function Dashboard() {
         </div>
       ) : (
         proximosClientesCard
+      )}
+
+      {isStatusInfoOpen && createPortal(
+        <div
+          className="fixed inset-0 bg-black/45 backdrop-blur-sm z-[300] flex items-center justify-center p-4 overflow-y-auto animate-fade-in"
+          onClick={() => setIsStatusInfoOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-[20px] border border-border shadow-2xl w-full max-w-md p-6 md:p-7 relative animate-slide-up"
+          >
+            <button
+              onClick={() => setIsStatusInfoOpen(false)}
+              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-bg text-text-secondary hover:text-rose-600 flex items-center justify-center transition-colors cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <span className="text-[10px] font-bold tracking-widest text-rose-600 uppercase">
+              Como ler os status
+            </span>
+            <h3 className="font-title font-bold text-2xl text-text-primary mt-1 mb-5 pr-10">
+              Próximas clientes
+            </h3>
+
+            <div className="space-y-3.5 text-sm">
+              <p className="text-text-secondary">
+                <span className="font-semibold text-text-primary">Confirmado:</span> o horário está garantido — a aprovação automática está ativa ou você já aprovou manualmente.
+              </p>
+              <p className="text-text-secondary">
+                <span className="font-semibold text-text-primary">Aguardando:</span> a cliente agendou pelo portal e o horário depende da sua aprovação (aparece quando a aprovação manual está ativa em Configurações).
+              </p>
+              <p className="text-text-secondary">
+                <span className="font-semibold text-text-primary">Concluído:</span> o atendimento já foi realizado e o valor entrou no seu faturamento.
+              </p>
+              <p className="text-text-secondary">
+                <span className="font-semibold text-text-primary">Falta:</span> a cliente não compareceu e o não comparecimento ficou registrado no histórico dela.
+              </p>
+            </div>
+
+            <div className="mt-5 p-4 rounded-2xl bg-rose-50/60 border border-rose-100/60">
+              <p className="text-xs text-rose-900 leading-relaxed">
+                Por padrão, o agendamento entra como <span className="font-semibold">Confirmado</span>. Se você ativar aprovação manual em Configurações, ele entra como <span className="font-semibold">Aguardando</span> até você aprovar ou recusar.
+              </p>
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
 
     </div>
