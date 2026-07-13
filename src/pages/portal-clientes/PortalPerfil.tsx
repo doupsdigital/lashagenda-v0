@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { User, Phone, Mail, Lock, ShieldAlert, Loader2, CheckCircle2, AlertCircle, Camera, Trash2 } from 'lucide-react';
+import { User, Phone, Mail, ShieldAlert, Loader2, CheckCircle2, AlertCircle, Camera, Trash2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import InstallAppCard from '../../components/common/InstallAppCard';
@@ -43,12 +43,6 @@ export default function PortalPerfil() {
   const [loadingDados, setLoadingDados] = useState(true);
   const [salvandoDados, setSalvandoDados] = useState(false);
   const [erroDados, setErroDados] = useState<string | null>(null);
-
-  // Seção 2: Alterar Senha
-  const [novaSenha, setNovaSenha] = useState('');
-  const [confirmarSenha, setConfirmarSenha] = useState('');
-  const [salvandoSenha, setSalvandoSenha] = useState(false);
-  const [erroSenha, setErroSenha] = useState<string | null>(null);
 
   useEffect(() => {
     if (!clienteId) return;
@@ -168,8 +162,9 @@ export default function PortalPerfil() {
       return;
     }
 
-    if (!email.trim() || !email.includes('@')) {
-      setErroDados('Digite um e-mail válido.');
+    const novoEmail = email.trim().toLowerCase();
+    if (novoEmail && !novoEmail.includes('@')) {
+      setErroDados('Digite um e-mail válido, ou deixe em branco.');
       return;
     }
 
@@ -177,14 +172,14 @@ export default function PortalPerfil() {
     setErroDados(null);
 
     try {
-      // 1. UPDATE em clientes
+      // 1. UPDATE em clientes (e-mail é opcional aqui)
       const { data: updatedData, error: updateCliError } = await supabase
         .from('clientes')
         .update({
           nome: nome.trim(),
           sobrenome: sobrenome.trim(),
           whatsapp: whatsappLimpo,
-          email: email.trim().toLowerCase(),
+          email: novoEmail || null,
         })
         .eq('id', clienteId)
         .select();
@@ -195,23 +190,24 @@ export default function PortalPerfil() {
         throw new Error('Não foi possível salvar as alterações. RLS (Row Level Security) bloqueou a atualização no banco de dados.');
       }
 
-      // 1.5. UPDATE em usuarios (para manter nome e e-mail sincronizados no login/perfil)
+      // 1.5. UPDATE em usuarios — nome sempre; e-mail só quando informado, pois
+      // a coluna usuarios.email é obrigatória (contas de convidada usam um
+      // e-mail sintético interno que não deve ser apagado).
+      const usuariosUpdate: { nome: string; email?: string } = {
+        nome: `${nome.trim()} ${sobrenome.trim()}`,
+      };
+      if (novoEmail) usuariosUpdate.email = novoEmail;
+
       const { error: updateUsrError } = await supabase
         .from('usuarios')
-        .update({
-          nome: `${nome.trim()} ${sobrenome.trim()}`,
-          email: email.trim().toLowerCase(),
-        })
+        .update(usuariosUpdate)
         .eq('id', user.id);
 
       if (updateUsrError) throw updateUsrError;
 
-
-
-      // 2. Se o e-mail mudou, atualizar Supabase Auth
+      // 2. Se um e-mail foi informado e mudou, atualiza também no Supabase Auth
       let mudouEmail = false;
-      const novoEmail = email.trim().toLowerCase();
-      if (novoEmail !== originalEmail.trim().toLowerCase()) {
+      if (novoEmail && novoEmail !== originalEmail.trim().toLowerCase()) {
         const { error: authError } = await supabase.auth.updateUser({ email: novoEmail });
         if (authError) throw authError;
         mudouEmail = true;
@@ -234,38 +230,6 @@ export default function PortalPerfil() {
       setErroDados(err.message || 'Erro ao salvar os dados.');
     } finally {
       setSalvandoDados(false);
-    }
-  };
-
-  // Salvar Nova Senha
-  const handleSalvarSenha = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (novaSenha.length < 6) {
-      setErroSenha('A senha deve ter no mínimo 6 caracteres.');
-      return;
-    }
-
-    if (novaSenha !== confirmarSenha) {
-      setErroSenha('As senhas digitadas são diferentes.');
-      return;
-    }
-
-    setSalvandoSenha(true);
-    setErroSenha(null);
-
-    try {
-      const { error } = await supabase.auth.updateUser({ password: novaSenha });
-      if (error) throw error;
-
-      setNovaSenha('');
-      setConfirmarSenha('');
-      setSuccessModal({ isOpen: true, title: 'Senha alterada!', message: 'Sua senha foi atualizada com sucesso.' });
-    } catch (err: any) {
-      console.error('Erro ao alterar senha:', err);
-      setErroSenha(err.message || 'Erro ao alterar a senha.');
-    } finally {
-      setSalvandoSenha(false);
     }
   };
 
@@ -438,7 +402,7 @@ export default function PortalPerfil() {
 
             <div className="space-y-1.5">
               <label htmlFor="email" className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
-                E-mail <span className="text-rose-600">*</span>
+                E-mail <span className="font-normal normal-case text-text-muted">(opcional)</span>
               </label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
@@ -448,7 +412,6 @@ export default function PortalPerfil() {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="seuemail@exemplo.com"
-                  required
                   className="w-full pl-10 pr-3.5 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
                 />
               </div>
@@ -465,67 +428,6 @@ export default function PortalPerfil() {
                 <><Loader2 className="w-4 h-4 animate-spin" /> Salvando...</>
               ) : (
                 'Salvar Alterações'
-              )}
-            </button>
-          </div>
-        </form>
-      </section>
-
-      {/* SEÇÃO 2: ALTERAR SENHA */}
-      <section id="ob-portal-senha" className="bg-white border border-border rounded-2xl shadow-sm overflow-hidden">
-        <div className="bg-rose-50/20 px-6 py-4 border-b border-border flex items-center gap-2">
-          <Lock className="w-5 h-5 text-rose-600 shrink-0" />
-          <h2 className="font-title font-semibold text-xl text-text-primary">Alterar Senha</h2>
-        </div>
-
-        <form onSubmit={handleSalvarSenha} className="p-6 space-y-5">
-          {erroSenha && (
-            <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-800">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              {erroSenha}
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label htmlFor="novaSenha" className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
-                Nova Senha
-              </label>
-              <input
-                id="novaSenha"
-                type="password"
-                value={novaSenha}
-                onChange={e => setNovaSenha(e.target.value)}
-                placeholder="Mínimo 6 caracteres"
-                className="w-full px-3.5 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <label htmlFor="confirmarSenha" className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
-                Confirmar Nova Senha
-              </label>
-              <input
-                id="confirmarSenha"
-                type="password"
-                value={confirmarSenha}
-                onChange={e => setConfirmarSenha(e.target.value)}
-                placeholder="Repita a nova senha"
-                className="w-full px-3.5 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end pt-2">
-            <button
-              type="submit"
-              disabled={salvandoSenha}
-              className="px-5 py-2.5 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-1.5 cursor-pointer w-full sm:w-auto"
-            >
-              {salvandoSenha ? (
-                <><Loader2 className="w-4 h-4 animate-spin" /> Alterando...</>
-              ) : (
-                'Alterar Senha'
               )}
             </button>
           </div>

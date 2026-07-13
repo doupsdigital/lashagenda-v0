@@ -197,7 +197,6 @@ export default function PortalAgendar() {
   const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null);
 
   // ── Step 4 ──────────────────────────────────────────────────────────────────
-  const [observacoes, setObservacoes] = useState('');
   const [salvando, setSalvando] = useState(false);
   const [erroSalvar, setErroSalvar] = useState<'generic' | 'race' | 'perm' | null>(null);
   const [nomeConvidado, setNomeConvidado] = useState('');
@@ -457,7 +456,7 @@ export default function PortalAgendar() {
           duracao_minutos: duracaoTotal,
           status: aprovAuto ? 'confirmado' : 'pendente',
           origem: 'portal',
-          observacoes: observacoes.trim() || null,
+          observacoes: null,
           valor_cobrado: valorTotal,
         });
 
@@ -996,21 +995,6 @@ export default function PortalAgendar() {
               </div>
             </div>
           )}
-
-          {/* Observações */}
-          <div className="bg-white border border-border rounded-2xl p-5 space-y-3">
-            <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
-              Observações{' '}
-              <span className="font-normal normal-case text-text-muted">(opcional)</span>
-            </label>
-            <textarea
-              rows={3}
-              value={observacoes}
-              onChange={e => setObservacoes(e.target.value)}
-              placeholder="Alguma informação adicional para a profissional?"
-              className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted resize-none"
-            />
-          </div>
 
           {erroSalvar && erroSalvar !== 'race' && (
             <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-800">

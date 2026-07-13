@@ -21,8 +21,6 @@ import PortalCatalogo from './pages/portal-clientes/PortalCatalogo';
 import PortalAgendar from './pages/portal-clientes/PortalAgendar';
 import PortalMeusAgendamentos from './pages/portal-clientes/PortalMeusAgendamentos';
 import PortalPerfil from './pages/portal-clientes/PortalPerfil';
-import CadastroCliente from './pages/portal-clientes/CadastroCliente';
-import PortalLogin from './pages/portal-clientes/PortalLogin';
 import { PortalProvider } from './contexts/PortalContext';
 import RecuperarSenha from './pages/profissional/RecuperarSenha';
 import RedefinirSenha from './pages/profissional/RedefinirSenha';
@@ -154,12 +152,10 @@ export default function App() {
             >
               <Route index element={<Navigate to="catalogo" replace />} />
               <Route path="catalogo" element={<PortalCatalogo />} />
-              <Route path="login" element={<PortalLogin />} />
-              <Route path="cadastro" element={<CadastroCliente />} />
 
-              {/* Pública: permite agendar como convidada (nome + WhatsApp) sem login prévio.
-                  Se já houver sessão (conta completa ou de uma reserva anterior como convidada),
-                  o próprio PortalAgendar usa os dados da sessão em vez de pedir os campos de novo. */}
+              {/* Pública: agendamento como convidada (nome + WhatsApp), sem conta/senha.
+                  Se já houver sessão de uma reserva anterior, o próprio PortalAgendar usa
+                  os dados da sessão em vez de pedir os campos de novo. */}
               <Route path="agendar" element={<PortalAgendar />} />
 
               {/* Rotas protegidas do cliente */}

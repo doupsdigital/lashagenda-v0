@@ -20,7 +20,9 @@ export default function ClienteRoute({ children }: { children: React.ReactNode }
     );
   }
 
-  if (!user || !isCliente) return <Navigate to={slug ? `/portal/${slug}/login` : '/login'} replace />;
+  // Sem login de cliente no portal: quem ainda não tem sessão (nenhuma reserva
+  // como convidada nesta sessão) é levado para o agendamento, não para uma tela de login.
+  if (!user || !isCliente) return <Navigate to={slug ? `/portal/${slug}/agendar` : '/login'} replace />;
 
   return <>{children}</>;
 }

@@ -1,4 +1,4 @@
-import { Link, NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { BookOpen, Calendar, ClipboardList, User, LogOut, MessageCircle, LayoutDashboard } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -11,14 +11,13 @@ export default function PortalLayout() {
   const location = useLocation();
   const { user, profile, isProfissional, signOut } = useAuth();
   const { nomeNegocio, logoUrl, slug, loading, nomeProfissional, telefoneProfissional, descricao, instagram, endereco } = usePortal();
-  const isAuthPage = location.pathname.endsWith('/login') || location.pathname.endsWith('/cadastro');
   const isAgendar = location.pathname.endsWith('/agendar');
 
   const [installBannerVisible, setInstallBannerVisible] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
-    navigate(slug ? `/portal/${slug}/login` : '/login', { replace: true });
+    navigate(`/portal/${slug}/catalogo`, { replace: true });
   };
 
   const clientName = profile?.nome?.split(' ')[0] || 'Cliente';
@@ -81,25 +80,16 @@ export default function PortalLayout() {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Profissional visualizando o próprio portal: botão de retorno + Entrar como cliente */}
+          {/* Profissional visualizando o próprio portal: botão de retorno ao painel */}
           {isProfissional ? (
-            <>
-              <Link
-                to={`/portal/${slug}/login`}
-                className="flex items-center gap-1 px-2.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-rose-600 border border-rose-300 hover:bg-rose-50 rounded-xl transition-all cursor-pointer whitespace-nowrap"
-              >
-                <span className="hidden sm:inline">Entrar como</span>
-                <span>Cliente</span>
-              </Link>
-              <button
-                onClick={() => navigate('/meu-estudio')}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-white bg-rose-600 hover:bg-rose-800 rounded-xl transition-all shadow-md cursor-pointer whitespace-nowrap"
-              >
-                <LayoutDashboard className="w-4 h-4" />
-                <span>Painel</span>
-              </button>
-            </>
-          ) : !isAuthPage && (user ? (
+            <button
+              onClick={() => navigate('/meu-estudio')}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-white bg-rose-600 hover:bg-rose-800 rounded-xl transition-all shadow-md cursor-pointer whitespace-nowrap"
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              <span>Painel</span>
+            </button>
+          ) : user && (
             <>
               {profile?.avatar_url ? (
                 <img
@@ -123,80 +113,68 @@ export default function PortalLayout() {
                 <span className="hidden sm:block">Sair</span>
               </button>
             </>
-          ) : (
-            <Link
-              id="ob-portal-entrar"
-              to={`/portal/${slug}/login`}
-              className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-rose-600 hover:bg-rose-800 rounded-xl transition-all shadow-md cursor-pointer"
-            >
-              Entrar
-            </Link>
-          ))}
+          )}
         </div>
       </header>
 
       {/* Horizontal nav (desktop) */}
-      {!isAuthPage && (
-        <nav className="hidden md:flex bg-white border-b border-border px-6 gap-1">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) =>
-                `px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 -mb-px ${
-                  isActive
-                    ? 'border-rose-600 text-rose-600'
-                    : 'border-transparent text-text-secondary hover:text-rose-600 hover:border-rose-200'
-                }`
-              }
-            >
-              {item.name}
-            </NavLink>
-          ))}
-        </nav>
-      )}
+      <nav className="hidden md:flex bg-white border-b border-border px-6 gap-1">
+        {navItems.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            className={({ isActive }) =>
+              `px-4 py-3 text-sm font-medium transition-all duration-200 border-b-2 -mb-px ${
+                isActive
+                  ? 'border-rose-600 text-rose-600'
+                  : 'border-transparent text-text-secondary hover:text-rose-600 hover:border-rose-200'
+              }`
+            }
+          >
+            {item.name}
+          </NavLink>
+        ))}
+      </nav>
 
       {/* Content */}
       <main className="flex-1 p-4 md:p-8 md:pb-8 max-w-[1200px] w-full mx-auto" style={{ paddingBottom: 'calc(1rem + 60px + env(safe-area-inset-bottom, 0px))' }}>
         <Outlet />
       </main>
 
-      {!isAuthPage && user && <InstallBanner onVisibilityChange={setInstallBannerVisible} />}
+      {user && <InstallBanner onVisibilityChange={setInstallBannerVisible} />}
 
       {/* Bottom nav (mobile) */}
-      {!isAuthPage && (
-        <nav
-          id="ob-portal-nav"
-          className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-border z-30"
-          style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-        >
-          <div className="flex items-stretch h-[60px]">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className={({ isActive }) =>
-                    `flex-1 flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-colors ${
-                      isActive ? 'text-rose-600' : 'text-text-muted hover:text-rose-400'
-                    }`
-                  }
-                >
-                  <Icon className="w-5 h-5" />
-                  <span>{item.shortName}</span>
-                </NavLink>
-              );
-            })}
-          </div>
-        </nav>
-      )}
+      <nav
+        id="ob-portal-nav"
+        className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-border z-30"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      >
+        <div className="flex items-stretch h-[60px]">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) =>
+                  `flex-1 flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-colors ${
+                    isActive ? 'text-rose-600' : 'text-text-muted hover:text-rose-400'
+                  }`
+                }
+              >
+                <Icon className="w-5 h-5" />
+                <span>{item.shortName}</span>
+              </NavLink>
+            );
+          })}
+        </div>
+      </nav>
 
       {/* Botão de ajuda flutuante do portal */}
-      {!isAuthPage && <PortalFloatingHelpButton bannerVisible={installBannerVisible} />}
+      <PortalFloatingHelpButton bannerVisible={installBannerVisible} />
 
       {/* Botão flutuante de WhatsApp */}
-      {!isAuthPage && !isAgendar && telefoneProfissional && (
+      {!isAgendar && telefoneProfissional && (
         <a
           href={`https://wa.me/55${telefoneProfissional.replace(/\D/g, '')}?text=${encodeURIComponent('Olá! Vi seu catálogo e gostaria de mais informações.')}`}
           target="_blank"
