@@ -94,8 +94,8 @@ Mudança visual/textual isolada, ainda sem tocar em `useSubscription`/gating. As
 - [x] `src/pages/profissional/Faturamento.tsx` — renomeado "Plano Básico (CRM)" → **"Plano Agenda"** (ícone trocado de `Users` para `Calendar`), "Plano Premium (Agenda)" → **"Plano Premium"**; preços atualizados: R$ 59,90 (Agenda) e R$ 89,90 (Premium, era 99,90); benefícios de cada card reescritos refletindo a nova divisão (Agenda = agendamento + cadastro básico; Premium = tudo + relatórios/anamnese/histórico); rótulos "Básico"/"Premium" no painel de status e nas telas de checkout/sucesso também atualizados
 - [x] `supabase/functions/asaas-checkout/index.ts:79-80` — `valor` do premium alterado de `99.90` para `89.90`; `descricao` atualizada para `Lash Agenda — Plano Agenda` / `Lash Agenda — Plano Premium`
 - [x] `src/components/layout/Layout.tsx` — texto do toast de boas-vindas pós-checkout ("Plano Básico ativo!" → "Plano Agenda ativo!") — adicional encontrado durante a execução, não estava listado originalmente
-- [ ] ~~Redeploy da Edge Function~~ — **adiado de propósito.** Decisão do usuário (2026-07-10): não redeployar Edge Functions a cada etapa; isso fica para o final do projeto, quando o sistema inteiro já estiver ajustado. Ver checklist consolidado em **"Lembretes — Deploy final de Edge Functions"** no fim deste documento.
-- [ ] ~~Teste manual de checkout Pix~~ — depende do redeploy acima, também adiado para o final.
+- [x] ~~Redeploy da Edge Function~~ — feito no deploy final (ver checklist consolidado em **"Lembretes — Deploy final de Edge Functions"**).
+- [x] ~~Teste manual de checkout Pix~~ — feito no deploy final, com valores reduzidos de teste (R$ 5 / R$ 10) direto no Asaas em produção; confirmado funcionando.
 
 > **Nota:** como confirmado, não há assinantes reais hoje, então não existe assinatura antiga em valor divergente para se preocupar. Até o redeploy final, o código local já está correto (R$ 89,90), mas a Edge Function rodando ao vivo no Supabase ainda cobra o valor antigo (R$ 99,90) — sem risco, pois não há cobranças reais em andamento.
 
@@ -113,7 +113,7 @@ Esta é a fase que efetivamente muda quem vê o quê. Fazer com atenção e test
 - [x] `src/components/layout/Sidebar.tsx` e `src/components/layout/TabBar.tsx` — removida toda a lógica de cadeado/`UpgradeModal` disparado por clique; Sidebar agora filtra os itens de menu (Relatórios exige `feature: 'crm'`, some do menu para quem é básico em vez de aparecer bloqueado); TabBar simplificado (não tinha nenhum item exigindo `crm`, então perdeu toda a lógica de bloqueio)
 - [x] `src/components/common/BillingGuard.tsx` — lista de benefícios do Premium atualizada para citar Relatórios/Histórico/Anamnese em vez de "Portal de agendamento" e "histórico financeiro"
 - [x] `src/components/common/UpgradeModal.tsx` — pitch reescrito para CRM/Relatórios/Análises (o gatilho visual que abria esse modal foi removido nesta fase junto com os cadeados; ele volta a ser usado na Fase 6, com um ponto de entrada novo)
-- [ ] Teste manual completo — **fazer antes de aprovar o commit**, ver instruções no chat
+- [x] Teste manual completo — validado navegando com uma conta no plano Agenda e outra no Premium (feito ao longo das fases seguintes)
 
 ---
 
@@ -183,8 +183,12 @@ Depois de testar, o usuário decidiu inverter o que tinha sido feito antes: em v
 
 **Decisão do usuário (2026-07-10):** não fazer redeploy de Edge Functions do Supabase a cada etapa deste plano. O código-fonte é ajustado normalmente a cada fase (e commitado), mas o redeploy real no Supabase (que exige `supabase login` com credenciais do usuário) fica concentrado para **o final**, quando todo o sistema já estiver ajustado. Até lá, a versão rodando ao vivo no Supabase continua com o comportamento antigo — sem risco, pois não há assinantes reais hoje.
 
-Checklist a executar no final (revisar e marcar conforme cada Edge Function for de fato alterada ao longo das fases):
-- [ ] `asaas-checkout` — valor do Premium (R$ 89,90) e descrição ("Lash Agenda — Plano ...") — alterado na Fase 2
-- [ ] Conferir se alguma outra Edge Function foi tocada nas Fases 3-8 e incluir aqui antes do deploy final
-- [ ] Rodar `npx supabase functions deploy <nome-da-funcao>` para cada uma
-- [ ] Teste manual pós-deploy: gerar um checkout Pix de cada plano em ambiente de teste do Asaas e conferir o valor cobrado
+Checklist executado (revisão feita função por função, uma de cada vez, no chat):
+- [x] `asaas-checkout` — valor do Premium (R$ 89,90) e descrição ("Lash Agenda — Plano ...") — alterado na Fase 2, redeploy feito
+- [x] `asaas-check-payment` — **encontrado na revisão final**: threshold de detecção de plano (`valor >= 90`) estava desatualizado por causa do preço novo do Premium (R$ 89,90 < 90) e classificava pagamento Premium como `basico`; corrigido para `>= 75`, redeploy feito
+- [x] `asaas-webhook` — mesmo bug e mesma correção do `asaas-check-payment` (esta é a função principal, o check-payment é só fallback); redeploy feito
+- [x] `asaas-cancel` — revisada, sem alteração necessária (não tem branding nem valores)
+- [x] `notify-new-professional` — revisada, sem alteração necessária
+- [x] `send-push` — revisada; único resquício encontrado foi o e-mail de fallback do `VAPID_SUBJECT` (`lashhubapp@gmail.com`), mantido de propósito por decisão do usuário (é só um fallback técnico, provavelmente nunca usado)
+- [x] Rodado `npx supabase functions deploy <nome-da-funcao>` para as 3 funções alteradas
+- [x] Teste manual pós-deploy: checkout Pix com valores reduzidos de teste (Agenda R$ 5 / Premium R$ 10) direto em produção no Asaas, threshold do webhook ajustado temporariamente (`>= 7.5`) durante o teste e revertido depois; confirmado funcionando para os dois planos

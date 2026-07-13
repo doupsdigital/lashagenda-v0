@@ -90,7 +90,7 @@ const testimonials = [
 
 const faqs = [
   { q: 'Minha cliente precisa baixar algum app?', a: 'Não. Ela acessa o link do seu estúdio e, se quiser, salva na tela inicial do celular como ícone. Funciona igualzinho a um app, mas sem precisar ir em nenhuma loja.' },
-  { q: 'O Lash Hub cobra taxa em cima de cada atendimento?', a: 'Não. O valor de cada procedimento é 100% seu. Você paga apenas a mensalidade fixa do plano.' },
+  { q: 'O Lash Agenda cobra taxa em cima de cada atendimento?', a: 'Não. O valor de cada procedimento é 100% seu. Você paga apenas a mensalidade fixa do plano.' },
   { q: 'Preciso configurar tudo do zero?', a: 'Não. Quando você entra, o sistema já vem com 10 serviços de Lash e sobrancelhas pré-cadastrados. É só ajustar e começar a usar.' },
   { q: 'Como funciona o período de teste?', a: 'Você ganha 14 dias de acesso completo. Não pedimos cartão de crédito pra começar.' },
 ];
@@ -191,9 +191,9 @@ export default function LandingPage_OfertaUm() {
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             <div style={{ width: 38, height: 38, borderRadius: 10, background: `linear-gradient(135deg, ${P.accent}, #e88faa)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 4px 14px rgba(200,75,114,0.35)`, overflow: 'hidden', padding: 2 }}>
-              <img src="/logo-login.png" alt="Lash Hub" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              <img src="/logo-login.png" alt="Lash Agenda" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             </div>
-            <span className="hidden min-[380px]:inline" style={{ fontWeight: 800, fontSize: 17, background: `linear-gradient(135deg, ${P.accent}, #e88faa)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Lash Hub</span>
+            <span className="hidden min-[380px]:inline" style={{ fontWeight: 800, fontSize: 17, background: `linear-gradient(135deg, ${P.accent}, #e88faa)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Lash Agenda</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <motion.button
@@ -251,7 +251,7 @@ export default function LandingPage_OfertaUm() {
               transition={{ delay: 1.3, duration: 0.7, ease: EASE }}
               style={{ fontSize: 16, color: P.muted, lineHeight: 1.8, marginBottom: 36, maxWidth: 520 }}
             >
-              Com o Lash Hub, suas clientes marcam horário pelo app do seu estúdio. Sem precisar te chamar no WhatsApp. Sem depender de você estar disponível.
+              Com o Lash Agenda, suas clientes marcam horário pelo app do seu estúdio. Sem precisar te chamar no WhatsApp. Sem depender de você estar disponível.
             </motion.p>
 
             {/* CTAs */}
@@ -399,7 +399,7 @@ export default function LandingPage_OfertaUm() {
           >
             <motion.p variants={fadeUp} style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: P.accent, marginBottom: 12 }}>Veja como funciona</motion.p>
             <motion.h2 variants={fadeUp} style={{ fontSize: 'clamp(20px, 4.5vw, 34px)', fontWeight: 900, letterSpacing: -0.5, lineHeight: 1.2, color: '#3a2d40', textWrap: 'balance' } as React.CSSProperties}>
-              Como o Lash Hub muda<br />o seu dia a dia
+              Como o Lash Agenda muda<br />o seu dia a dia
             </motion.h2>
             <motion.p variants={fadeUp} style={{ fontSize: 14, color: P.muted, marginTop: 10, lineHeight: 1.75, maxWidth: 380, margin: '10px auto 0', fontStyle: 'italic' }}>
               Agenda automática, ficha de cliente, controle de ganhos — tudo no seu celular.
@@ -436,7 +436,7 @@ export default function LandingPage_OfertaUm() {
                     height: '100%',
                     border: 'none',
                   }}
-                  title="Lash Hub — Como funciona"
+                  title="Lash Agenda — Como funciona"
                 />
               </div>
             </motion.div>
@@ -502,7 +502,7 @@ export default function LandingPage_OfertaUm() {
             variants={stagger(0.08)}
             style={{ marginBottom: 48 }}
           >
-            <motion.p variants={fadeUp} style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: P.accent, marginBottom: 12 }}>Por que o Lash Hub é diferente</motion.p>
+            <motion.p variants={fadeUp} style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: P.accent, marginBottom: 12 }}>Por que o Lash Agenda é diferente</motion.p>
             <motion.h2 variants={fadeUp} style={{ fontSize: 'clamp(24px, 3.5vw, 42px)', fontWeight: 900, lineHeight: 1.15, letterSpacing: -0.5 }}>
               Sistemas de salão não foram feitos <br className="hidden sm:block" />pra Lash Designer.
             </motion.h2>
@@ -561,7 +561,7 @@ export default function LandingPage_OfertaUm() {
               </motion.ul>
             </motion.div>
 
-            {/* Lash Hub — slides from right */}
+            {/* Lash Agenda — slides from right */}
             <motion.div
               initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -574,7 +574,7 @@ export default function LandingPage_OfertaUm() {
                 <div style={{ width: 44, height: 44, borderRadius: '50%', background: P.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: `0 6px 18px rgba(200,75,114,0.4)` }}>
                   <CheckCircle2 size={24} color="#fff" />
                 </div>
-                <h3 style={{ fontSize: 15, fontWeight: 800, color: P.accent, lineHeight: 1.3 }}>Lash Hub</h3>
+                <h3 style={{ fontSize: 15, fontWeight: 800, color: P.accent, lineHeight: 1.3 }}>Lash Agenda</h3>
               </div>
               <motion.ul
                 initial="hidden"
@@ -735,52 +735,18 @@ export default function LandingPage_OfertaUm() {
           >
             <motion.div
               variants={fadeUp}
-              whileHover={{ y: -6, boxShadow: '0 20px 60px rgba(0,0,0,0.08)', transition: { type: 'spring', stiffness: 260 } }}
-              style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 20, padding: 28, boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}
-            >
-              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: P.muted, marginBottom: 8 }}>Plano Básico</div>
-              <div style={{ marginBottom: 20 }}>
-                <span style={{ fontSize: 11, color: P.muted }}>R$ </span>
-                <span style={{ fontSize: 40, fontWeight: 900, color: P.text }}>59,90</span>
-                <span style={{ fontSize: 11, color: P.muted }}>/mês</span>
-              </div>
-              <div style={{ paddingTop: 20, borderTop: `1px solid ${P.border}`, display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 24 }}>
-                {['Ficha de cada cliente', 'Histórico de atendimentos', 'Controle dos seus ganhos'].map(f => (
-                  <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 15, color: P.text, fontWeight: 500 }}>
-                    <span style={{ width: 24, height: 24, borderRadius: '50%', background: P.accentLight, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <Check size={14} color={P.accent} />
-                    </span>
-                    {f}
-                  </div>
-                ))}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 14, color: P.faint }}>
-                  <span style={{ width: 24, height: 24, borderRadius: '50%', background: '#f0ece5', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 13 }}>×</span>
-                  Sem agenda online
-                </div>
-              </div>
-              <motion.button
-                onClick={() => navigate('/cadastro')}
-                whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                style={{ width: '100%', padding: '12px 0', border: `1px solid ${P.accent}`, borderRadius: 12, background: 'transparent', color: P.accent, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
-              >
-                Criar conta grátis
-              </motion.button>
-            </motion.div>
-
-            <motion.div
-              variants={fadeUp}
               whileHover={{ y: -6, boxShadow: `0 24px 64px rgba(200,75,114,0.2)`, transition: { type: 'spring', stiffness: 260 } }}
               style={{ background: P.card, border: `2px solid ${P.accent}`, borderRadius: 20, padding: 28, position: 'relative', boxShadow: `0 8px 40px rgba(200,75,114,0.15)` }}
             >
-              <div style={{ position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)', background: P.accent, color: '#fff', fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, padding: '4px 16px', borderRadius: 999, whiteSpace: 'nowrap' }}>Mais completo</div>
-              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: P.accent, marginBottom: 8 }}>Plano Premium</div>
+              <div style={{ position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)', background: P.accent, color: '#fff', fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, padding: '4px 16px', borderRadius: 999, whiteSpace: 'nowrap' }}>Mais recomendado</div>
+              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: P.accent, marginBottom: 8 }}>Plano Agenda</div>
               <div style={{ marginBottom: 20 }}>
                 <span style={{ fontSize: 11, color: P.accent }}>R$ </span>
-                <span style={{ fontSize: 40, fontWeight: 900, color: P.accent }}>99,90</span>
+                <span style={{ fontSize: 40, fontWeight: 900, color: P.accent }}>59,90</span>
                 <span style={{ fontSize: 11, color: P.muted }}>/mês</span>
               </div>
               <div style={{ paddingTop: 20, borderTop: `1px solid ${P.border}`, display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 24 }}>
-                {['Tudo do plano básico', 'Agenda online 24h', 'App para suas clientes', 'Avisos no celular'].map(f => (
+                {['Agendamento automático 24h', 'Portal online para suas clientes', 'Cadastro de Clientes e Serviços', 'Confirmação manual ou automática'].map(f => (
                   <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 15, color: P.text, fontWeight: 600 }}>
                     <span style={{ width: 24, height: 24, borderRadius: '50%', background: P.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <Check size={14} color="#fff" />
@@ -794,7 +760,37 @@ export default function LandingPage_OfertaUm() {
                 whileHover={{ scale: 1.02, boxShadow: `0 8px 32px rgba(200,75,114,0.45)` }} whileTap={{ scale: 0.98 }}
                 style={{ width: '100%', padding: '12px 0', border: 'none', borderRadius: 12, background: P.accent, color: '#fff', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
               >
-                Testar 14 dias grátis
+                Criar conta grátis
+              </motion.button>
+            </motion.div>
+
+            <motion.div
+              variants={fadeUp}
+              whileHover={{ y: -6, boxShadow: '0 20px 60px rgba(0,0,0,0.08)', transition: { type: 'spring', stiffness: 260 } }}
+              style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 20, padding: 28, boxShadow: '0 2px 16px rgba(0,0,0,0.06)' }}
+            >
+              <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: P.muted, marginBottom: 8 }}>Plano Premium</div>
+              <div style={{ marginBottom: 20 }}>
+                <span style={{ fontSize: 11, color: P.muted }}>R$ </span>
+                <span style={{ fontSize: 40, fontWeight: 900, color: P.text }}>89,90</span>
+                <span style={{ fontSize: 11, color: P.muted }}>/mês</span>
+              </div>
+              <div style={{ paddingTop: 20, borderTop: `1px solid ${P.border}`, display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 24 }}>
+                {['Tudo do Plano Agenda', 'Relatórios e Análises do negócio', 'Fichas de Anamnese para Lash Designers', 'Suporte Prioritário'].map(f => (
+                  <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 15, color: P.text, fontWeight: 500 }}>
+                    <span style={{ width: 24, height: 24, borderRadius: '50%', background: P.accentLight, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <Check size={14} color={P.accent} />
+                    </span>
+                    {f}
+                  </div>
+                ))}
+              </div>
+              <motion.button
+                onClick={() => navigate('/cadastro')}
+                whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                style={{ width: '100%', padding: '12px 0', border: `1px solid ${P.accent}`, borderRadius: 12, background: 'transparent', color: P.accent, fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
+              >
+                Criar conta grátis
               </motion.button>
             </motion.div>
           </motion.div>
@@ -878,7 +874,7 @@ export default function LandingPage_OfertaUm() {
           </div>
           <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, color: P.text }}>7 dias de garantia incondicional</h3>
           <p style={{ fontSize: 14, color: P.muted, lineHeight: 1.8 }}>
-            Use na sua rotina real. Se em até 7 dias você achar que o Lash Hub não ajudou no seu dia a dia, devolvemos seu dinheiro integralmente. Sem burocracia, sem pergunta.
+            Use na sua rotina real. Se em até 7 dias você achar que o Lash Agenda não ajudou no seu dia a dia, devolvemos seu dinheiro integralmente. Sem burocracia, sem pergunta.
           </p>
         </motion.div>
       </section>
@@ -896,7 +892,7 @@ export default function LandingPage_OfertaUm() {
             Chega de perder horário<br />respondendo WhatsApp.
           </motion.h2>
           <motion.p variants={fadeUp} style={{ fontSize: 15, color: 'rgba(255,255,255,0.8)', marginBottom: 40, lineHeight: 1.7 }}>
-            Deixa o Lash Hub cuidar da agenda enquanto você cuida das clientes.
+            Deixa o Lash Agenda cuidar da agenda enquanto você cuida das clientes.
           </motion.p>
           <motion.div variants={fadeUp}>
             <motion.button
@@ -917,11 +913,11 @@ export default function LandingPage_OfertaUm() {
       <footer style={{ position: 'relative', zIndex: 1, padding: '24px 20px', background: P.accentDark, textAlign: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 10 }}>
           <div style={{ width: 28, height: 28, borderRadius: 8, background: `linear-gradient(135deg, ${P.accent}, #e88faa)`, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', padding: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
-            <img src="/logo-login.png" alt="Lash Hub" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <img src="/logo-login.png" alt="Lash Agenda" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
-          <span style={{ fontWeight: 800, fontSize: 13, color: '#fff' }}>Lash Hub</span>
+          <span style={{ fontWeight: 800, fontSize: 13, color: '#fff' }}>Lash Agenda</span>
         </div>
-        <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>© {new Date().getFullYear()} Lash Hub. Todos os direitos reservados.</p>
+        <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>© {new Date().getFullYear()} Lash Agenda. Todos os direitos reservados.</p>
       </footer>
 
     </div>
