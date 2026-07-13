@@ -38,8 +38,9 @@ export default function PortalLayout() {
 
   const navItems = [
     { name: 'Catálogo', shortName: 'Catálogo', path: `/portal/${slug}/catalogo`, icon: BookOpen },
+    // Agendar é público — permite agendamento como convidada, sem precisar de login.
+    { name: 'Agendar', shortName: 'Agendar', path: `/portal/${slug}/agendar`, icon: Calendar },
     ...(user ? [
-      { name: 'Agendar', shortName: 'Agendar', path: `/portal/${slug}/agendar`, icon: Calendar },
       { name: 'Meus Agendamentos', shortName: 'Agendamentos', path: `/portal/${slug}/meus-agendamentos`, icon: ClipboardList },
       { name: 'Meu Perfil', shortName: 'Perfil', path: `/portal/${slug}/perfil`, icon: User },
     ] : []),

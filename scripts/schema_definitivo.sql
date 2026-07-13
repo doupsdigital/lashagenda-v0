@@ -349,12 +349,15 @@ BEGIN
 
     client_uuid := (new.raw_user_meta_data ->> 'cliente_id')::UUID;
 
-    -- Criar registro do usuário cliente (vinculado ao cliente já existente)
+    -- Criar registro do usuário cliente (vinculado ao cliente já existente).
+    -- Contas anônimas (agendamento como convidada) não têm e-mail — geramos
+    -- um e-mail sintético único para satisfazer a constraint UNIQUE NOT NULL
+    -- sem precisar alterar o schema da tabela usuarios.
     INSERT INTO public.usuarios (id, nome, email, role, cliente_id, estabelecimento_id)
     VALUES (
       new.id,
       new.raw_user_meta_data ->> 'nome',
-      new.email,
+      COALESCE(new.email, 'guest_' || new.id::text || '@guests.lashagenda.internal'),
       'cliente',
       client_uuid,
       (new.raw_user_meta_data ->> 'estabelecimento_id')::UUID

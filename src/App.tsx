@@ -157,6 +157,11 @@ export default function App() {
               <Route path="login" element={<PortalLogin />} />
               <Route path="cadastro" element={<CadastroCliente />} />
 
+              {/* Pública: permite agendar como convidada (nome + WhatsApp) sem login prévio.
+                  Se já houver sessão (conta completa ou de uma reserva anterior como convidada),
+                  o próprio PortalAgendar usa os dados da sessão em vez de pedir os campos de novo. */}
+              <Route path="agendar" element={<PortalAgendar />} />
+
               {/* Rotas protegidas do cliente */}
               <Route
                 element={
@@ -165,7 +170,6 @@ export default function App() {
                   </ClienteRoute>
                 }
               >
-                <Route path="agendar" element={<PortalAgendar />} />
                 <Route path="meus-agendamentos" element={<PortalMeusAgendamentos />} />
                 <Route path="perfil" element={<PortalPerfil />} />
               </Route>

@@ -45,6 +45,15 @@ function formatValor(val: number): string {
   return `R$ ${Number(val).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 }
 
+function applyPhoneMask(value: string): string {
+  const digits = value.replace(/\D/g, '');
+  if (!digits) return '';
+  const limited = digits.substring(0, 11);
+  if (limited.length <= 2) return `(${limited}`;
+  if (limited.length <= 7) return `(${limited.substring(0, 2)}) ${limited.substring(2)}`;
+  return `(${limited.substring(0, 2)}) ${limited.substring(2, 7)}-${limited.substring(7)}`;
+}
+
 function dateToStr(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
@@ -158,7 +167,7 @@ function IndicadorProgresso({ etapaAtual }: { etapaAtual: number }) {
 export default function PortalAgendar() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { clienteId } = useAuth();
+  const { user, clienteId } = useAuth();
   const { establishmentId, slug } = usePortal();
   const { autoStart, loading: onboardingLoading } = useOnboarding('portal_agendar');
   useEffect(() => { autoStart(); }, [onboardingLoading]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -191,6 +200,9 @@ export default function PortalAgendar() {
   const [observacoes, setObservacoes] = useState('');
   const [salvando, setSalvando] = useState(false);
   const [erroSalvar, setErroSalvar] = useState<'generic' | 'race' | 'perm' | null>(null);
+  const [nomeConvidado, setNomeConvidado] = useState('');
+  const [whatsappConvidado, setWhatsappConvidado] = useState('');
+  const [erroConvidado, setErroConvidado] = useState<string | null>(null);
 
   // ── Success ──────────────────────────────────────────────────────────────────
   const [mensagemPos, setMensagemPos] = useState('Obrigada pelo seu agendamento!');
@@ -381,8 +393,8 @@ export default function PortalAgendar() {
     return true;
   }
 
-  async function confirmarAgendamento() {
-    if (!clienteId || !dataSelecionada || !horarioSelecionado) return;
+  async function criarAgendamento(targetClienteId: string) {
+    if (!dataSelecionada || !horarioSelecionado) return;
 
     setSalvando(true);
     setErroSalvar(null);
@@ -439,7 +451,7 @@ export default function PortalAgendar() {
         .from('agendamentos')
         .insert({
           id: agendamentoId,
-          cliente_id: clienteId,
+          cliente_id: targetClienteId,
           estabelecimento_id: establishmentId,
           data_hora: dataHoraISO,
           duracao_minutos: duracaoTotal,
@@ -519,6 +531,75 @@ export default function PortalAgendar() {
         setErroSalvar('generic');
       }
     } finally {
+      setSalvando(false);
+    }
+  }
+
+  // Cliente já autenticada (conta completa ou sessão de convidada anterior)
+  async function confirmarAgendamento() {
+    if (!clienteId) return;
+    await criarAgendamento(clienteId);
+  }
+
+  // Agendamento como convidada — sem conta prévia, só nome + WhatsApp.
+  // Cria uma sessão anônima (auth.uid() real) e reaproveita todo o fluxo/RLS
+  // já existente para clientes autenticadas.
+  async function confirmarComoConvidado() {
+    if (!establishmentId || !dataSelecionada || !horarioSelecionado) return;
+
+    const nome = nomeConvidado.trim();
+    const whatsappDigits = whatsappConvidado.replace(/\D/g, '');
+
+    if (!nome || whatsappDigits.length < 10) {
+      setErroConvidado('Preencha seu nome completo e um WhatsApp válido com DDD.');
+      return;
+    }
+
+    setErroConvidado(null);
+    setSalvando(true);
+    setErroSalvar(null);
+
+    try {
+      // 1. Verifica se já existe uma cliente cadastrada com esse WhatsApp
+      //    (cadastro manual da profissional ou agendamento anterior como convidada)
+      const { data: existingId } = await supabase
+        .rpc('get_cliente_id_by_email_or_whatsapp', {
+          p_email: '',
+          p_whatsapp_digits: whatsappDigits,
+          p_estabelecimento_id: establishmentId,
+        });
+
+      let targetClienteId = existingId as string | null;
+
+      // 2. Se não existe, cria o registro de cliente (RLS já libera insert anônimo)
+      if (!targetClienteId) {
+        targetClienteId = crypto.randomUUID();
+        const { error: clientError } = await supabase.from('clientes').insert({
+          id: targetClienteId,
+          nome,
+          whatsapp: whatsappConvidado,
+          estabelecimento_id: establishmentId,
+        });
+        if (clientError) throw clientError;
+      }
+
+      // 3. Cria a sessão anônima vinculada a essa cliente
+      const { error: authError } = await supabase.auth.signInAnonymously({
+        options: {
+          data: {
+            role: 'cliente',
+            nome,
+            cliente_id: targetClienteId,
+            estabelecimento_id: establishmentId,
+          },
+        },
+      });
+      if (authError) throw authError;
+
+      await criarAgendamento(targetClienteId);
+    } catch (err) {
+      console.error('Erro ao agendar como convidada:', err);
+      setErroSalvar('generic');
       setSalvando(false);
     }
   }
@@ -873,6 +954,49 @@ export default function PortalAgendar() {
             </div>
           </div>
 
+          {/* Seus dados — só para quem ainda não tem sessão (agendamento como convidada) */}
+          {!user && (
+            <div className="bg-white border border-border rounded-2xl p-5 space-y-4">
+              <h3 className="font-title font-semibold text-lg text-text-primary">
+                Seus dados
+              </h3>
+
+              {erroConvidado && (
+                <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-800">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  {erroConvidado}
+                </div>
+              )}
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+                  Nome completo
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ex: Maria Silva"
+                  value={nomeConvidado}
+                  onChange={e => setNomeConvidado(e.target.value)}
+                  className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+                  WhatsApp
+                </label>
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  placeholder="(11) 99999-9999"
+                  value={whatsappConvidado}
+                  onChange={e => setWhatsappConvidado(applyPhoneMask(e.target.value))}
+                  className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
+                />
+              </div>
+            </div>
+          )}
+
           {/* Observações */}
           <div className="bg-white border border-border rounded-2xl p-5 space-y-3">
             <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
@@ -947,7 +1071,7 @@ export default function PortalAgendar() {
           {etapa === 4 && (
             <button
               disabled={salvando}
-              onClick={confirmarAgendamento}
+              onClick={() => (user ? confirmarAgendamento() : confirmarComoConvidado())}
               className="flex items-center gap-2 px-6 py-2.5 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer"
             >
               {salvando ? (

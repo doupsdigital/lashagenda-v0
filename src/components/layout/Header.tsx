@@ -29,7 +29,7 @@ export default function Header({ setMobileOpen }: HeaderProps) {
       case '/meu-estudio':
         return { title: 'Meu Estúdio', Icon: LayoutGrid };
       case '/clientes':
-        return { title: 'Clientes', Icon: Users };
+        return { title: 'Clientes', subtitle: 'Gerencie a lista de contatos do seu estúdio', Icon: Users };
       case '/servicos':
         return { title: 'Serviços', Icon: WandSparkles };
       case '/agendamentos':

@@ -1,27 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useOnboarding } from '../../hooks/useOnboarding';
 import { supabase } from '../../lib/supabase';
-import { 
+import {
   Plus,
   Search,
   AlertCircle,
-  X,
   UserPlus,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Trash2,
-  CheckCircle
+  Sparkles,
+  MessageCircle,
 } from 'lucide-react';
 import type { Cliente } from '../../types';
 import { registrarLog } from '../../utils/log';
-
-interface ClienteWithAttendances extends Cliente {
-  atendimentos?: { data_atendimento: string }[];
-  agendamentos?: { data_hora: string; status: string }[];
-}
 
 function applyPhoneMask(value: string): string {
   const digits = value.replace(/\D/g, '');
@@ -47,60 +43,40 @@ export default function Clientes() {
   const { estabelecimentoId, profile } = useAuth();
   const { autoStart } = useOnboarding('clientes');
   useEffect(() => { if (profile) autoStart(); }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
-  const [clientes, setClientes] = useState<ClienteWithAttendances[]>([]);
-  const [portalClienteIds, setPortalClienteIds] = useState<Set<string>>(new Set());
+  const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Search and filter states
+  // Search state
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'todos' | 'ativos' | 'inativos'>('todos');
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Modal State
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showOptionalFields, setShowOptionalFields] = useState(false);
   const [clientToDelete, setClientToDelete] = useState<{ id: string; name: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Form States
   const [nome, setNome] = useState('');
-  const [sobrenome, setSobrenome] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [email, setEmail] = useState('');
   const [dataNascimento, setDataNascimento] = useState('');
   const [cpf, setCpf] = useState('');
   const [endereco, setEndereco] = useState('');
-  
-  // Success Modal State
-  const [successClient, setSuccessClient] = useState<{ nomeCompleto: string; whatsapp: string; email?: string | null } | null>(null);
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [clientesRes, usuariosRes] = await Promise.all([
-        supabase
-          .from('clientes')
-          .select('*, atendimentos(data_atendimento), agendamentos(data_hora, status)')
-          .eq('estabelecimento_id', estabelecimentoId)
-          .order('nome', { ascending: true }),
-        supabase
-          .from('usuarios')
-          .select('cliente_id')
-          .not('cliente_id', 'is', null)
-      ]);
+      const { data, error } = await supabase
+        .from('clientes')
+        .select('*')
+        .eq('estabelecimento_id', estabelecimentoId)
+        .order('nome', { ascending: true });
 
-      if (clientesRes.error) throw clientesRes.error;
-      setClientes(clientesRes.data || []);
-
-      const ids = new Set<string>(
-        (usuariosRes.data || [])
-          .map(u => u.cliente_id)
-          .filter(Boolean) as string[]
-      );
-      setPortalClienteIds(ids);
+      if (error) throw error;
+      setClientes(data || []);
     } catch (err) {
       console.error('Erro ao buscar clientes:', err);
       showTemporaryError('Falha ao carregar clientes do banco.');
@@ -118,24 +94,20 @@ export default function Clientes() {
     setTimeout(() => setErrorMessage(null), 5000);
   };
 
-
-
-  const handleOpenModal = () => {
+  const resetForm = () => {
     setNome('');
-    setSobrenome('');
     setWhatsapp('');
     setEmail('');
     setDataNascimento('');
     setCpf('');
     setEndereco('');
-    setIsModalOpen(true);
   };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!nome.trim() || !sobrenome.trim() || !whatsapp.trim()) {
-      showTemporaryError('Nome, sobrenome e WhatsApp são obrigatórios.');
+    if (!nome.trim() || !whatsapp.trim()) {
+      showTemporaryError('Nome e WhatsApp são obrigatórios.');
       return;
     }
 
@@ -158,7 +130,6 @@ export default function Clientes() {
       // 2. Insert new client with establishment_id
       const clientPayload = {
         nome,
-        sobrenome,
         whatsapp,
         email: email.trim() || null,
         data_nascimento: dataNascimento || null,
@@ -176,13 +147,8 @@ export default function Clientes() {
       if (insertError) throw insertError;
       if (!newClient) throw new Error('Erro ao salvar cliente.');
 
-      await registrarLog('criou', 'cliente', newClient.id, `Cadastrou o cliente "${nome} ${sobrenome}"`);
-      setIsModalOpen(false);
-      setSuccessClient({
-        nomeCompleto: `${nome} ${sobrenome}`,
-        whatsapp: whatsapp,
-        email: email.trim() || null
-      });
+      await registrarLog('criou', 'cliente', newClient.id, `Cadastrou o cliente "${nome}"`);
+      resetForm();
       fetchData();
     } catch (err) {
       console.error(err);
@@ -197,10 +163,10 @@ export default function Clientes() {
     try {
       // 1. Delete associated attendances
       await supabase.from('atendimentos').delete().eq('cliente_id', clientToDelete.id);
-      
+
       // 2. Delete associated appointments
       await supabase.from('agendamentos').delete().eq('cliente_id', clientToDelete.id);
-      
+
       // 3. Delete associated user if exists
       await supabase.from('usuarios').delete().eq('cliente_id', clientToDelete.id);
 
@@ -223,30 +189,10 @@ export default function Clientes() {
     }
   };
 
-  // Helper to determine last attendance date
-  const getLastAttendanceDate = (client: ClienteWithAttendances) => {
-    const dates: number[] = [];
-    
-    if (client.atendimentos && client.atendimentos.length > 0) {
-      client.atendimentos.forEach(a => {
-        dates.push(new Date(a.data_atendimento + 'T12:00:00').getTime());
-      });
-    }
-    
-    if (client.agendamentos && client.agendamentos.length > 0) {
-      client.agendamentos.forEach(a => {
-        if (a.status === 'concluido') {
-          dates.push(new Date(a.data_hora).getTime());
-        }
-      });
-    }
-
-    if (dates.length === 0) {
-      return 'Nenhum';
-    }
-
-    const maxDate = new Date(Math.max(...dates));
-    return maxDate.toLocaleDateString('pt-BR');
+  const handleOpenWhatsApp = (whatsapp: string) => {
+    const digits = whatsapp.replace(/\D/g, '');
+    if (!digits) return;
+    window.open(`https://wa.me/55${digits}`, '_blank');
   };
 
   const normalize = (s: string) =>
@@ -255,13 +201,10 @@ export default function Clientes() {
   const filteredClientes = clientes.filter(client => {
     const fullName = normalize(`${client.nome} ${client.sobrenome || ''}`);
     const searchDigits = searchTerm.replace(/\D/g, '');
-    const searchMatch =
+    return (
       fullName.includes(normalize(searchTerm)) ||
-      (searchDigits.length > 0 && (client.whatsapp || '').replace(/\D/g, '').includes(searchDigits));
-
-    const statusMatch = statusFilter === 'todos' || statusFilter === 'ativos';
-
-    return searchMatch && statusMatch;
+      (searchDigits.length > 0 && (client.whatsapp || '').replace(/\D/g, '').includes(searchDigits))
+    );
   });
 
   // Paginated clients calculation
@@ -271,12 +214,12 @@ export default function Clientes() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, statusFilter]);
+  }, [searchTerm]);
 
   return (
     <div className="space-y-6">
       {/* Floating Toast for Errors */}
-      {errorMessage && !isModalOpen && (
+      {errorMessage && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-full max-w-lg px-4 pointer-events-none">
           <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-3 shadow-lg animate-fade-in pointer-events-auto">
             <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-600" />
@@ -285,11 +228,144 @@ export default function Clientes() {
         </div>
       )}
 
-      {/* Search & Actions Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white border border-border rounded-[14px] p-5 shadow-sm">
-        {/* Search */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
-          <div id="ob-clientes-search" className="relative flex-1 max-w-md">
+      {/* Nova Cliente — formulário inline */}
+      <div id="ob-clientes-add-btn" className="bg-white border border-border rounded-[14px] p-6 shadow-sm">
+        <h2 className="font-title font-semibold text-xl text-text-primary mb-5 flex items-center gap-2">
+          <UserPlus className="w-5 h-5 text-rose-600" />
+          Nova Cliente
+        </h2>
+
+        <form onSubmit={handleSave} className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+              Nome <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="Ex: Amanda Oliveira"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+              WhatsApp <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              inputMode="numeric"
+              required
+              placeholder="Ex: (11) 99999-9999"
+              value={whatsapp}
+              onChange={(e) => setWhatsapp(applyPhoneMask(e.target.value))}
+              className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowOptionalFields(prev => !prev)}
+            className="flex items-center gap-1.5 text-xs font-semibold text-rose-600 hover:text-rose-800 transition-colors cursor-pointer"
+          >
+            <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showOptionalFields ? 'rotate-180' : ''}`} />
+            {showOptionalFields ? 'Ocultar dados opcionais' : 'Adicionar mais detalhes (opcional)'}
+          </button>
+
+          {showOptionalFields && (
+            <div className="space-y-4 pt-1 animate-fade-in">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="maria@exemplo.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                    Data de Nascimento
+                  </label>
+                  <input
+                    type="date"
+                    value={dataNascimento}
+                    onChange={(e) => setDataNascimento(e.target.value)}
+                    className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                  CPF
+                </label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="000.000.000-00"
+                  value={cpf}
+                  onChange={(e) => setCpf(applyCpfMask(e.target.value))}
+                  className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                  Endereço Completo
+                </label>
+                <input
+                  type="text"
+                  placeholder="Rua, Número, Bairro, Cidade..."
+                  value={endereco}
+                  onChange={(e) => setEndereco(e.target.value)}
+                  className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                />
+              </div>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            className="w-full flex items-center justify-center gap-1.5 py-3 bg-rose-600 hover:bg-rose-800 text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            Cadastrar Cliente
+          </button>
+        </form>
+      </div>
+
+      {/* Cadastro Automático */}
+      <div className="bg-rose-50/40 border border-rose-100 rounded-[14px] p-5 flex items-start gap-3">
+        <div className="w-9 h-9 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 flex-shrink-0">
+          <Sparkles className="w-4 h-4" />
+        </div>
+        <div>
+          <p className="font-semibold text-sm text-text-primary">Cadastro Automático</p>
+          <p className="text-xs text-text-secondary mt-1 leading-relaxed">
+            Não se preocupe em cadastrar todas as suas clientes manualmente! Conforme elas forem agendando pelo seu{' '}
+            <span className="font-semibold text-rose-600">link de agendamento</span>, o sistema criará o cadastro de cada uma automaticamente.
+          </p>
+        </div>
+      </div>
+
+      {/* Sua Lista */}
+      <div id="ob-clientes-lista" className="bg-white border border-border rounded-[14px] overflow-hidden shadow-sm">
+        <div className="p-5 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5">
+            <h2 className="font-title font-semibold text-xl text-text-primary">Sua Lista</h2>
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-rose-50 text-rose-600">
+              {filteredClientes.length} cadastrados
+            </span>
+          </div>
+          <div id="ob-clientes-search" className="relative w-full md:max-w-xs">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-text-muted" />
             <input
               type="text"
@@ -299,309 +375,90 @@ export default function Clientes() {
               className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
             />
           </div>
-
-          {/* Status selector */}
-          <select
-            value={statusFilter}
-            onChange={(e: any) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 cursor-pointer"
-          >
-            <option value="todos">Todos os Status</option>
-            <option value="ativos">Apenas Ativos</option>
-            <option value="inativos">Apenas Inativos</option>
-          </select>
         </div>
 
-        {/* Create button */}
-        <button
-          id="ob-clientes-add-btn"
-          onClick={handleOpenModal}
-          className="flex items-center justify-center gap-1.5 px-4 py-2 bg-rose-600 hover:bg-rose-800 text-white rounded-lg text-sm font-medium transition-colors cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          Adicionar Cliente
-        </button>
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 text-text-secondary">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-600 mb-2"></div>
+            <p className="text-sm">Carregando clientes...</p>
+          </div>
+        ) : filteredClientes.length === 0 ? (
+          <div className="p-12 text-center text-text-secondary">
+            <UserPlus className="w-12 h-12 text-rose-200 mx-auto mb-3" />
+            <p className="font-title font-medium text-lg text-text-primary">Nenhum cliente ainda</p>
+            <p className="text-sm text-text-muted mt-1">
+              Os clientes aparecerão aqui quando você cadastrar ou quando eles agendarem pelo link público.
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="divide-y divide-border">
+              {paginatedClientes.map(client => {
+                const initials = `${client.nome[0] || ''}${(client.sobrenome || '')[0] || ''}`.toUpperCase();
+
+                return (
+                  <div
+                    key={client.id}
+                    onClick={() => navigate(`/clientes/${client.id}`)}
+                    className="flex items-center gap-3 px-5 py-4 hover:bg-bg/25 transition-colors cursor-pointer group"
+                  >
+                    <div className="w-10 h-10 flex-shrink-0 rounded-full bg-rose-100 border border-rose-200 text-rose-800 flex items-center justify-center font-title font-semibold text-sm">
+                      {initials}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-text-primary group-hover:text-rose-600 transition-colors truncate">
+                        {client.nome} {client.sobrenome}
+                      </p>
+                      <p className="text-xs text-text-muted truncate">{client.whatsapp}</p>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        onClick={() => client.whatsapp && handleOpenWhatsApp(client.whatsapp)}
+                        disabled={!client.whatsapp}
+                        className="w-8 h-8 rounded-full bg-green-50 text-green-600 hover:bg-green-100 flex items-center justify-center transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                        title="Abrir WhatsApp"
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => setClientToDelete({ id: client.id, name: `${client.nome} ${client.sobrenome || ''}` })}
+                        className="w-8 h-8 rounded-full bg-bg text-text-secondary hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors cursor-pointer"
+                        title="Excluir Cliente"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="px-6 py-4 border-t border-border flex items-center justify-between text-xs text-text-secondary bg-rose-50/5">
+                <span>Página {currentPage} de {totalPages} ({filteredClientes.length} total)</span>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="p-1.5 border border-border rounded-lg bg-white hover:bg-bg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className="p-1.5 border border-border rounded-lg bg-white hover:bg-bg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
-
-      {/* Main List Area */}
-      {loading ? (
-        <div className="flex flex-col items-center justify-center py-20 text-text-secondary">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-600 mb-2"></div>
-          <p className="text-sm">Carregando clientes...</p>
-        </div>
-      ) : filteredClientes.length === 0 ? (
-        <div className="bg-white border border-border rounded-[14px] p-12 text-center text-text-secondary shadow-sm">
-          <UserPlus className="w-12 h-12 text-rose-200 mx-auto mb-3" />
-          <p className="font-title font-medium text-lg text-text-primary">Nenhum cliente encontrado</p>
-          <p className="text-sm text-text-muted mt-1">Tente buscar por outro nome ou WhatsApp, ou cadastre uma nova cliente.</p>
-        </div>
-      ) : (
-        <div id="ob-clientes-lista" className="bg-white border border-border rounded-[14px] overflow-hidden shadow-sm flex flex-col justify-between">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-rose-50/10 border-b border-border text-xs font-semibold text-text-secondary uppercase tracking-wider">
-                  <th className="px-6 py-4">Cliente</th>
-                  <th className="px-6 py-4">WhatsApp</th>
-                  <th className="px-6 py-4">Email</th>
-                  <th className="px-6 py-4">Último Atendimento</th>
-                  <th className="px-6 py-4">Origem</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 text-right">Ações</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {paginatedClientes.map(client => {
-                  const initials = `${client.nome[0] || ''}${(client.sobrenome || '')[0] || ''}`.toUpperCase();
-                  const lastAttendance = getLastAttendanceDate(client);
-                  
-                  return (
-                    <tr
-                      key={client.id}
-                      onClick={() => navigate(`/clientes/${client.id}`)}
-                      className="hover:bg-bg/25 transition-colors cursor-pointer group"
-                    >
-                      {/* Avatar + Name */}
-                      <td className="px-6 py-4 flex items-center gap-3">
-                        <div className="hidden md:flex w-9 h-9 flex-shrink-0 rounded-full bg-rose-100 border border-rose-200 text-rose-800 items-center justify-center font-title font-semibold text-sm">
-                          {initials}
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-text-primary group-hover:text-rose-600 transition-colors">
-                            {client.nome} {client.sobrenome}
-                          </p>
-                          <p className="hidden md:block text-[10px] text-text-muted">
-                            Cadastrado em: {new Date(client.created_at || '').toLocaleDateString('pt-BR')}
-                          </p>
-                        </div>
-                      </td>
-                      {/* WhatsApp */}
-                      <td className="px-6 py-4 text-sm text-text-primary whitespace-nowrap">
-                        {client.whatsapp}
-                      </td>
-                      {/* Email */}
-                      <td className="px-6 py-4 text-sm text-text-secondary">
-                        {client.email || <span className="text-text-muted italic">Não informado</span>}
-                      </td>
-                      {/* Last Attendance */}
-                      <td className="px-6 py-4 text-sm text-text-secondary">
-                        {lastAttendance}
-                      </td>
-                      {/* Origem */}
-                      <td className="px-6 py-4">
-                        {portalClienteIds.has(client.id) ? (
-                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider bg-blue-100 text-blue-700">
-                            Portal
-                          </span>
-                        ) : (
-                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider bg-gray-100 text-gray-500">
-                            Manual
-                          </span>
-                        )}
-                      </td>
-                      {/* Status */}
-                      <td className="px-6 py-4">
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider bg-green-100 text-green-800">
-                          Ativo
-                        </span>
-                      </td>
-                      {/* Actions */}
-                      <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
-                        <button
-                          onClick={() => setClientToDelete({ id: client.id, name: `${client.nome} ${client.sobrenome || ''}` })}
-                          className="p-1.5 text-text-secondary hover:text-red-600 rounded-lg hover:bg-red-50 transition-all cursor-pointer inline-flex items-center justify-center"
-                          title="Excluir Cliente"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="px-6 py-4 border-t border-border flex items-center justify-between text-xs text-text-secondary bg-rose-50/5">
-              <span>Página {currentPage} de {totalPages} ({filteredClientes.length} total)</span>
-              
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="p-1.5 border border-border rounded-lg bg-white hover:bg-bg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="p-1.5 border border-border rounded-lg bg-white hover:bg-bg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* CREATE MODAL */}
-      {isModalOpen && createPortal(<div className="fixed inset-0 bg-black/45 backdrop-blur-sm z-[200] flex items-center justify-center p-4 overflow-y-auto animate-fade-in">
-          <div className="bg-white rounded-[14px] border border-border shadow-xl w-full max-w-lg flex flex-col max-h-[calc(100vh-2rem)] overflow-hidden my-8 animate-slide-up">
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-rose-50/10 flex-shrink-0">
-              <h4 className="font-title font-semibold text-lg text-text-primary flex items-center gap-2">
-                <UserPlus className="w-5 h-5 text-rose-600" />
-                Cadastrar Novo Cliente
-              </h4>
-              <button 
-                onClick={() => setIsModalOpen(false)}
-                className="text-text-secondary hover:text-rose-600 cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            
-            <form onSubmit={handleSave} className="p-6 space-y-5 overflow-y-auto flex-1">
-              {errorMessage && (
-                <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl flex items-start gap-2.5 mb-2">
-                  <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-600 mt-0.5" />
-                  <p className="text-xs font-medium leading-relaxed">{errorMessage}</p>
-                </div>
-              )}
-              {/* Mandatory Fields */}
-              <div className="space-y-4">
-                <p className="text-xs font-semibold text-text-muted uppercase tracking-wider border-b border-border pb-1">Dados Obrigatórios</p>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
-                      Nome <span className="text-red-500">*</span>
-                    </label>
-                    <input 
-                      type="text" 
-                      required
-                      placeholder="Ex: Maria"
-                      value={nome}
-                      onChange={(e) => setNome(e.target.value)}
-                      className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
-                      Sobrenome <span className="text-red-500">*</span>
-                    </label>
-                    <input 
-                      type="text" 
-                      required
-                      placeholder="Ex: Oliveira"
-                      value={sobrenome}
-                      onChange={(e) => setSobrenome(e.target.value)}
-                      className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
-                    WhatsApp <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    required
-                    placeholder="Ex: (11) 99999-9999"
-                    value={whatsapp}
-                    onChange={(e) => setWhatsapp(applyPhoneMask(e.target.value))}
-                    className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
-                  />
-                </div>
-              </div>
-
-              {/* Optional Fields */}
-              <div className="space-y-4 pt-1">
-                <p className="text-xs font-semibold text-text-muted uppercase tracking-wider border-b border-border pb-1">Dados Opcionais</p>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
-                      Email
-                    </label>
-                    <input 
-                      type="email" 
-                      placeholder="maria@exemplo.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
-                      Data de Nascimento
-                    </label>
-                    <input 
-                      type="date" 
-                      value={dataNascimento}
-                      onChange={(e) => setDataNascimento(e.target.value)}
-                      className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
-                      CPF
-                    </label>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      placeholder="000.000.000-00"
-                      value={cpf}
-                      onChange={(e) => setCpf(applyCpfMask(e.target.value))}
-                      className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
-                    />
-                  </div>
-
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
-                    Endereço Completo
-                  </label>
-                  <input 
-                    type="text" 
-                    placeholder="Rua, Número, Bairro, Cidade..."
-                    value={endereco}
-                    onChange={(e) => setEndereco(e.target.value)}
-                    className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
-                  />
-                </div>
-              </div>
-
-              {/* Modal Buttons */}
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-border rounded-lg text-xs font-medium text-text-secondary hover:bg-bg transition-colors cursor-pointer"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-rose-600 hover:bg-rose-800 text-white rounded-lg text-xs font-medium transition-colors cursor-pointer"
-                >
-                  Salvar
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>, document.body)}
 
       {/* DELETE CONFIRMATION MODAL */}
       {clientToDelete && createPortal(<div className="fixed inset-0 bg-black/45 backdrop-blur-sm z-[200] flex items-center justify-center p-4 overflow-y-auto animate-fade-in">
@@ -615,12 +472,12 @@ export default function Clientes() {
                   Confirmar Exclusão
                 </h4>
                 <p className="text-xs text-text-secondary leading-relaxed">
-                  Tem certeza que deseja excluir permanentemente a cliente <span className="font-semibold text-text-primary">{clientToDelete.name}</span>? 
+                  Tem certeza que deseja excluir permanentemente a cliente <span className="font-semibold text-text-primary">{clientToDelete.name}</span>?
                   Esta ação irá apagar definitivamente o cadastro e todo o seu histórico de atendimentos e agendamentos, e não poderá ser desfeita.
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center justify-end gap-3 pt-5 mt-5 border-t border-border">
               <button
                 type="button"
@@ -639,56 +496,6 @@ export default function Clientes() {
                 {isDeleting ? 'Excluindo...' : 'Confirmar Exclusão'}
               </button>
             </div>
-          </div>
-        </div>, document.body)}
-
-      {/* SUCCESS CONFIRMATION MODAL */}
-      {successClient && createPortal(<div className="fixed inset-0 bg-black/45 backdrop-blur-sm z-[200] flex items-center justify-center p-4 overflow-y-auto animate-fade-in">
-          <div className="bg-white rounded-[14px] border border-border shadow-xl w-full max-w-sm p-6 text-center animate-slide-up space-y-4">
-            
-            {/* Animated Check Icon */}
-            <div className="mx-auto w-16 h-16 rounded-full bg-green-50 border border-green-200 flex items-center justify-center text-green-600 animate-pulse">
-              <CheckCircle className="w-9 h-9" />
-            </div>
-
-            <div className="space-y-1">
-              <h3 className="font-title font-bold text-xl text-text-primary">
-                Cliente Cadastrada!
-              </h3>
-              <p className="text-xs text-text-secondary">
-                O cadastro foi realizado com sucesso no sistema.
-              </p>
-            </div>
-
-            {/* Details Box */}
-            <div className="bg-bg/40 border border-border/80 rounded-xl p-4 text-left text-xs space-y-2.5">
-              <div className="flex justify-between border-b border-border/40 pb-1.5">
-                <span className="font-bold text-text-secondary uppercase text-[10px] tracking-wider">Cliente</span>
-                <span className="font-semibold text-text-primary">{successClient.nomeCompleto}</span>
-              </div>
-              <div className="flex justify-between border-b border-border/40 pb-1.5">
-                <span className="font-bold text-text-secondary uppercase text-[10px] tracking-wider">WhatsApp</span>
-                <span className="font-semibold text-text-primary">{successClient.whatsapp}</span>
-              </div>
-              {successClient.email && (
-                <div className="flex justify-between">
-                  <span className="font-bold text-text-secondary uppercase text-[10px] tracking-wider">Email</span>
-                  <span className="font-semibold text-text-primary truncate max-w-[180px]" title={successClient.email}>{successClient.email}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Actions */}
-            <div className="pt-2">
-              <button
-                type="button"
-                onClick={() => setSuccessClient(null)}
-                className="w-full py-2.5 bg-rose-600 hover:bg-rose-800 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
-              >
-                Concluir e Fechar
-              </button>
-            </div>
-
           </div>
         </div>, document.body)}
     </div>
