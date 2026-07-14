@@ -746,7 +746,7 @@ export default function Agendamentos() {
       }
 
       let apptId = '';
-      const clientName = `${selectedCliente.nome} ${selectedCliente.sobrenome}`;
+      const clientName = `${selectedCliente.nome} ${selectedCliente.sobrenome || ''}`.trim();
       let createdNew = false;
       let existingRelationsIds: string[] = [];
 
@@ -882,7 +882,7 @@ export default function Agendamentos() {
 
     setRejectSaving(true);
     const appt = rejectModalAppt;
-    const clientName = appt.cliente ? `${appt.cliente.nome} ${appt.cliente.sobrenome}` : 'Cliente';
+    const clientName = appt.cliente ? `${appt.cliente.nome} ${appt.cliente.sobrenome || ''}`.trim() : 'Cliente';
     try {
       const { error } = await supabase
         .from('agendamentos')
@@ -936,7 +936,7 @@ export default function Agendamentos() {
         .eq('id', appt.id)
         .eq('estabelecimento_id', estabelecimentoId);
       if (error) throw error;
-      const clientName = appt.cliente ? `${appt.cliente.nome} ${appt.cliente.sobrenome}` : 'Cliente';
+      const clientName = appt.cliente ? `${appt.cliente.nome} ${appt.cliente.sobrenome || ''}`.trim() : 'Cliente';
       await registrarLog('editou', 'agendamento', appt.id, `Confirmou agendamento de "${clientName}"`);
       setApproveModalAppt(null);
       setIsDetailOpen(false);
@@ -964,7 +964,7 @@ export default function Agendamentos() {
   const handleConcludeConfirm = async () => {
     if (!concludeAppt) return;
     const appt = concludeAppt;
-    const clientName = appt.cliente ? `${appt.cliente.nome} ${appt.cliente.sobrenome}` : 'Cliente';
+    const clientName = appt.cliente ? `${appt.cliente.nome} ${appt.cliente.sobrenome || ''}`.trim() : 'Cliente';
     const totalServicos = appt.agendamento_servicos?.reduce((sum, s) => sum + Number(s.valor_cobrado || 0), 0) || 0;
     const valorFinal = concludeUseCustom ? concludeCustomValue : totalServicos;
 
@@ -1014,7 +1014,7 @@ export default function Agendamentos() {
       return;
     }
 
-    const clientName = appt.cliente ? `${appt.cliente.nome} ${appt.cliente.sobrenome}` : 'Cliente';
+    const clientName = appt.cliente ? `${appt.cliente.nome} ${appt.cliente.sobrenome || ''}`.trim() : 'Cliente';
     
     openConfirmModal({
       title: 'Cancelar Agendamento?',
@@ -1055,7 +1055,7 @@ export default function Agendamentos() {
   };
 
   const handleDeleteAppointment = async (appt: AgendamentoWithRelations) => {
-    const clientName = appt.cliente ? `${appt.cliente.nome} ${appt.cliente.sobrenome}` : 'Cliente';
+    const clientName = appt.cliente ? `${appt.cliente.nome} ${appt.cliente.sobrenome || ''}`.trim() : 'Cliente';
     
     openConfirmModal({
       title: 'Excluir Agendamento?',
@@ -1095,7 +1095,7 @@ export default function Agendamentos() {
   };
 
   const handleMarkNoShow = (appt: AgendamentoWithRelations) => {
-    const clientName = appt.cliente ? `${appt.cliente.nome} ${appt.cliente.sobrenome}` : 'Cliente';
+    const clientName = appt.cliente ? `${appt.cliente.nome} ${appt.cliente.sobrenome || ''}`.trim() : 'Cliente';
     openConfirmModal({
       title: 'Registrar Falta?',
       description: `Confirma que "${clientName}" não compareceu ao agendamento sem aviso prévio?`,
@@ -1453,7 +1453,7 @@ export default function Agendamentos() {
                           style={{ top: `${top}px`, height: `${height}px` }}
                           onClick={(e) => { e.stopPropagation(); handleOpenDetail(appt); }}
                           className={`absolute left-1 right-1 rounded-lg border border-l-[3px] overflow-hidden flex flex-col shadow-sm cursor-pointer z-10 transition-all ${colors.border} ${weekAccentBorder} ${colors.bg} ${height < 45 ? 'px-1 py-[2px]' : 'px-2 py-1'}`}
-                          title={`${appt.cliente?.nome} ${appt.cliente?.sobrenome} — ${appt.agendamento_servicos?.map(s => s.servico?.nome || servicos.find(ls => ls.id === s.servico_id)?.nome).filter(Boolean).join(', ')}`}
+                          title={`${appt.cliente?.nome} ${appt.cliente?.sobrenome || ''} — ${appt.agendamento_servicos?.map(s => s.servico?.nome || servicos.find(ls => ls.id === s.servico_id)?.nome).filter(Boolean).join(', ')}`}
                         >
                           <div className="flex items-start justify-between gap-1 min-h-0">
                             <p className={`font-bold truncate flex-1 leading-none ${height < 45 ? 'text-[9px]' : 'text-[10px] leading-tight'}`}>{appt.cliente?.nome} {appt.cliente?.sobrenome}</p>
@@ -1713,18 +1713,6 @@ export default function Agendamentos() {
               {/* Main parameters */}
               <div className="space-y-3.5 text-xs">
 
-                {/* Origem */}
-                <div className="grid grid-cols-[100px_1fr] border-b border-border/40 pb-2">
-                  <span className="font-bold text-text-secondary uppercase text-[10px] tracking-wider">Origem:</span>
-                  <span>
-                    {selectedAppt.origem === 'portal' ? (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">Portal</span>
-                    ) : (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Manual</span>
-                    )}
-                  </span>
-                </div>
-
                 {/* Date / Time */}
                 <div className="grid grid-cols-[100px_1fr] border-b border-border/40 pb-2">
                   <span className="font-bold text-text-secondary uppercase text-[10px] tracking-wider">Data / Horário:</span>
@@ -1741,27 +1729,25 @@ export default function Agendamentos() {
                 </div>
 
                 {/* List of services in details view */}
-                <div className="border-b border-border/40 pb-2">
+                <div>
                   <span className="font-bold text-text-secondary uppercase text-[10px] tracking-wider block mb-1">Procedimentos:</span>
                   <div className="space-y-1 mt-1 bg-bg/25 border border-border/60 p-2.5 rounded-lg max-h-[120px] overflow-y-auto">
                     {selectedAppt.agendamento_servicos?.map((s, idx) => (
                       <div key={idx} className="flex justify-between items-center text-xs text-text-primary">
                         <span>
-                          {s.servico?.nome} 
+                          {s.servico?.nome}
                           {s.variacao?.nome && <span className="text-[10px] bg-gold-light/40 text-gold border border-gold-light/60 px-1 py-0.5 rounded font-normal ml-1">{s.variacao.nome}</span>}
                         </span>
                         <span className="font-semibold text-rose-800">R$ {Number(s.valor_cobrado).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                       </div>
                     ))}
+                    <div className="border-t border-border/40 pt-1.5 mt-1.5 flex justify-between items-center text-sm font-bold text-text-primary">
+                      <span>Total</span>
+                      <span className="text-rose-800">
+                        R$ {selectedAppt.agendamento_servicos?.reduce((sum, s) => sum + Number(s.valor_cobrado), 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </span>
+                    </div>
                   </div>
-                </div>
-
-                {/* Price Display */}
-                <div className="grid grid-cols-[100px_1fr] border-b border-border/40 pb-2">
-                  <span className="font-bold text-text-secondary uppercase text-[10px] tracking-wider">Valor Cobrado:</span>
-                  <span className="text-rose-800 font-title font-bold text-base">
-                    R$ {selectedAppt.agendamento_servicos?.reduce((sum, s) => sum + Number(s.valor_cobrado), 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                  </span>
                 </div>
 
                 {/* Observations */}
@@ -1774,7 +1760,7 @@ export default function Agendamentos() {
               </div>
 
               {/* Status & Edit Controls */}
-              <div className="pt-2 border-t border-border flex flex-col gap-2">
+              <div className="pt-2 flex flex-col gap-2">
 
                 {selectedAppt.status === 'pendente' && (
                   <>
@@ -1856,7 +1842,7 @@ export default function Agendamentos() {
       {/* CONCLUDE MODAL */}
       {concludeAppt && (() => {
         const totalServicos = concludeAppt.agendamento_servicos?.reduce((sum, s) => sum + Number(s.valor_cobrado || 0), 0) || 0;
-        const clientName = concludeAppt.cliente ? `${concludeAppt.cliente.nome} ${concludeAppt.cliente.sobrenome}` : 'Cliente';
+        const clientName = concludeAppt.cliente ? `${concludeAppt.cliente.nome} ${concludeAppt.cliente.sobrenome || ''}`.trim() : 'Cliente';
         return createPortal(
           <div className="fixed inset-0 bg-black/45 backdrop-blur-sm z-[300] flex items-center justify-center p-4 overflow-y-auto animate-fade-in">
             <div className="bg-white rounded-[14px] border border-border shadow-xl w-full max-w-md flex flex-col max-h-[calc(100vh-2rem)] overflow-hidden animate-slide-up">
