@@ -101,6 +101,8 @@ export default function Login() {
               </div>
               <input
                 type="email"
+                name="email"
+                autoComplete="username"
                 required
                 placeholder="seu@email.com"
                 value={email}
@@ -120,6 +122,8 @@ export default function Login() {
               </div>
               <input
                 type={showPassword ? 'text' : 'password'}
+                name="password"
+                autoComplete="current-password"
                 required
                 placeholder="••••••••"
                 value={password}
