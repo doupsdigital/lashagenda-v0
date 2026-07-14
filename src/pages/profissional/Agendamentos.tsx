@@ -19,7 +19,8 @@ import {
   Trash2,
   CheckCircle,
   XCircle,
-  UserX
+  UserX,
+  Lock
 } from 'lucide-react';
 import type {
   Agendamento,
@@ -147,6 +148,19 @@ export default function Agendamentos() {
 
   const [pendingOpen, setPendingOpen] = useState(() => !!(location.state as { openPending?: boolean })?.openPending);
 
+  // View mode dropdown (toolbar)
+  const [viewDropdownOpen, setViewDropdownOpen] = useState(false);
+
+  // "Trancar Horário" bottom sheet
+  const [isTrancarOpen, setIsTrancarOpen] = useState(false);
+  const [trancarData, setTrancarData] = useState('');
+  const [trancarDiaInteiro, setTrancarDiaInteiro] = useState(true);
+  const [trancarHoraInicio, setTrancarHoraInicio] = useState('12:00');
+  const [trancarHoraFim, setTrancarHoraFim] = useState('13:00');
+  const [trancarMotivo, setTrancarMotivo] = useState('');
+  const [trancarSaving, setTrancarSaving] = useState(false);
+  const [trancarError, setTrancarError] = useState<string | null>(null);
+
   // "Ver Agenda do Dia" from Dashboard: switch to daily view for today
   useEffect(() => {
     const state = location.state as { filterToday?: boolean } | null;
@@ -237,6 +251,117 @@ export default function Agendamentos() {
     } catch (err) {
       console.error('Erro de setup:', err);
       showTemporaryError('Falha ao carregar catálogo de serviços.');
+    }
+  };
+
+  // "Trancar Horário" — abre o bottom sheet já com a data do dia visualizado na agenda
+  const handleOpenTrancar = () => {
+    const y = currentDate.getFullYear();
+    const m = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const d = String(currentDate.getDate()).padStart(2, '0');
+    setTrancarData(`${y}-${m}-${d}`);
+    setTrancarDiaInteiro(true);
+    setTrancarHoraInicio('12:00');
+    setTrancarHoraFim('13:00');
+    setTrancarMotivo('');
+    setTrancarError(null);
+    setIsTrancarOpen(true);
+  };
+
+  // Atalho de usabilidade: preenche o período de almoço direto
+  const handleAplicarAtalhoAlmoco = () => {
+    setTrancarDiaInteiro(false);
+    setTrancarHoraInicio('12:00');
+    setTrancarHoraFim('13:00');
+  };
+
+  const insertTrancamento = async () => {
+    setTrancarSaving(true);
+    try {
+      const { error } = await supabase.from('bloqueios_agenda').insert({
+        data_inicio: trancarData,
+        data_fim: trancarData,
+        dia_inteiro: trancarDiaInteiro,
+        hora_inicio: trancarDiaInteiro ? null : `${trancarHoraInicio}:00`,
+        hora_fim: trancarDiaInteiro ? null : `${trancarHoraFim}:00`,
+        motivo: trancarMotivo.trim() || null,
+        estabelecimento_id: estabelecimentoId,
+      });
+      if (error) throw error;
+
+      setIsTrancarOpen(false);
+      await fetchSetupData();
+      showTemporarySuccess('Horário trancado com sucesso!');
+    } catch (err) {
+      console.error(err);
+      setTrancarError('Falha ao trancar o horário.');
+    } finally {
+      setTrancarSaving(false);
+    }
+  };
+
+  const handleSubmitTrancar = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setTrancarError(null);
+
+    if (!trancarData) {
+      setTrancarError('Selecione a data.');
+      return;
+    }
+    if (!trancarDiaInteiro) {
+      if (!trancarHoraInicio || !trancarHoraFim) {
+        setTrancarError('Preencha os horários de início e fim.');
+        return;
+      }
+      if (trancarHoraFim <= trancarHoraInicio) {
+        setTrancarError('O horário de fim deve ser maior que o de início.');
+        return;
+      }
+    }
+
+    setTrancarSaving(true);
+    try {
+      // Verifica se já existem agendamentos ativos no período antes de trancar
+      const dayStart = new Date(`${trancarData}T00:00:00`);
+      const dayEnd = new Date(`${trancarData}T23:59:59.999`);
+
+      const { data: dayAppts, error: apptErr } = await supabase
+        .from('agendamentos')
+        .select('id, data_hora, duracao_minutos')
+        .eq('estabelecimento_id', estabelecimentoId)
+        .neq('status', 'cancelado')
+        .neq('status', 'falta')
+        .gte('data_hora', dayStart.toISOString())
+        .lte('data_hora', dayEnd.toISOString());
+      if (apptErr) throw apptErr;
+
+      const lockStart = trancarDiaInteiro ? dayStart : new Date(`${trancarData}T${trancarHoraInicio}:00`);
+      const lockEnd = trancarDiaInteiro ? dayEnd : new Date(`${trancarData}T${trancarHoraFim}:00`);
+
+      const conflicts = (dayAppts || []).filter(appt => {
+        const apptStart = new Date(appt.data_hora);
+        const apptEnd = new Date(apptStart.getTime() + appt.duracao_minutos * 60000);
+        return lockStart < apptEnd && lockEnd > apptStart;
+      });
+
+      if (conflicts.length > 0) {
+        setTrancarSaving(false);
+        openConfirmModal({
+          title: 'Já existem agendamentos nesse período',
+          description: `Há ${conflicts.length} agendamento${conflicts.length > 1 ? 's' : ''} ativo${conflicts.length > 1 ? 's' : ''} no período selecionado. Eles não serão cancelados automaticamente — você pode reagendá-los manualmente. Deseja trancar o horário mesmo assim?`,
+          warningText: 'Os agendamentos existentes continuam normalmente na agenda.',
+          type: 'warning',
+          confirmText: 'Trancar mesmo assim',
+          onConfirm: insertTrancamento,
+        });
+        return;
+      }
+
+      await insertTrancamento();
+    } catch (err) {
+      console.error(err);
+      setTrancarError('Falha ao verificar agendamentos existentes.');
+      setTrancarSaving(false);
     }
   };
 
@@ -1068,11 +1193,6 @@ export default function Agendamentos() {
     .filter(a => a.status === 'pendente')
     .sort((a, b) => new Date(a.data_hora).getTime() - new Date(b.data_hora).getTime());
 
-  useEffect(() => {
-    if (pendingAppts.length > 0) setPendingOpen(true);
-    else setPendingOpen(false);
-  }, [pendingAppts.length]);
-
   return (
     <div className="space-y-6">
       {/* Floating Toasts */}
@@ -1130,39 +1250,64 @@ export default function Agendamentos() {
               {viewMode === 'mensal' && currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase()}
             </span>
           </div>
+        </div>
+      </div>
 
-          {/* Filters & Actions */}
-          <div className="flex flex-col lg:flex-row lg:items-center gap-3">
+      {/* Toolbar de ações rápidas — Novo Agendamento / Trancar Horário / Visualização */}
+      <div className="flex items-center gap-2">
+        <button
+          id="ob-agend-novo-btn"
+          onClick={() => handleOpenForm(currentDate)}
+          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+        >
+          <Plus className="w-4 h-4" />
+          <span className="hidden sm:inline">Novo Agendamento</span>
+          <span className="sm:hidden">Novo</span>
+        </button>
 
-            {/* View switcher */}
-            <div id="ob-agend-view-toggle" className="flex w-full lg:w-auto bg-bg rounded-lg p-0.5 border border-border/40">
-              {[
-                { id: 'diaria', label: 'Dia' },
-                { id: 'semanal', label: 'Semana' },
-                { id: 'mensal', label: 'Mês' }
-              ].map(mode => (
-                <button
-                  key={mode.id}
-                  onClick={() => setViewMode(mode.id as any)}
-                  className={`flex-1 lg:flex-none px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer text-center ${viewMode === mode.id
-                    ? 'bg-white text-rose-600 shadow-sm border border-border/30'
-                    : 'text-text-secondary hover:text-rose-600'}`}
-                >
-                  {mode.label}
-                </button>
-              ))}
-            </div>
+        <button
+          onClick={handleOpenTrancar}
+          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+        >
+          <Lock className="w-4 h-4" />
+          <span className="hidden sm:inline">Trancar Horário</span>
+          <span className="sm:hidden">Trancar</span>
+        </button>
 
-            {/* Create button */}
-            <button
-              id="ob-agend-novo-btn"
-              onClick={() => handleOpenForm(currentDate)}
-              className="flex items-center justify-center gap-1 w-full lg:w-auto px-3 py-2.5 bg-rose-600 hover:bg-rose-800 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              Novo Agendamento
-            </button>
-          </div>
+        <div className="relative flex-1">
+          <button
+            id="ob-agend-view-toggle"
+            onClick={() => setViewDropdownOpen(o => !o)}
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+          >
+            {viewMode === 'diaria' && 'Dia'}
+            {viewMode === 'semanal' && 'Semana'}
+            {viewMode === 'mensal' && 'Mês'}
+            <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${viewDropdownOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          {viewDropdownOpen && (
+            <>
+              <div className="fixed inset-0 z-20" onClick={() => setViewDropdownOpen(false)} />
+              <div className="absolute right-0 mt-1.5 w-36 bg-white rounded-lg shadow-lg border border-border overflow-hidden z-30 animate-fade-in">
+                {[
+                  { id: 'diaria', label: 'Dia' },
+                  { id: 'semanal', label: 'Semana' },
+                  { id: 'mensal', label: 'Mês' }
+                ].map(mode => (
+                  <button
+                    key={mode.id}
+                    onClick={() => { setViewMode(mode.id as any); setViewDropdownOpen(false); }}
+                    className={`w-full text-left px-4 py-2.5 text-xs font-semibold transition-colors cursor-pointer ${
+                      viewMode === mode.id ? 'bg-rose-50 text-rose-600' : 'text-text-secondary hover:bg-bg'
+                    }`}
+                  >
+                    {mode.label}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -2156,6 +2301,164 @@ export default function Agendamentos() {
 
           </div>
         </div>, document.body)}
+
+      {/* Bottom sheet: Trancar Horário */}
+      {isTrancarOpen && createPortal(
+        <div
+          className="fixed inset-0 bg-black/45 backdrop-blur-sm z-[300] flex items-end sm:items-center justify-center animate-fade-in"
+          onClick={() => !trancarSaving && setIsTrancarOpen(false)}
+        >
+          <div
+            className="bg-white w-full sm:max-w-md rounded-t-[20px] sm:rounded-[16px] shadow-xl overflow-hidden animate-slide-up max-h-[92vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Drag handle (mobile) */}
+            <div className="sm:hidden flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1.5 bg-border rounded-full" />
+            </div>
+
+            <div className="p-6">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="font-title font-bold text-xl text-text-primary flex items-center gap-2">
+                    <Lock className="w-5 h-5 text-rose-600" />
+                    Trancar Horário
+                  </h3>
+                  <p className="text-[11px] font-semibold text-text-secondary uppercase tracking-wider mt-0.5">
+                    Folga, feriado ou pausa
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsTrancarOpen(false)}
+                  className="text-text-secondary hover:text-rose-600 transition-colors p-1 rounded-full hover:bg-bg cursor-pointer flex-shrink-0"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmitTrancar} className="space-y-4 mt-5">
+                {/* Data */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+                    Data
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={trancarData}
+                    onChange={(e) => setTrancarData(e.target.value)}
+                    className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                  />
+                </div>
+
+                {/* Dia inteiro / período específico */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+                    O que travar
+                  </label>
+                  <div className="flex bg-bg rounded-lg p-0.5 border border-border/40">
+                    <button
+                      type="button"
+                      onClick={() => setTrancarDiaInteiro(true)}
+                      className={`flex-1 px-3 py-2 rounded-md text-xs font-semibold transition-all cursor-pointer ${trancarDiaInteiro
+                        ? 'bg-white text-rose-600 shadow-sm border border-border/30'
+                        : 'text-text-secondary hover:text-rose-600'}`}
+                    >
+                      Dia inteiro
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTrancarDiaInteiro(false)}
+                      className={`flex-1 px-3 py-2 rounded-md text-xs font-semibold transition-all cursor-pointer ${!trancarDiaInteiro
+                        ? 'bg-white text-rose-600 shadow-sm border border-border/30'
+                        : 'text-text-secondary hover:text-rose-600'}`}
+                    >
+                      Só um período
+                    </button>
+                  </div>
+                </div>
+
+                {!trancarDiaInteiro && (
+                  <div className="space-y-2 animate-fade-in">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+                          Início
+                        </label>
+                        <input
+                          type="time"
+                          required={!trancarDiaInteiro}
+                          value={trancarHoraInicio}
+                          onChange={(e) => setTrancarHoraInicio(e.target.value)}
+                          className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+                          Fim
+                        </label>
+                        <input
+                          type="time"
+                          required={!trancarDiaInteiro}
+                          value={trancarHoraFim}
+                          onChange={(e) => setTrancarHoraFim(e.target.value)}
+                          className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleAplicarAtalhoAlmoco}
+                      className="text-[11px] font-semibold text-rose-600 hover:text-rose-800 cursor-pointer underline underline-offset-2"
+                    >
+                      Atalho: horário de almoço (12:00–13:00)
+                    </button>
+                  </div>
+                )}
+
+                {/* Motivo */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+                    Motivo <span className="text-text-muted font-normal normal-case">(opcional)</span>
+                  </label>
+                  <textarea
+                    rows={2}
+                    placeholder="Ex.: feriado, folga, compromisso pessoal..."
+                    value={trancarMotivo}
+                    onChange={(e) => setTrancarMotivo(e.target.value)}
+                    className="w-full px-3 py-2 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 resize-none"
+                  />
+                </div>
+
+                {trancarError && (
+                  <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-800 px-3 py-2 rounded-lg">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-600" />
+                    <p className="text-xs font-medium">{trancarError}</p>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-2 bg-amber-50/50 border border-amber-100 rounded-lg p-3">
+                  <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                  <p className="text-[11px] text-amber-800 leading-relaxed">
+                    Se já houver agendamentos ativos nesse período, você verá um aviso antes de trancar — eles não são cancelados automaticamente.
+                  </p>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={trancarSaving}
+                  className="w-full flex items-center justify-center gap-2 py-3 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+                >
+                  <Lock className="w-4 h-4" />
+                  {trancarSaving ? 'Trancando...' : 'Trancar Horário'}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
 
       <ConfirmModal
         isOpen={confirmModalOpen}
