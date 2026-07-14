@@ -151,7 +151,6 @@ export default function PortalCatalogo() {
         .from('servicos')
         .select('*, variacoes_servico(*)')
         .eq('estabelecimento_id', establishmentId)
-        .eq('ativo', true)
         .order('nome', { ascending: true });
 
       if (servError) throw servError;

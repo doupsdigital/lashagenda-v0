@@ -7,7 +7,6 @@ import {
   Plus,
   Edit2,
   Trash2,
-  Power,
   Search,
   AlertCircle,
   Sparkles,
@@ -17,7 +16,7 @@ import {
   ImagePlus,
   Tag,
   ChevronDown,
-  Scissors,
+  WandSparkles,
 } from 'lucide-react';
 import type { Servico, VariacaoServico } from '../../types';
 import { registrarLog } from '../../utils/log';
@@ -40,7 +39,6 @@ export default function Servicos() {
   const [servicos, setServicos] = useState<ServicoWithRelations[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'todos' | 'ativos' | 'inativos'>('todos');
 
   // Selected item for editing (null = modo criação)
   const [editingServico, setEditingServico] = useState<ServicoWithRelations | null>(null);
@@ -272,28 +270,6 @@ export default function Servicos() {
     }
   };
 
-  const handleToggleServicoStatus = async (serv: Servico) => {
-    const newStatus = !serv.ativo;
-    try {
-      const { error } = await supabase
-        .from('servicos')
-        .update({ ativo: newStatus })
-        .eq('id', serv.id);
-
-      if (error) throw error;
-      await registrarLog(
-        'editou',
-        'servico',
-        serv.id,
-        `${newStatus ? 'Ativou' : 'Desativou'} serviço "${serv.nome}"`
-      );
-      fetchData();
-    } catch (err) {
-      console.error(err);
-      showTemporaryError('Falha ao atualizar status del serviço.');
-    }
-  };
-
   const handleDeleteServico = async (serv: ServicoWithRelations) => {
     // Regra: não pode excluir serviço com atendimentos registrados
     try {
@@ -416,14 +392,9 @@ export default function Servicos() {
   };
 
   // FILTER LOGIC
-  const filteredServicos = servicos.filter(serv => {
-    const matchesSearch = serv.nome.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      statusFilter === 'todos' ||
-      (statusFilter === 'ativos' && serv.ativo) ||
-      (statusFilter === 'inativos' && !serv.ativo);
-    return matchesSearch && matchesStatus;
-  });
+  const filteredServicos = servicos.filter(serv =>
+    serv.nome.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   // Só mostra o botão "Limpar todos os serviços" enquanto a base ainda parecer
   // ser 100% a base de exemplo (nenhum serviço editado, adicionado ou com imagem própria).
@@ -711,27 +682,15 @@ export default function Servicos() {
             </span>
           </h3>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <div className="relative flex-1 sm:w-56">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-text-muted" />
-              <input
-                type="text"
-                placeholder="Buscar serviço por nome..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
-              />
-            </div>
-
-            <select
-              value={statusFilter}
-              onChange={(e: any) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 cursor-pointer"
-            >
-              <option value="todos">Todos os Status</option>
-              <option value="ativos">Apenas Ativos</option>
-              <option value="inativos">Apenas Inativos</option>
-            </select>
+          <div className="relative sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-text-muted" />
+            <input
+              type="text"
+              placeholder="Buscar serviço por nome..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
+            />
           </div>
         </div>
 
@@ -743,7 +702,7 @@ export default function Servicos() {
         ) : filteredServicos.length === 0 ? (
           <div className="p-12 text-center text-text-secondary">
             <div className="w-16 h-16 rounded-full bg-rose-50 flex items-center justify-center mx-auto mb-3">
-              <Scissors className="w-7 h-7 text-rose-300" />
+              <WandSparkles className="w-7 h-7 text-rose-300" />
             </div>
             {servicos.length === 0 ? (
               <>
@@ -762,38 +721,39 @@ export default function Servicos() {
             {filteredServicos.map(serv => (
               <div
                 key={serv.id}
-                className={`px-6 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors duration-150 hover:bg-bg/10 ${!serv.ativo ? 'opacity-50' : ''}`}
+                className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-3 transition-colors duration-150 hover:bg-bg/30"
               >
-                {/* Left: Info */}
-                <div className="flex-1 min-w-0 space-y-1">
-                  <div className="flex items-center gap-2.5">
-                    <p className="font-semibold text-text-primary text-base truncate">{serv.nome}</p>
-                    {!serv.ativo && (
-                      <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 uppercase tracking-wider">
-                        Inativo
-                      </span>
-                    )}
-                  </div>
+                {/* Thumbnail */}
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden bg-rose-50 border border-rose-100 flex items-center justify-center flex-shrink-0">
+                  {serv.imagem_url ? (
+                    <img src={serv.imagem_url} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <WandSparkles className="w-5 h-5 text-rose-300" />
+                  )}
+                </div>
 
-                  <div className="flex flex-wrap items-center gap-y-1 gap-x-4 text-xs text-text-secondary">
-                    <span className="flex items-center gap-1.5">
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-text-primary text-sm sm:text-base truncate">{serv.nome}</p>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-text-secondary mt-0.5">
+                    <span className="flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5 text-text-muted" />
                       {serv.duracao_minutos} min
                     </span>
-                    <span className="flex items-center gap-1.5">
+                    <span className="flex items-center gap-1">
                       <Coins className="w-3.5 h-3.5 text-text-muted" />
                       R$ {Number(serv.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </span>
                     {serv.variacoes_servico && serv.variacoes_servico.length > 0 && (
                       <span className="bg-gold-light/40 text-gold text-[10px] font-medium px-2 py-0.5 rounded border border-gold-light/60">
-                        Possui {serv.variacoes_servico.length} variações
+                        {serv.variacoes_servico.length} variações
                       </span>
                     )}
                   </div>
 
                   {/* Variações legadas (não é mais possível criar novas por aqui) */}
                   {serv.variacoes_servico && serv.variacoes_servico.length > 0 && (
-                    <div className="text-[11px] text-text-muted flex flex-wrap gap-x-2 gap-y-1 mt-1 bg-rose-50/10 p-1.5 rounded border border-border/40 max-w-xl">
+                    <div className="text-[11px] text-text-muted flex flex-wrap gap-x-2 gap-y-1 mt-1.5">
                       <span className="font-medium">Opções:</span>
                       {serv.variacoes_servico.map((v, i) => (
                         <span key={v.id}>
@@ -805,27 +765,19 @@ export default function Servicos() {
                   )}
                 </div>
 
-                {/* Right: Actions */}
-                <div className="flex items-center justify-end gap-2.5">
+                {/* Actions */}
+                <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
                   <button
                     onClick={() => handleEditServico(serv)}
-                    className="p-1.5 text-text-secondary hover:text-rose-600 rounded hover:bg-rose-50 transition-colors cursor-pointer"
+                    className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-text-secondary hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
                     title="Editar Serviço"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>
 
                   <button
-                    onClick={() => handleToggleServicoStatus(serv)}
-                    className={`p-1.5 rounded transition-colors cursor-pointer ${serv.ativo ? 'text-green-600 hover:bg-green-50' : 'text-text-muted hover:bg-gray-100'}`}
-                    title={serv.ativo ? 'Desativar Serviço' : 'Ativar Serviço'}
-                  >
-                    <Power className="w-4 h-4" />
-                  </button>
-
-                  <button
                     onClick={() => handleDeleteServico(serv)}
-                    className="p-1.5 text-red-500 hover:bg-red-50 rounded transition-colors cursor-pointer"
+                    className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-text-secondary hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                     title="Excluir Serviço"
                   >
                     <Trash2 className="w-4 h-4" />
