@@ -2,7 +2,6 @@
   "name": "Lash Agenda",
   "short_name": "Lash Agenda",
   "description": "Sistema de agendamentos para profissionais de cílios e estética",
-  "start_url": "/",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#FAF0F3",

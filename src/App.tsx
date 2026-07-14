@@ -19,7 +19,6 @@ import MeusHorarios from './pages/profissional/MeusHorarios';
 import CadastroProfissional from './pages/profissional/CadastroProfissional';
 import PortalCatalogo from './pages/portal-clientes/PortalCatalogo';
 import PortalAgendar from './pages/portal-clientes/PortalAgendar';
-import PortalEntrarApp from './pages/portal-clientes/PortalEntrarApp';
 import PortalMeusAgendamentos from './pages/portal-clientes/PortalMeusAgendamentos';
 import PortalPerfil from './pages/portal-clientes/PortalPerfil';
 import { PortalProvider } from './contexts/PortalContext';
@@ -158,10 +157,6 @@ export default function App() {
                   Se já houver sessão de uma reserva anterior, o próprio PortalAgendar usa
                   os dados da sessão em vez de pedir os campos de novo. */}
               <Route path="agendar" element={<PortalAgendar />} />
-
-              {/* Deep link do app instalado (PWA) na tela inicial da cliente — ver
-                  Edge Function portal-manifest e PortalEntrarApp para o contexto completo. */}
-              <Route path="app/:token" element={<PortalEntrarApp />} />
 
               {/* Rotas protegidas do cliente */}
               <Route

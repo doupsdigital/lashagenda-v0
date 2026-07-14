@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { BookOpen, Calendar, ClipboardList, User, LogOut, MessageCircle, LayoutDashboard } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePortal } from '../../contexts/PortalContext';
 import PortalFloatingHelpButton from '../common/PortalFloatingHelpButton';
@@ -9,34 +9,11 @@ import InstallBanner from '../common/InstallBanner';
 export default function PortalLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, profile, isProfissional, isCliente, portalToken, signOut } = useAuth();
+  const { user, profile, isProfissional, signOut } = useAuth();
   const { nomeNegocio, logoUrl, slug, loading, nomeProfissional, telefoneProfissional, descricao, instagram, endereco } = usePortal();
   const isAgendar = location.pathname.endsWith('/agendar');
 
   const [installBannerVisible, setInstallBannerVisible] = useState(false);
-
-  // Enquanto a cliente estiver logada no portal, o manifest usado para
-  // "Adicionar à Tela de Início" deve apontar direto para o portal dela
-  // (com o token permanente embutido), não para "/" (área da profissional).
-  // Ver Edge Function portal-manifest para o porquê disso ser necessário no iOS.
-  useEffect(() => {
-    const manifestLink = document.querySelector('link[rel="manifest"]');
-    if (!manifestLink) return;
-
-    if (isCliente && slug && portalToken) {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const params = new URLSearchParams({
-        slug,
-        token: portalToken,
-        origin: window.location.origin,
-      });
-      manifestLink.setAttribute('href', `${supabaseUrl}/functions/v1/portal-manifest?${params.toString()}`);
-    }
-
-    return () => {
-      manifestLink.setAttribute('href', '/manifest.json');
-    };
-  }, [isCliente, slug, portalToken]);
 
   const handleSignOut = async () => {
     await signOut();

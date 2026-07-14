@@ -17,7 +17,6 @@ interface AuthContextType {
   statusAssinatura: string | null;
   estabelecimentoSlug: string | null;
   trialEndsAt: string | null;
-  portalToken: string | null;
   loading: boolean;
   isPaginaVista: (key: string) => boolean;
   markPageSeen: (key: string) => Promise<void>;
@@ -43,7 +42,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [statusAssinatura, setStatusAssinatura] = useState<string | null>(null);
   const [estabelecimentoSlug, setEstabelecimentoSlug] = useState<string | null>(null);
   const [trialEndsAt, setTrialEndsAt] = useState<string | null>(null);
-  const [portalToken, setPortalToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -54,7 +52,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setEstabelecimentoId(null);
         setPlano(null);
         setEstabelecimentoSlug(null);
-        setPortalToken(null);
         setLoading(false);
         return;
       }
@@ -71,7 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const fetchProfile = async () => {
         return await supabase
           .from('usuarios')
-          .select('*, estabelecimentos(plano, status_assinatura, slug, trial_ends_at), clientes(portal_token)')
+          .select('*, estabelecimentos(plano, status_assinatura, slug, trial_ends_at)')
           .eq('id', session.user.id)
           .maybeSingle();
       };
@@ -102,7 +99,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setStatusAssinatura(profileData.estabelecimentos?.status_assinatura ?? 'trial');
       setEstabelecimentoSlug(profileData.estabelecimentos?.slug ?? null);
       setTrialEndsAt(profileData.estabelecimentos?.trial_ends_at ?? null);
-      setPortalToken(profileData.clientes?.portal_token ?? null);
       setLoading(false);
     });
 
@@ -125,7 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!user) return;
     const { data } = await supabase
       .from('usuarios')
-      .select('*, estabelecimentos(plano, status_assinatura, slug, trial_ends_at), clientes(portal_token)')
+      .select('*, estabelecimentos(plano, status_assinatura, slug, trial_ends_at)')
       .eq('id', user.id)
       .maybeSingle();
 
@@ -138,7 +134,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setStatusAssinatura(profileData.estabelecimentos?.status_assinatura ?? 'trial');
       setEstabelecimentoSlug(profileData.estabelecimentos?.slug ?? null);
       setTrialEndsAt(profileData.estabelecimentos?.trial_ends_at ?? null);
-      setPortalToken(profileData.clientes?.portal_token ?? null);
     }
   };
 
@@ -169,7 +164,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider value={{
       user, profile, role, isProfissional, isCliente, clienteId,
       estabelecimentoId, plano, statusAssinatura, estabelecimentoSlug,
-      trialEndsAt, portalToken, loading, isPaginaVista, markPageSeen,
+      trialEndsAt, loading, isPaginaVista, markPageSeen,
       signIn, signOut, refreshProfile,
     }}>
       {children}
