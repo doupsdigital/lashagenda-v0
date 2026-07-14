@@ -5,12 +5,11 @@ import { useAuth } from '../../contexts/AuthContext';
 import { usePortal } from '../../contexts/PortalContext';
 import PortalFloatingHelpButton from '../common/PortalFloatingHelpButton';
 import InstallBanner from '../common/InstallBanner';
-import { ENTRY_HREF, ENTRY_STANDALONE } from '../../debugEntry';
 
 export default function PortalLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, profile, role, isProfissional, signOut } = useAuth();
+  const { user, profile, isProfissional, signOut } = useAuth();
   const { nomeNegocio, logoUrl, slug, loading, nomeProfissional, telefoneProfissional, descricao, instagram, endereco } = usePortal();
   const isAgendar = location.pathname.endsWith('/agendar');
 
@@ -63,21 +62,6 @@ export default function PortalLayout() {
 
   return (
     <div className="min-h-screen bg-bg flex flex-col font-sans">
-      {/* DEBUG TEMPORÁRIO — remover depois de diagnosticar o PWA no iOS */}
-      <div
-        style={{
-          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 99999,
-          background: 'rgba(0,0,0,0.85)', color: '#0f0', fontSize: '9px',
-          fontFamily: 'monospace', padding: '4px 6px', lineHeight: 1.4,
-          wordBreak: 'break-all',
-        }}
-      >
-        <div>entrada: {ENTRY_HREF}</div>
-        <div>atual: {location.pathname}</div>
-        <div>standalone: {String(ENTRY_STANDALONE)}</div>
-        <div>sessão: {user ? `${profile?.nome ?? '?'} (${role})` : 'nenhuma'}</div>
-      </div>
-
       {/* Header */}
       <header className="h-[60px] bg-white border-b border-border flex items-center justify-between px-4 md:px-6 sticky top-0 z-30">
         <div className="flex items-center gap-2.5 min-w-0">
