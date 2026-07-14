@@ -65,8 +65,6 @@ const DIAS_SEMANA = [
 export default function Agendamentos() {
   const { isProfissional, estabelecimentoId, profile } = useAuth();
   const location = useLocation();
-  const { autoStart } = useOnboarding('agendamentos');
-  useEffect(() => { if (profile) autoStart(); }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
   const [viewMode, setViewMode] = useState<'mensal' | 'semanal' | 'diaria'>(() => {
     if (typeof window !== 'undefined' && window.innerWidth < 1024) {
       return 'diaria';
@@ -84,7 +82,10 @@ export default function Agendamentos() {
   const [servicos, setServicos] = useState<(Servico & { variacoes_servico?: VariacaoServico[] })[]>([]);
   const [agendamentos, setAgendamentos] = useState<AgendamentoWithRelations[]>([]);
   const [bloqueios, setBloqueios] = useState<BloqueioAgenda[]>([]);
-  
+
+  const { autoStart } = useOnboarding('agendamentos', { hasPending: agendamentos.some(a => a.status === 'pendente') });
+  useEffect(() => { if (profile) autoStart(); }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -1479,7 +1480,7 @@ export default function Agendamentos() {
 
       {/* VISUALIZAÇÃO DIÁRIA */}
       {!loading && viewMode === 'diaria' && (
-        <div className="bg-white border border-border rounded-[14px] overflow-hidden shadow-sm flex flex-col">
+        <div id="ob-agend-grid" className="bg-white border border-border rounded-[14px] overflow-hidden shadow-sm flex flex-col">
           <div className="grid grid-cols-[60px_1fr] border-b border-border bg-rose-50/10 text-center">
             <div className="py-3 border-r border-border" />
             <div className="py-3 flex items-center justify-center gap-1.5 font-title font-semibold text-lg text-text-primary">
@@ -1593,7 +1594,7 @@ export default function Agendamentos() {
 
       {/* VISUALIZAÇÃO MENSAL */}
       {!loading && viewMode === 'mensal' && (
-        <div className="bg-white border border-border rounded-[14px] overflow-hidden shadow-sm flex flex-col">
+        <div id="ob-agend-grid" className="bg-white border border-border rounded-[14px] overflow-hidden shadow-sm flex flex-col">
           <div className="grid grid-cols-7 border-b border-border bg-rose-50/10 text-center text-xs font-bold text-text-secondary py-3">
             {DIAS_SEMANA.map(d => (
               <span key={d.valor}>{d.nome}</span>

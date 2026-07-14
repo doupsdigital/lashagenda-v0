@@ -12,6 +12,7 @@ export type OnboardingPageKey =
   | 'relatorios'
   | 'link_agendamento'
   | 'configuracoes'
+  | 'fichas_anamnese'
   | 'portal_catalogo'
   | 'portal_catalogo_anonimo'
   | 'portal_agendar'
@@ -19,86 +20,163 @@ export type OnboardingPageKey =
   | 'portal_perfil';
 
 import type { DriveStep } from 'driver.js';
-const STEPS: Record<OnboardingPageKey, DriveStep[]> = {
-  meu_estudio: [
-    {
-      popover: {
-        title: 'Bem-vinda ao Lash Agenda! 👋',
-        description: 'Vamos te mostrar rapidinho como o sistema funciona. São só alguns passos e você já estará pronta para usar tudo. Pode pular a qualquer momento.',
-        side: 'over' as any, align: 'center',
-      },
+
+// Passo final "Menu principal": no mobile o menu é a TabBar inferior, no
+// desktop é a Sidebar lateral — os dois existem sempre no DOM, só um fica
+// visível por vez (o outro fica com display:none via CSS responsivo), então
+// escolhemos em tempo real qual dos dois destacar.
+const menuPrincipalElement = (): Element =>
+  (window.innerWidth < 768
+    ? document.querySelector('#onboarding-tabbar')
+    : document.querySelector('#onboarding-menu-sidebar')) as Element;
+
+const MENU_PRINCIPAL_STEP: DriveStep = {
+  element: menuPrincipalElement,
+  popover: {
+    title: 'Menu principal',
+    description: 'Pelo menu você acessa as principais áreas do sistema: Início, Agendamentos, Clientes, Serviços, Configurações e mais.',
+  },
+};
+
+// "Meu Estúdio" (Dashboard) muda bastante de layout entre os planos — no
+// Agenda ela vê um resumo simples; no Premium, KPIs completos, ações rápidas
+// e gráfico de receita. Por isso são dois roteiros separados (ver useOnboarding).
+const MEU_ESTUDIO_STEPS_PREMIUM: DriveStep[] = [
+  {
+    popover: {
+      title: 'Bem-vinda ao Lash Agenda! 👋',
+      description: 'Vamos te mostrar rapidinho como o sistema funciona. São só alguns passos e você já estará pronta para usar tudo. Pode pular a qualquer momento.',
+      side: 'over' as any, align: 'center',
     },
-    {
-      element: '#onboarding-card-faturamento',
-      popover: {
-        title: 'Seu faturamento 💰',
-        description: 'Aqui você acompanha quanto ganhou no mês com atendimentos finalizados. O valor atualiza automaticamente conforme você conclui atendimentos.',
-      },
+  },
+  {
+    element: '#onboarding-card-faturamento',
+    popover: {
+      title: 'Faturamento do mês 💰',
+      description: 'Aqui você acompanha quanto ganhou no mês com atendimentos finalizados. O valor atualiza automaticamente conforme você conclui atendimentos.',
     },
-    {
-      element: '#onboarding-card-hoje',
-      popover: {
-        title: 'Agendamentos de hoje 📅',
-        description: 'Quantos atendimentos você tem marcados para hoje. Clique no card para ir direto à agenda do dia.',
-      },
+  },
+  {
+    element: '#onboarding-card-hoje',
+    popover: {
+      title: 'Agendamentos de hoje 📅',
+      description: 'Quantos atendimentos você tem marcados para hoje. Clique no card para ir direto à agenda do dia.',
     },
-    {
-      element: '#onboarding-card-pendentes',
-      popover: {
-        title: 'Confirmações pendentes ⏳',
-        description: 'Quando sua cliente agendar pelo portal, o agendamento fica aqui até você confirmar. Não deixe acumular!',
-      },
+  },
+  {
+    element: '#onboarding-card-pendentes',
+    popover: {
+      title: 'Confirmações pendentes ⏳',
+      description: 'Quando sua cliente agendar pelo portal, o agendamento fica aqui até você confirmar. Não deixe acumular!',
     },
-    {
-      element: '#onboarding-card-clientes',
-      popover: {
-        title: 'Novas clientes 🌟',
-        description: 'Quantas clientes novas se cadastraram no período. Acompanhe seu crescimento por aqui.',
-      },
+  },
+  {
+    element: '#onboarding-card-clientes',
+    popover: {
+      title: 'Novas clientes 🌟',
+      description: 'Quantas clientes novas se cadastraram no mês. Acompanhe seu crescimento por aqui.',
     },
-    {
-      element: '#onboarding-btn-novo-agendamento',
-      popover: {
-        title: 'Criar agendamento rápido',
-        description: 'Use este botão para adicionar um agendamento manualmente — quando a cliente liga ou manda mensagem pedindo um horário.',
-      },
+  },
+  {
+    element: '#onboarding-share-link',
+    popover: {
+      title: 'Compartilhe sua agenda 🔗',
+      description: 'Copie o link do seu portal exclusivo e envie para suas clientes agendarem sozinhas, a qualquer hora — sem precisar te chamar no WhatsApp.',
     },
-    {
-      element: '#onboarding-btn-bloquear',
-      popover: {
-        title: 'Bloquear horário',
-        description: 'Precisa sair mais cedo ou tem um compromisso? Bloqueie o horário para que suas clientes não consigam agendar nesse período.',
-      },
+  },
+  {
+    element: '#onboarding-btn-novo-agendamento',
+    popover: {
+      title: 'Criar agendamento rápido',
+      description: 'Use este botão para adicionar um agendamento manualmente — quando a cliente liga ou manda mensagem pedindo um horário.',
     },
-    {
-      element: '#onboarding-btn-novo-servico',
-      popover: {
-        title: 'Seus serviços',
-        description: 'Cadastre aqui todos os seus serviços com preço e duração. Eles aparecem no portal para suas clientes escolherem na hora de agendar.',
-      },
+  },
+  {
+    element: '#onboarding-btn-bloquear',
+    popover: {
+      title: 'Bloquear horário',
+      description: 'Precisa sair mais cedo ou tem um compromisso? Bloqueie o horário para que suas clientes não consigam agendar nesse período.',
     },
-    {
-      element: '#onboarding-btn-agenda-dia',
-      popover: {
-        title: 'Agenda do dia',
-        description: 'Veja todos os seus horários de hoje de forma organizada, com nome da cliente, serviço e status.',
-      },
+  },
+  {
+    element: '#onboarding-btn-novo-servico',
+    popover: {
+      title: 'Seus serviços',
+      description: 'Cadastre aqui todos os seus serviços com preço e duração. Eles aparecem no portal para suas clientes escolherem na hora de agendar.',
     },
-    {
-      element: '#onboarding-tabbar',
-      popover: {
-        title: 'Menu principal',
-        description: 'Por aqui você acessa tudo: Início, Agenda completa, suas Clientes, Serviços e mais configurações. Explore cada seção!',
-      },
+  },
+  {
+    element: '#onboarding-btn-agenda-dia',
+    popover: {
+      title: 'Agenda do dia',
+      description: 'Veja todos os seus horários de hoje de forma organizada, com nome da cliente, serviço e status.',
     },
-    {
-      popover: {
-        title: 'Tudo pronto! 🎉',
-        description: 'Você já conhece o essencial do Lash Agenda. Agora é só começar a usar. Qualquer dúvida, clique em Ajuda em qualquer tela.',
-        side: 'over' as any, align: 'center',
-      },
+  },
+  {
+    element: '#onboarding-proximas-clientes',
+    popover: {
+      title: 'Próximas clientes',
+      description: 'Veja quem está agendada a seguir, com nome, serviço e status. Toque no ícone de informação para entender cada status.',
     },
-  ],
+  },
+  MENU_PRINCIPAL_STEP,
+  {
+    popover: {
+      title: 'Tudo pronto! 🎉',
+      description: 'Você já conhece o essencial do Lash Agenda. Agora é só começar a usar. Qualquer dúvida, clique em Ajuda em qualquer tela.',
+      side: 'over' as any, align: 'center',
+    },
+  },
+];
+
+const MEU_ESTUDIO_STEPS_BASICO: DriveStep[] = [
+  {
+    popover: {
+      title: 'Bem-vinda ao Lash Agenda! 👋',
+      description: 'Vamos te mostrar rapidinho como o sistema funciona. São só alguns passos e você já estará pronta para usar tudo. Pode pular a qualquer momento.',
+      side: 'over' as any, align: 'center',
+    },
+  },
+  {
+    element: '#onboarding-card-hoje',
+    popover: {
+      title: 'Confirmações pendentes ⏳',
+      description: 'Quando sua cliente agendar pelo portal, o agendamento fica aqui até você confirmar. Não deixe acumular!',
+    },
+  },
+  {
+    element: '#onboarding-card-faturamento',
+    popover: {
+      title: 'Faturamento de hoje 💰',
+      description: 'Aqui você acompanha quanto já ganhou hoje com atendimentos finalizados.',
+    },
+  },
+  {
+    element: '#onboarding-share-link',
+    popover: {
+      title: 'Compartilhe sua agenda 🔗',
+      description: 'Copie o link do seu portal exclusivo e envie para suas clientes agendarem sozinhas, a qualquer hora — sem precisar te chamar no WhatsApp.',
+    },
+  },
+  {
+    element: '#onboarding-proximas-clientes',
+    popover: {
+      title: 'Próximas clientes',
+      description: 'Veja quem está agendada a seguir, com nome, serviço e status. Toque no ícone de informação para entender cada status.',
+    },
+  },
+  MENU_PRINCIPAL_STEP,
+  {
+    popover: {
+      title: 'Tudo pronto! 🎉',
+      description: 'Você já conhece o essencial do Lash Agenda. Relatórios, fichas de anamnese e ações rápidas do painel fazem parte do plano Premium — conheça em "Minha Assinatura". Qualquer dúvida, clique em Ajuda em qualquer tela.',
+      side: 'over' as any, align: 'center',
+    },
+  },
+];
+
+const STEPS: Record<Exclude<OnboardingPageKey, 'meu_estudio'>, DriveStep[]> & { meu_estudio: DriveStep[] } = {
+  meu_estudio: MEU_ESTUDIO_STEPS_PREMIUM,
 
   agendamentos: [
     {
@@ -109,17 +187,17 @@ const STEPS: Record<OnboardingPageKey, DriveStep[]> = {
       },
     },
     {
-      element: '#ob-agend-view-toggle',
-      popover: {
-        title: 'Modos de visualização',
-        description: 'Alterne entre visualização mensal, semanal e diária. No celular, o modo diário é o mais prático para o dia a dia.',
-      },
-    },
-    {
       element: '#ob-agend-novo-btn',
       popover: {
         title: 'Novo agendamento',
         description: 'Cria um novo horário para uma cliente. Você escolhe a cliente, o serviço, a data e o horário.',
+      },
+    },
+    {
+      element: '#ob-agend-view-toggle',
+      popover: {
+        title: 'Modos de visualização',
+        description: 'Alterne entre visualização mensal, semanal e diária. No celular, o modo diário é o mais prático para o dia a dia.',
       },
     },
     {
@@ -142,8 +220,15 @@ const STEPS: Record<OnboardingPageKey, DriveStep[]> = {
     {
       popover: {
         title: 'Suas clientes 👩',
-        description: 'Aqui você gerencia toda a sua base de clientes — dados pessoais, histórico e Ficha Clínica (Anamnese).',
+        description: 'Aqui você gerencia toda a sua base de clientes — dados pessoais e histórico de agendamentos.',
         side: 'over' as any, align: 'center',
+      },
+    },
+    {
+      element: '#ob-clientes-add-btn',
+      popover: {
+        title: 'Cadastrar cliente',
+        description: 'Adicione uma nova cliente manualmente com nome e WhatsApp — e-mail, data de nascimento, CPF e endereço são opcionais e podem ser preenchidos depois.',
       },
     },
     {
@@ -154,17 +239,10 @@ const STEPS: Record<OnboardingPageKey, DriveStep[]> = {
       },
     },
     {
-      element: '#ob-clientes-add-btn',
-      popover: {
-        title: 'Cadastrar cliente',
-        description: 'Adicione uma nova cliente manualmente com nome e WhatsApp — e-mail, CPF, data de nascimento e Ficha Clínica (Anamnese) são opcionais e podem ser preenchidos depois.',
-      },
-    },
-    {
       element: '#ob-clientes-lista',
       popover: {
         title: 'Lista de clientes',
-        description: 'Clique em qualquer cliente para ver o perfil completo, histórico de atendimentos e agendar um novo horário.',
+        description: 'Clique em qualquer cliente para ver o perfil completo, histórico de atendimentos e agendar um novo horário. Clientes que agendarem pelo seu link também aparecem aqui automaticamente.',
       },
     },
   ],
@@ -188,7 +266,7 @@ const STEPS: Record<OnboardingPageKey, DriveStep[]> = {
       element: '#ob-servicos-lista',
       popover: {
         title: 'Lista de serviços',
-        description: 'Clique no lápis para editar, no botão de energia para ativar/desativar, e na lixeira para excluir. Serviços inativos não aparecem no portal.',
+        description: 'Clique no lápis para editar e na lixeira para excluir um serviço.',
       },
     },
   ],
@@ -229,14 +307,14 @@ const STEPS: Record<OnboardingPageKey, DriveStep[]> = {
       element: '#ob-relatorios-kpis',
       popover: {
         title: 'Indicadores principais',
-        description: 'Faturamento total, número de atendimentos e clientes novas no período selecionado. Compare com períodos anteriores para acompanhar o crescimento.',
+        description: 'Faturamento total, número de atendimentos, confirmações pendentes e clientes novas no período selecionado. Compare com períodos anteriores para acompanhar o crescimento.',
       },
     },
     {
       element: '#ob-relatorios-graficos',
       popover: {
         title: 'Gráficos de desempenho',
-        description: 'Veja a evolução do faturamento, os dias de maior movimento e quais serviços geram mais receita. Use essas informações para tomar decisões melhores.',
+        description: 'Logo abaixo você encontra a evolução do faturamento, os dias de maior movimento, clientes novas x fiéis, os serviços mais realizados e faltas/cancelamentos do período.',
       },
     },
   ],
@@ -284,7 +362,7 @@ const STEPS: Record<OnboardingPageKey, DriveStep[]> = {
       element: '#ob-config-perfil',
       popover: {
         title: 'Seu perfil',
-        description: 'Atualize seu nome, foto de perfil e senha de acesso.',
+        description: 'Atualize seu nome, foto de perfil e telefone de contato.',
       },
     },
     {
@@ -295,17 +373,41 @@ const STEPS: Record<OnboardingPageKey, DriveStep[]> = {
       },
     },
     {
-      element: '#ob-config-visual',
+      element: '#ob-config-agendamento',
       popover: {
-        title: 'Identidade visual',
-        description: 'Escolha a paleta de cores do sistema e faça upload da logo do seu estúdio. O portal das clientes vai refletir a sua identidade.',
+        title: 'Configurações de agendamento',
+        description: 'Defina se os agendamentos feitos pelo portal ficam confirmados automaticamente ou aguardam sua aprovação. Personalize também a mensagem que sua cliente recebe ao agendar.',
       },
     },
     {
-      element: '#ob-config-agendamento',
+      element: '#ob-config-visual',
       popover: {
-        title: 'Configurações de Agendamento',
-        description: 'Defina se os agendamentos feitos pelo portal ficam confirmados automaticamente ou aguardam sua aprovação. Personalize também a mensagem que sua cliente recebe ao agendar.',
+        title: 'Identidade visual',
+        description: 'Escolha a paleta de cores do sistema, ative o modo escuro e faça upload da logo do seu estúdio. O portal das clientes vai refletir a sua identidade.',
+      },
+    },
+  ],
+
+  fichas_anamnese: [
+    {
+      popover: {
+        title: 'Fichas de Anamnese 📋',
+        description: 'Recurso exclusivo do plano Premium: registre a ficha clínica e as preferências técnicas de lash de cada cliente antes do atendimento.',
+        side: 'over' as any, align: 'center',
+      },
+    },
+    {
+      element: '#ob-fichas-search',
+      popover: {
+        title: 'Busca rápida',
+        description: 'Encontre qualquer cliente pelo nome para ver ou preencher a ficha dela.',
+      },
+    },
+    {
+      element: '#ob-fichas-lista',
+      popover: {
+        title: 'Lista de clientes',
+        description: 'O selo indica se a ficha já foi preenchida ou está pendente. Clique em uma cliente para abrir a ficha completa.',
       },
     },
   ],
@@ -503,21 +605,35 @@ const DRIVER_CONFIG = (onComplete: () => void, doneBtnText = 'Concluir ✓') =>
     onDestroyed: onComplete,
   } as Parameters<typeof driver>[0]);
 
-export function useOnboarding(pageKey: OnboardingPageKey, options?: { studioName?: string | null }) {
+export function useOnboarding(
+  pageKey: OnboardingPageKey,
+  options?: { studioName?: string | null; isPremium?: boolean; hasPending?: boolean }
+) {
   const { isPaginaVista, markPageSeen, loading } = useAuth();
 
   // Combina a marcação salva na conta (quando logada) com o fallback local —
   // basta uma das duas ter registrado a página como vista.
   const hasSeenPage = () => isPaginaVista(pageKey) || getLocalSeen().includes(pageKey);
 
-  // Ref garante que startTour sempre lê o studioName mais recente,
-  // mesmo quando chamado dentro de um setTimeout com closure desatualizado.
+  // Ref garante que startTour sempre lê as options mais recentes (studioName,
+  // isPremium, hasPending), mesmo quando chamado dentro de um setTimeout com
+  // closure desatualizado.
   const optionsRef = useRef(options);
   optionsRef.current = options;
 
   const startTour = () => {
-    let steps = STEPS[pageKey];
+    // "Meu Estúdio" tem layouts bem diferentes por plano — escolhe o roteiro certo.
+    let steps = pageKey === 'meu_estudio'
+      ? (optionsRef.current?.isPremium ? MEU_ESTUDIO_STEPS_PREMIUM : MEU_ESTUDIO_STEPS_BASICO)
+      : STEPS[pageKey];
+
     if (!steps?.length) return;
+
+    // Na Agenda, o painel "Aguardando confirmação" só existe no DOM quando há
+    // pelo menos 1 agendamento pendente — sem isso o passo aponta pro nada.
+    if (pageKey === 'agendamentos' && !optionsRef.current?.hasPending) {
+      steps = steps.filter(s => s.element !== '#ob-agend-pendentes');
+    }
 
     // Personaliza o primeiro passo com o nome do estúdio quando disponível
     const studioName = optionsRef.current?.studioName;

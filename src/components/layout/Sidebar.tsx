@@ -205,7 +205,7 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
           </div>
 
           {/* Navigation Items */}
-          <nav className="flex-1 overflow-y-auto p-3 space-y-6">
+          <nav id="onboarding-menu-sidebar" className="flex-1 overflow-y-auto p-3 space-y-6">
             {/* MENU SECTION */}
             <div className="space-y-1.5">
               {!collapsed && (

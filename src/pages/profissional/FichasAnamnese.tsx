@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { useOnboarding } from '../../hooks/useOnboarding';
 import { Search, ClipboardPen, ChevronRight, AlertCircle } from 'lucide-react';
 import type { Cliente } from '../../types';
 
@@ -20,7 +21,9 @@ function temFichaPreenchida(cliente: ClienteListItem): boolean {
 
 export default function FichasAnamnese() {
   const navigate = useNavigate();
-  const { estabelecimentoId } = useAuth();
+  const { estabelecimentoId, profile } = useAuth();
+  const { autoStart } = useOnboarding('fichas_anamnese');
+  useEffect(() => { if (profile) autoStart(); }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
   const [clientes, setClientes] = useState<ClienteListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -76,7 +79,7 @@ export default function FichasAnamnese() {
         </div>
       )}
 
-      <div className="relative max-w-md">
+      <div id="ob-fichas-search" className="relative max-w-md">
         <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
         <input
           type="text"
@@ -87,7 +90,7 @@ export default function FichasAnamnese() {
         />
       </div>
 
-      <div className="bg-white border border-border rounded-[14px] shadow-sm overflow-hidden">
+      <div id="ob-fichas-lista" className="bg-white border border-border rounded-[14px] shadow-sm overflow-hidden">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-16 text-text-secondary">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-600 mb-2" />

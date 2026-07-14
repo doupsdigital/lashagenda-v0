@@ -60,7 +60,7 @@ export default function Dashboard() {
   const { estabelecimentoId, estabelecimentoSlug, profile } = useAuth();
   const { isPremium } = useSubscription();
   const navigate = useNavigate();
-  const { autoStart } = useOnboarding('meu_estudio');
+  const { autoStart } = useOnboarding('meu_estudio', { isPremium });
 
   const [pendingAppointments, setPendingAppointments] = useState(0);
   const [todayAppointments, setTodayAppointments] = useState<any[]>([]);
@@ -202,7 +202,7 @@ export default function Dashboard() {
   ];
 
   const proximosClientesCard = (
-    <div className="bg-white border border-border rounded-2xl p-5 shadow-sm flex flex-col">
+    <div id="onboarding-proximas-clientes" className="bg-white border border-border rounded-2xl p-5 shadow-sm flex flex-col">
       <div className="flex items-center justify-between gap-2 mb-4 flex-shrink-0">
         <div className="flex items-center gap-1.5">
           <h2 className="font-sans font-semibold text-base text-text-primary flex items-center gap-2">
@@ -410,7 +410,7 @@ export default function Dashboard() {
       )}
 
       {/* ── COMPARTILHAR AGENDA ── */}
-      <div className="rounded-2xl p-6 text-white relative overflow-hidden shadow-sm flex flex-col items-center text-center" style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}>
+      <div id="onboarding-share-link" className="rounded-2xl p-6 text-white relative overflow-hidden shadow-sm flex flex-col items-center text-center" style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}>
         <h2 className="font-title font-bold text-lg md:text-xl mb-1">Compartilhe sua Agenda</h2>
         <p className="text-sm text-white/75 mb-4 max-w-md">
           Envie o link do seu portal exclusivo para suas clientes agendarem sozinhas, a qualquer hora do dia.
