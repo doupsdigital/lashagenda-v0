@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
-import { useOnboarding } from '../../hooks/useOnboarding';
 import {
   Users,
   CalendarDays,
@@ -84,9 +83,7 @@ const getWeekLabel = (date: Date, start: Date) => {
 };
 
 export default function Relatorios() {
-  const { estabelecimentoId, profile } = useAuth();
-  const { autoStart } = useOnboarding('relatorios');
-  useEffect(() => { if (profile) autoStart(); }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { estabelecimentoId } = useAuth();
   const [period, setPeriod] = useState<PeriodType>('esteMes');
   const [customStartDate, setCustomStartDate] = useState(() =>
     formatDateStr(new Date(new Date().getFullYear(), new Date().getMonth(), 1))

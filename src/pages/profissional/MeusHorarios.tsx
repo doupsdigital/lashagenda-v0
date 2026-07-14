@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
-import { useOnboarding } from '../../hooks/useOnboarding';
 import { Clock, CalendarOff, Plus, Trash2, AlertCircle, CheckCircle } from 'lucide-react';
 import type { HorarioAtendimento, BloqueioAgenda } from '../../types';
 import ConfirmModal from '../../components/common/ConfirmModal';
@@ -33,9 +32,7 @@ function formatDate(dateStr: string) {
 }
 
 export default function MeusHorarios() {
-  const { estabelecimentoId, profile } = useAuth();
-  const { autoStart } = useOnboarding('meus_horarios');
-  useEffect(() => { if (profile) autoStart(); }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { estabelecimentoId } = useAuth();
   const [dias, setDias] = useState<DiaConfig[]>(createDefaultDias);
   const [loadingHorarios, setLoadingHorarios] = useState(true);
   const [savingHorarios, setSavingHorarios] = useState(false);

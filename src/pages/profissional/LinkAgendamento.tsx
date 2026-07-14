@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
-import { useOnboarding } from '../../hooks/useOnboarding';
 import ConfirmModal from '../../components/common/ConfirmModal';
 import {
   Link2,
@@ -13,9 +12,7 @@ import {
 } from 'lucide-react';
 
 export default function LinkAgendamento() {
-  const { estabelecimentoId, estabelecimentoSlug, refreshProfile, profile } = useAuth();
-  const { autoStart } = useOnboarding('link_agendamento');
-  useEffect(() => { if (profile) autoStart(); }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { estabelecimentoId, estabelecimentoSlug, refreshProfile } = useAuth();
 
   const [slugEdit, setSlugEdit] = useState('');
   const [savingSlug, setSavingSlug] = useState(false);

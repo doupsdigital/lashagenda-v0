@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
-import { useOnboarding } from '../../hooks/useOnboarding';
 import { PALETTES_LIST, applyPalette } from '../../utils/theme';
 import ConfirmModal from '../../components/common/ConfirmModal';
 import InstallAppCard from '../../components/common/InstallAppCard';
@@ -69,8 +68,6 @@ function SectionCard({ id, icon: Icon, title, isOpen, onToggle, headerExtra, chi
 
 export default function Configuracoes() {
   const { profile, user, refreshProfile, estabelecimentoId } = useAuth();
-  const { autoStart } = useOnboarding('configuracoes');
-  useEffect(() => { if (profile) autoStart(); }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
   const fileInputRef = useRef<HTMLInputElement>(null);
   const logoFileInputRef = useRef<HTMLInputElement>(null);
 

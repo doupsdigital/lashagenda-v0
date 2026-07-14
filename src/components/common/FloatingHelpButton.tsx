@@ -11,6 +11,7 @@ function getPageKey(pathname: string): OnboardingPageKey | null {
   if (pathname === '/relatorios') return 'relatorios';
   if (pathname === '/link-agendamento') return 'link_agendamento';
   if (pathname === '/configuracoes') return 'configuracoes';
+  if (pathname.startsWith('/fichas-anamnese')) return 'fichas_anamnese';
   return null;
 }
 

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { useOnboarding } from '../../hooks/useOnboarding';
 import { supabase } from '../../lib/supabase';
 import {
   Plus,
@@ -40,9 +39,7 @@ function applyCpfMask(value: string): string {
 
 export default function Clientes() {
   const navigate = useNavigate();
-  const { estabelecimentoId, profile } = useAuth();
-  const { autoStart } = useOnboarding('clientes');
-  useEffect(() => { if (profile) autoStart(); }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { estabelecimentoId } = useAuth();
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
