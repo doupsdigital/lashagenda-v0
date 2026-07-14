@@ -668,37 +668,48 @@ export default function PortalAgendar() {
                     const isChecked = selecionados.has(serv.id);
                     const item = selecionados.get(serv.id);
                     return (
-                      <div key={serv.id} className="p-5 space-y-3">
-                        <label className="flex items-start gap-3 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={isChecked}
-                            onChange={() => toggleServico(serv)}
-                            className="mt-1 w-4 h-4 accent-rose-600 cursor-pointer shrink-0"
-                          />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between gap-2 flex-wrap">
-                              <span className="font-semibold text-text-primary">{serv.nome}</span>
-                              <div className="flex items-center gap-3 text-sm text-text-secondary shrink-0">
-                                <span className="flex items-center gap-1">
-                                  <Clock className="w-3.5 h-3.5 text-rose-400" />
-                                  {formatDuracao(serv.duracao_minutos)}
-                                </span>
-                                <span className="flex items-center gap-1 font-semibold text-text-primary">
-                                  <Tag className="w-3.5 h-3.5 text-gold" />
-                                  {formatValor(serv.valor)}
-                                </span>
-                              </div>
-                            </div>
-                            {serv.descricao && (
-                              <p className="text-sm text-text-secondary mt-0.5">{serv.descricao}</p>
+                      <div key={serv.id} className={`transition-colors ${isChecked ? 'bg-rose-600' : ''}`}>
+                        <div
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => toggleServico(serv)}
+                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleServico(serv); } }}
+                          className="relative flex items-center gap-4 p-4 sm:p-5 pr-24 sm:pr-28 cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-rose-300 focus-visible:ring-inset"
+                        >
+                          {/* Thumbnail */}
+                          <div className={`w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border ${isChecked ? 'border-white/50' : 'border-border'} bg-rose-50 flex items-center justify-center`}>
+                            {serv.imagem_url ? (
+                              <img src={serv.imagem_url} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <Heart className="w-5 h-5 text-rose-200" />
                             )}
                           </div>
-                        </label>
+
+                          {/* Info */}
+                          <div className="flex-1 min-w-0 space-y-1">
+                            <p className={`font-semibold text-base truncate ${isChecked ? 'text-white' : 'text-text-primary'}`}>{serv.nome}</p>
+                            <span className={`flex items-center gap-1 text-xs ${isChecked ? 'text-white/90' : 'text-text-secondary'}`}>
+                              <Clock className={`w-3.5 h-3.5 ${isChecked ? 'text-white/80' : 'text-rose-400'}`} />
+                              {formatDuracao(serv.duracao_minutos)}
+                            </span>
+                            {serv.descricao && (
+                              <p className={`text-xs truncate ${isChecked ? 'text-white/80' : 'text-text-secondary'}`}>{serv.descricao}</p>
+                            )}
+                          </div>
+
+                          {/* Preço — destaque no canto inferior direito */}
+                          <span
+                            className={`absolute right-4 sm:right-5 bottom-3 sm:bottom-4 font-title font-bold text-lg ${
+                              isChecked ? 'text-white' : 'text-rose-700'
+                            }`}
+                          >
+                            {formatValor(serv.valor)}
+                          </span>
+                        </div>
 
                         {/* Variações */}
                         {isChecked && serv.variacoes.length > 0 && (
-                          <div className="ml-7 bg-rose-50/30 border border-rose-100 rounded-xl p-3 space-y-2">
+                          <div className="ml-[5rem] mr-4 sm:mr-5 mb-4 bg-white/95 border border-rose-100 rounded-xl p-3 space-y-2">
                             <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">
                               Escolha uma opção <span className="text-red-500">*</span>
                             </p>
