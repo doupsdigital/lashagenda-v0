@@ -10,7 +10,7 @@ export default function PortalLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, profile, isProfissional, signOut } = useAuth();
-  const { nomeNegocio, logoUrl, slug, loading, nomeProfissional, telefoneProfissional, descricao, instagram, endereco } = usePortal();
+  const { nomeNegocio, logoUrl, slug, loading, nomeProfissional, telefoneProfissional } = usePortal();
   const isAgendar = location.pathname.endsWith('/agendar');
 
   const [installBannerVisible, setInstallBannerVisible] = useState(false);
@@ -64,17 +64,15 @@ export default function PortalLayout() {
     <div className="min-h-screen bg-bg flex flex-col font-sans">
       {/* Header */}
       <header className="h-[60px] bg-white border-b border-border flex items-center justify-between px-4 md:px-6 sticky top-0 z-30">
-        <div className="flex items-center gap-2.5 min-w-0">
-          {!(descricao || instagram || endereco) && (
-            logoUrl ? (
-              <img src={logoUrl} alt={nomeNegocio || 'Studio'} className="h-8 w-auto object-contain flex-shrink-0" />
-            ) : (
-              <div className="w-8 h-8 rounded-lg bg-rose-600 text-white flex items-center justify-center font-title font-semibold text-lg flex-shrink-0">
-                {profissionalInitials}
-              </div>
-            )
+        <div className="flex items-center gap-2 min-w-0">
+          {logoUrl ? (
+            <img src={logoUrl} alt={nomeNegocio || 'Studio'} className="h-8 w-auto object-contain flex-shrink-0" />
+          ) : (
+            <div className="w-8 h-8 rounded-lg bg-rose-600 text-white flex items-center justify-center font-title font-semibold text-sm flex-shrink-0">
+              {profissionalInitials}
+            </div>
           )}
-          <span className="font-title font-semibold text-xl text-text-primary tracking-wide truncate">
+          <span className="text-sm font-semibold italic text-text-secondary tracking-wide uppercase truncate">
             {nomeNegocio}
           </span>
         </div>
