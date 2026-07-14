@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
 import { useOnboarding } from '../../hooks/useOnboarding';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
@@ -30,7 +29,7 @@ interface ServicoWithRelations extends Servico {
 }
 
 export default function Servicos() {
-  const { estabelecimentoId, profile } = useAuth();
+  const { estabelecimentoId, profile, isPaginaVista, markPageSeen } = useAuth();
   const { autoStart } = useOnboarding('servicos');
   useEffect(() => { if (profile) autoStart(); }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -87,10 +86,8 @@ export default function Servicos() {
     description: ''
   });
 
-  // "Limpar todos os serviços" (base de exemplo) state
-  const [isClearAllModalOpen, setIsClearAllModalOpen] = useState(false);
-  const [clearAllConfirmText, setClearAllConfirmText] = useState('');
-  const [isClearingAll, setIsClearingAll] = useState(false);
+  // Aviso "esses são serviços de exemplo" (some no primeiro acesso)
+  const [exampleBannerDismissed, setExampleBannerDismissed] = useState(false);
 
   // Fetch all services (com variações legadas, se houver)
   const fetchData = async () => {
@@ -322,85 +319,25 @@ export default function Servicos() {
     }
   };
 
-  // Exclui em massa apenas os serviços do estabelecimento logado (base de exemplo).
-  // Nunca apaga imagens do Storage: os serviços de exemplo usam imagens compartilhadas
-  // (bucket "defaults") reutilizadas por todas as profissionais.
-  const handleClearAllServicos = async () => {
-    if (!estabelecimentoId) return;
-    if (servicos.length === 0) {
-      setIsClearAllModalOpen(false);
-      return;
-    }
-
-    setIsClearingAll(true);
-    try {
-      const serviceIds = servicos.map(s => s.id);
-
-      const { data: atendimentosData, error: atendimentosError } = await supabase
-        .from('atendimentos')
-        .select('servico_id')
-        .in('servico_id', serviceIds);
-      if (atendimentosError) throw atendimentosError;
-
-      const { data: agendamentoServicosData, error: agendamentoServicosError } = await supabase
-        .from('agendamento_servicos')
-        .select('servico_id')
-        .in('servico_id', serviceIds);
-      if (agendamentoServicosError) throw agendamentoServicosError;
-
-      const linkedIds = new Set([
-        ...(atendimentosData || []).map(r => r.servico_id),
-        ...(agendamentoServicosData || []).map(r => r.servico_id),
-      ]);
-
-      const deletableIds = serviceIds.filter(id => !linkedIds.has(id));
-      const skippedCount = serviceIds.length - deletableIds.length;
-
-      if (deletableIds.length > 0) {
-        const { error: delError } = await supabase
-          .from('servicos')
-          .delete()
-          .in('id', deletableIds)
-          .eq('estabelecimento_id', estabelecimentoId);
-        if (delError) throw delError;
-      }
-
-      await registrarLog(
-        'excluiu',
-        'servico',
-        estabelecimentoId,
-        `Limpou base de serviços de exemplo (${deletableIds.length} excluídos, ${skippedCount} pulados)`
-      );
-
-      setIsClearAllModalOpen(false);
-      setClearAllConfirmText('');
-      resetForm();
-      await fetchData();
-      setSuccessModal({
-        isOpen: true,
-        title: 'Serviços removidos!',
-        description: skippedCount > 0
-          ? `${deletableIds.length} serviço(s) de exemplo excluído(s). ${skippedCount} não puderam ser excluídos por terem agendamentos/atendimentos vinculados.`
-          : `${deletableIds.length} serviço(s) de exemplo excluído(s) com sucesso. Agora você já pode cadastrar os seus.`,
-      });
-    } catch (err) {
-      console.error(err);
-      showTemporaryError('Falha ao limpar os serviços de exemplo.');
-    } finally {
-      setIsClearingAll(false);
-    }
-  };
-
   // FILTER LOGIC
   const filteredServicos = servicos.filter(serv =>
     serv.nome.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Só mostra o botão "Limpar todos os serviços" enquanto a base ainda parecer
-  // ser 100% a base de exemplo (nenhum serviço editado, adicionado ou com imagem própria).
+  // Só mostra o aviso de exemplo enquanto a base ainda parecer ser 100% a base
+  // de exemplo (nenhum serviço editado, adicionado ou com imagem própria) e
+  // ela ainda não tiver dispensado o aviso antes.
   const isDefaultServiceBase =
     servicos.length > 0 &&
     servicos.every(s => !!s.imagem_url && s.imagem_url.includes('/defaults/'));
+
+  const showExampleBanner =
+    isDefaultServiceBase && !exampleBannerDismissed && !isPaginaVista('servicos_exemplo_banner');
+
+  const dismissExampleBanner = () => {
+    setExampleBannerDismissed(true);
+    markPageSeen('servicos_exemplo_banner');
+  };
 
   return (
     <div className="space-y-6">
@@ -648,26 +585,24 @@ export default function Servicos() {
         </form>
       </div>
 
-      {/* Aviso: base de serviços de exemplo */}
-      {isDefaultServiceBase && (
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4 bg-amber-50 border border-amber-200 rounded-[14px] p-4 sm:p-5">
-          <div className="flex items-start gap-3 flex-1">
-            <div className="w-9 h-9 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
-              <Sparkles className="w-4.5 h-4.5 text-amber-600" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-amber-900">Esses são serviços de exemplo</p>
-              <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
-                Veja como funciona a lista de serviços. Quando quiser, apague todos de uma vez e cadastre os seus.
-              </p>
-            </div>
+      {/* Aviso: base de serviços de exemplo (mostrado só no primeiro acesso) */}
+      {showExampleBanner && (
+        <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-[14px] p-4 sm:p-5">
+          <div className="w-9 h-9 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+            <Sparkles className="w-4.5 h-4.5 text-amber-600" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-amber-900">Esses são serviços de exemplo</p>
+            <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
+              Preparamos o Fio a Fio Clássico e o Volume Russo como base pra você já começar — são os serviços mais pedidos. Edite os preços e detalhes à vontade, ou apague e cadastre os seus.
+            </p>
           </div>
           <button
-            onClick={() => setIsClearAllModalOpen(true)}
-            className="flex items-center justify-center gap-1.5 px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-semibold transition-colors cursor-pointer shadow-sm w-full sm:w-auto flex-shrink-0"
+            onClick={dismissExampleBanner}
+            className="text-amber-600 hover:text-amber-800 flex-shrink-0 p-1 rounded-full hover:bg-amber-100 transition-colors cursor-pointer"
+            aria-label="Fechar aviso"
           >
-            <Trash2 className="w-4 h-4" />
-            Limpar todos os serviços
+            <X className="w-4 h-4" />
           </button>
         </div>
       )}
@@ -809,71 +744,6 @@ export default function Servicos() {
         confirmText="OK"
         singleAction
       />
-
-      {/* Modal reforçado: limpar todos os serviços de exemplo */}
-      {isClearAllModalOpen && createPortal(
-        <div className="fixed inset-0 bg-black/45 backdrop-blur-sm z-[300] flex items-center justify-center p-4 overflow-y-auto animate-fade-in">
-          <div
-            className="bg-white rounded-[14px] border border-border shadow-xl w-full max-w-sm overflow-hidden p-6 flex flex-col items-center text-center animate-slide-up relative"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => { setIsClearAllModalOpen(false); setClearAllConfirmText(''); }}
-              className="absolute top-4 right-4 text-text-secondary hover:text-rose-600 transition-colors p-1 rounded-full hover:bg-bg"
-            >
-              <X className="w-4 h-4" />
-            </button>
-
-            <div className="w-12 h-12 rounded-full bg-red-50 border border-red-100 flex items-center justify-center text-red-600 mb-4">
-              <Trash2 className="w-5 h-5" />
-            </div>
-
-            <h3 className="font-title font-semibold text-lg text-text-primary mb-2">
-              Limpar todos os serviços?
-            </h3>
-            <p className="text-xs text-text-secondary leading-relaxed mb-4">
-              Isso vai excluir os {servicos.length} serviço(s) de exemplo cadastrados no seu estúdio. Serviços com agendamentos ou atendimentos vinculados serão mantidos automaticamente.
-            </p>
-
-            <div className="w-full flex items-center gap-2 p-3 bg-amber-50/50 border border-amber-100 rounded-lg text-left text-[11px] text-amber-800 font-semibold mb-4">
-              <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
-              <span>Esta ação é permanente e não pode ser desfeita.</span>
-            </div>
-
-            <div className="w-full text-left mb-5">
-              <label className="text-[11px] font-semibold text-text-secondary uppercase tracking-wider mb-1.5 block">
-                Digite EXCLUIR para confirmar
-              </label>
-              <input
-                type="text"
-                value={clearAllConfirmText}
-                onChange={(e) => setClearAllConfirmText(e.target.value)}
-                placeholder="EXCLUIR"
-                className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 w-full">
-              <button
-                type="button"
-                onClick={() => { setIsClearAllModalOpen(false); setClearAllConfirmText(''); }}
-                className="px-4 py-2 border border-border hover:bg-bg text-text-secondary rounded-lg text-xs font-semibold cursor-pointer transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={handleClearAllServicos}
-                disabled={clearAllConfirmText.trim().toUpperCase() !== 'EXCLUIR' || isClearingAll}
-                className="px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer transition-colors w-full bg-rose-600 hover:bg-rose-800 disabled:bg-rose-200 disabled:cursor-not-allowed text-white"
-              >
-                {isClearingAll ? 'Excluindo...' : 'Excluir tudo'}
-              </button>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
     </div>
   );
 }
