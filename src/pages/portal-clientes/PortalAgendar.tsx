@@ -189,7 +189,7 @@ export default function PortalAgendar() {
     if (etapa === 'sucesso' && slug && portalToken) {
       const timer = setTimeout(() => {
         window.location.replace(`/portal/${slug}/app/${portalToken}`);
-      }, 3500);
+      }, 5000);
       return () => clearTimeout(timer);
     }
   }, [etapa, slug, portalToken]);
