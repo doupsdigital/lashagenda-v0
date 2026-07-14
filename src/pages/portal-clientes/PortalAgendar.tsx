@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   ChevronLeft, ChevronRight, Check, Calendar, Clock, Tag,
-  CheckCircle, AlertCircle, Loader2, Heart,
+  CheckCircle, AlertCircle, Loader2, Heart, User,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
@@ -626,30 +626,6 @@ export default function PortalAgendar() {
 
       <IndicadorProgresso etapaAtual={etapa as number} />
 
-      {/* Banner compacto de serviços selecionados (visível nas etapas 2, 3 e 4) */}
-      {etapa !== 1 && itens.length > 0 && (
-        <div className="flex items-center gap-3 bg-rose-50/60 border border-rose-200 rounded-xl px-4 py-3 text-sm">
-          <CheckCircle className="w-4 h-4 text-rose-500 shrink-0" />
-          <div className="flex-1 flex flex-wrap gap-x-4 gap-y-1">
-            {itens.map(it => (
-              <span key={it.servico.id} className="text-text-primary">
-                <span className="font-medium">{it.servico.nome}</span>
-                {it.variacao && <span className="text-text-muted"> — {it.variacao.nome}</span>}
-                <span className="text-text-muted ml-2">
-                  · {formatDuracao(getDuracaoEfetiva(it))} · {formatValor(getValorEfetivo(it))}
-                </span>
-              </span>
-            ))}
-          </div>
-          <button
-            onClick={() => setEtapa(1)}
-            className="text-xs text-rose-600 hover:text-rose-800 font-semibold whitespace-nowrap cursor-pointer"
-          >
-            Alterar
-          </button>
-        </div>
-      )}
-
       {/* ─── ETAPA 1 — Serviços ───────────────────────────────────────────────── */}
       {etapa === 1 && (
         <div id="ob-portal-servico-select" className="space-y-5">
@@ -903,7 +879,56 @@ export default function PortalAgendar() {
 
       {/* ─── ETAPA 4 — Confirmação ────────────────────────────────────────────── */}
       {etapa === 4 && (
-        <div className="space-y-5">
+        <div id="ob-portal-resumo" className="space-y-5">
+          {/* Seus dados — só para quem ainda não tem sessão (agendamento como convidada) */}
+          {!user && (
+            <div className="bg-white border-2 border-rose-300 rounded-2xl overflow-hidden shadow-sm">
+              <div className="bg-rose-50 px-5 py-4 border-b border-rose-200">
+                <h3 className="font-title font-bold text-xl text-rose-800 flex items-center gap-2">
+                  <User className="w-5 h-5" />
+                  Seus dados
+                </h3>
+                <p className="text-sm text-rose-700/90 mt-0.5">Preencha para confirmar seu agendamento</p>
+              </div>
+
+              <div className="p-5 space-y-4">
+                {erroConvidado && (
+                  <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-800">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    {erroConvidado}
+                  </div>
+                )}
+
+                <div className="space-y-1.5">
+                  <label className="text-sm font-semibold uppercase tracking-wider text-text-secondary block">
+                    Nome completo
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ex: Maria Silva"
+                    value={nomeConvidado}
+                    onChange={e => setNomeConvidado(e.target.value)}
+                    className="w-full px-3.5 py-3 border border-border rounded-xl bg-bg text-text-primary text-base focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-sm font-semibold uppercase tracking-wider text-text-secondary block">
+                    WhatsApp
+                  </label>
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    placeholder="(11) 99999-9999"
+                    value={whatsappConvidado}
+                    onChange={e => setWhatsappConvidado(applyPhoneMask(e.target.value))}
+                    className="w-full px-3.5 py-3 border border-border rounded-xl bg-bg text-text-primary text-base focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Resumo */}
           <div className="bg-white border border-border rounded-2xl p-5 space-y-4">
             <h3 className="font-title font-semibold text-lg text-text-primary">
@@ -941,49 +966,6 @@ export default function PortalAgendar() {
               </div>
             </div>
           </div>
-
-          {/* Seus dados — só para quem ainda não tem sessão (agendamento como convidada) */}
-          {!user && (
-            <div className="bg-white border border-border rounded-2xl p-5 space-y-4">
-              <h3 className="font-title font-semibold text-lg text-text-primary">
-                Seus dados
-              </h3>
-
-              {erroConvidado && (
-                <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-800">
-                  <AlertCircle className="w-4 h-4 shrink-0" />
-                  {erroConvidado}
-                </div>
-              )}
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
-                  Nome completo
-                </label>
-                <input
-                  type="text"
-                  placeholder="Ex: Maria Silva"
-                  value={nomeConvidado}
-                  onChange={e => setNomeConvidado(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
-                  WhatsApp
-                </label>
-                <input
-                  type="tel"
-                  inputMode="numeric"
-                  placeholder="(11) 99999-9999"
-                  value={whatsappConvidado}
-                  onChange={e => setWhatsappConvidado(applyPhoneMask(e.target.value))}
-                  className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
-                />
-              </div>
-            </div>
-          )}
 
           {erroSalvar && erroSalvar !== 'race' && (
             <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-800">

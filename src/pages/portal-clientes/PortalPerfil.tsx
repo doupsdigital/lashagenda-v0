@@ -270,7 +270,7 @@ export default function PortalPerfil() {
       </div>
 
       {/* SEÇÃO 0: FOTO DE PERFIL */}
-      <section className="bg-white border border-border rounded-2xl shadow-sm p-6 flex flex-col items-center text-center">
+      <section id="ob-portal-foto" className="bg-white border border-border rounded-2xl shadow-sm p-6 flex flex-col items-center text-center">
         {erroAvatar && (
           <div className="flex items-center gap-2 p-4 mb-4 w-full bg-red-50 border border-red-200 rounded-xl text-sm text-red-800">
             <AlertCircle className="w-4 h-4 shrink-0" />

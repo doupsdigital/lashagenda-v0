@@ -321,6 +321,13 @@ const STEPS: Record<OnboardingPageKey, DriveStep[]> = {
       },
     },
     {
+      element: '#ob-portal-estudio-card',
+      popover: {
+        title: 'Sobre o estúdio',
+        description: 'Aqui você confere uma apresentação rápida da profissional, com Instagram e endereço de atendimento, quando disponíveis.',
+      },
+    },
+    {
       element: '#ob-portal-servicos-grid',
       popover: {
         title: 'Catálogo de serviços',
@@ -340,30 +347,29 @@ const STEPS: Record<OnboardingPageKey, DriveStep[]> = {
     {
       popover: {
         title: 'Bem-vinda ao portal! 👋',
-        description: 'Aqui você encontra todos os serviços disponíveis com preços e duração. Para agendar, é só criar uma conta gratuita — leva menos de 1 minuto!',
+        description: 'Aqui você encontra todos os serviços disponíveis com preços e duração. E o melhor: para agendar não precisa criar conta nem senha — é só escolher o serviço, o horário e informar seu nome e WhatsApp na confirmação.',
         side: 'over' as any, align: 'center',
+      },
+    },
+    {
+      element: '#ob-portal-estudio-card',
+      popover: {
+        title: 'Sobre o estúdio',
+        description: 'Aqui você confere uma apresentação rápida da profissional, com Instagram e endereço de atendimento, quando disponíveis.',
       },
     },
     {
       element: '#ob-portal-servicos-grid',
       popover: {
         title: 'Catálogo de serviços',
-        description: 'Cada card mostra o serviço com foto, preço e duração. Clique em "Agendar" no serviço que te interessar — você será direcionada para entrar ou criar sua conta.',
-      },
-    },
-    {
-      element: '#ob-portal-entrar',
-      popover: {
-        title: 'Entrar ou se cadastrar',
-        description: 'Clique aqui para acessar o portal. Se for sua primeira vez, clique em "Cadastre-se aqui" na próxima tela para criar seu acesso gratuito. Se já tem conta, basta digitar e-mail e senha.',
-        side: 'bottom' as any, align: 'end',
+        description: 'Cada card mostra o serviço com foto, preço e duração. Clique em "Agendar" no serviço que te interessar para ir direto para a escolha de data e horário.',
       },
     },
     {
       element: '#ob-portal-nav',
       popover: {
         title: 'Menu do portal',
-        description: 'Por enquanto só o Catálogo está disponível. Após entrar com sua conta, você verá também: Agendar, Meus Agendamentos e Meu Perfil.',
+        description: 'Por enquanto você vê o Catálogo e pode Agendar livremente. Assim que finalizar seu primeiro agendamento, as abas "Meus Agendamentos" e "Meu Perfil" aparecem aqui automaticamente — sem precisar criar conta.',
       },
     },
   ],
@@ -372,7 +378,7 @@ const STEPS: Record<OnboardingPageKey, DriveStep[]> = {
     {
       popover: {
         title: 'Agendar um horário 📅',
-        description: 'Siga os passos para escolher o serviço, o dia e o horário que preferir.',
+        description: 'São 4 passos rápidos: Serviços, Data, Horário e Confirmação. Você pode voltar e ajustar qualquer passo antes de confirmar.',
         side: 'over' as any, align: 'center',
       },
     },
@@ -380,21 +386,28 @@ const STEPS: Record<OnboardingPageKey, DriveStep[]> = {
       element: '#ob-portal-servico-select',
       popover: {
         title: 'Escolha o serviço',
-        description: 'Selecione o serviço que deseja agendar. Se tiver variações (como tipo ou duração diferentes), escolha a opção desejada.',
+        description: 'Toque na linha do serviço para selecioná-lo — ela fica destacada em rosa. Você pode escolher mais de um serviço no mesmo agendamento. Se algum tiver variações (tipo ou duração diferentes), escolha a opção desejada antes de continuar.',
       },
     },
     {
       element: '#ob-portal-calendario',
       popover: {
         title: 'Escolha a data',
-        description: 'Selecione um dia disponível no calendário. Dias em cinza não têm horários disponíveis.',
+        description: 'Selecione um dia disponível no calendário. Dias em cinza não têm horários disponíveis. Ao escolher a data, você já avança direto para os horários.',
       },
     },
     {
       element: '#ob-portal-horarios',
       popover: {
         title: 'Escolha o horário',
-        description: 'Clique no horário que preferir. Horários já ocupados aparecem desabilitados.',
+        description: 'Só aparecem os horários realmente livres nesse dia — os já ocupados são removidos da lista automaticamente. Toque no horário desejado e clique em Continuar.',
+      },
+    },
+    {
+      element: '#ob-portal-resumo',
+      popover: {
+        title: 'Revise e confirme',
+        description: 'Confira o resumo com serviços, data, horário e valor total. Se for seu primeiro agendamento aqui, informe seu nome e WhatsApp — não é preciso criar senha. Depois é só confirmar!',
       },
     },
   ],
@@ -432,21 +445,46 @@ const STEPS: Record<OnboardingPageKey, DriveStep[]> = {
       },
     },
     {
-      element: '#ob-portal-dados-pessoais',
+      element: '#ob-portal-foto',
       popover: {
-        title: 'Dados pessoais',
-        description: 'Mantenha seu nome, WhatsApp e e-mail atualizados. Essas informações são usadas para confirmar seus agendamentos.',
+        title: 'Foto de perfil',
+        description: 'Adicione uma foto para deixar seu cadastro mais pessoal. É só clicar em "Alterar Foto".',
       },
     },
     {
-      element: '#ob-portal-senha',
+      element: '#ob-portal-dados-pessoais',
       popover: {
-        title: 'Senha de acesso',
-        description: 'Altere sua senha quando quiser. Use uma senha segura que só você saiba.',
+        title: 'Dados pessoais',
+        description: 'Mantenha seu nome, sobrenome e WhatsApp atualizados — são usados para confirmar seus agendamentos. O e-mail é opcional.',
       },
     },
   ],
 };
+
+// Fallback local para marcar dicas como vistas independente de login — necessário
+// no portal, onde visitantes anônimas navegam sem conta (sem `usuarios.onboarding_paginas_vistas`
+// pra persistir), então cada troca de tela seria tratada como "primeira vez".
+const LOCAL_SEEN_KEY = 'lashhub-onboarding-seen';
+
+function getLocalSeen(): string[] {
+  try {
+    const raw = localStorage.getItem(LOCAL_SEEN_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function markLocalSeen(key: string) {
+  try {
+    const current = getLocalSeen();
+    if (!current.includes(key)) {
+      localStorage.setItem(LOCAL_SEEN_KEY, JSON.stringify([...current, key]));
+    }
+  } catch {
+    // localStorage indisponível (ex: modo privado) — sem persistência local, sem quebrar o fluxo
+  }
+}
 
 const DRIVER_CONFIG = (onComplete: () => void, doneBtnText = 'Concluir ✓') =>
   ({
@@ -467,6 +505,10 @@ const DRIVER_CONFIG = (onComplete: () => void, doneBtnText = 'Concluir ✓') =>
 
 export function useOnboarding(pageKey: OnboardingPageKey, options?: { studioName?: string | null }) {
   const { isPaginaVista, markPageSeen, loading } = useAuth();
+
+  // Combina a marcação salva na conta (quando logada) com o fallback local —
+  // basta uma das duas ter registrado a página como vista.
+  const hasSeenPage = () => isPaginaVista(pageKey) || getLocalSeen().includes(pageKey);
 
   // Ref garante que startTour sempre lê o studioName mais recente,
   // mesmo quando chamado dentro de um setTimeout com closure desatualizado.
@@ -496,7 +538,10 @@ export function useOnboarding(pageKey: OnboardingPageKey, options?: { studioName
     const doneBtnText = isLastPage ? 'Começar a usar \u{1F389}' : 'Concluir ✓';
 
     const driverObj = driver({
-      ...DRIVER_CONFIG(() => markPageSeen(pageKey), doneBtnText),
+      ...DRIVER_CONFIG(() => {
+        markPageSeen(pageKey);
+        markLocalSeen(pageKey);
+      }, doneBtnText),
       steps,
     });
 
@@ -505,9 +550,9 @@ export function useOnboarding(pageKey: OnboardingPageKey, options?: { studioName
 
   const autoStart = () => {
     if (loading) return; // aguarda o profile carregar antes de avaliar
-    if (isPaginaVista(pageKey)) return;
+    if (hasSeenPage()) return;
     setTimeout(() => startTour(), 500);
   };
 
-  return { startTour, autoStart, loading, isPaginaVista: () => isPaginaVista(pageKey) };
+  return { startTour, autoStart, loading, isPaginaVista: hasSeenPage };
 }

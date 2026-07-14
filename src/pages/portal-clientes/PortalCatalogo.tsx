@@ -221,7 +221,7 @@ export default function PortalCatalogo() {
 
       {/* Card de apresentação do estúdio */}
       {temInfoCard && (
-        <div className="bg-gradient-to-br from-rose-400 to-rose-600 rounded-2xl p-6 shadow-md flex flex-col sm:flex-row gap-5 items-center sm:items-start">
+        <div id="ob-portal-estudio-card" className="bg-gradient-to-br from-rose-400 to-rose-600 rounded-2xl p-6 shadow-md flex flex-col sm:flex-row gap-5 items-center sm:items-start">
           {logoUrl && (
             <img
               src={logoUrl}
