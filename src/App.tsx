@@ -19,6 +19,7 @@ import MeusHorarios from './pages/profissional/MeusHorarios';
 import CadastroProfissional from './pages/profissional/CadastroProfissional';
 import PortalCatalogo from './pages/portal-clientes/PortalCatalogo';
 import PortalAgendar from './pages/portal-clientes/PortalAgendar';
+import PortalEntrarApp from './pages/portal-clientes/PortalEntrarApp';
 import PortalMeusAgendamentos from './pages/portal-clientes/PortalMeusAgendamentos';
 import PortalPerfil from './pages/portal-clientes/PortalPerfil';
 import { PortalProvider } from './contexts/PortalContext';
@@ -157,6 +158,12 @@ export default function App() {
                   Se já houver sessão de uma reserva anterior, o próprio PortalAgendar usa
                   os dados da sessão em vez de pedir os campos de novo. */}
               <Route path="agendar" element={<PortalAgendar />} />
+
+              {/* "Casa" da cliente logo após agendar como convidada — mantém o token dela
+                  na URL, para que a instalação do app (Adicionar à Tela de Início) já
+                  aponte pra cá. Também recupera a sessão ao reabrir o app instalado
+                  caso ela não tenha sobrevivido à instalação (comum no iOS). */}
+              <Route path="app/:token" element={<PortalEntrarApp />} />
 
               {/* Rotas protegidas do cliente */}
               <Route

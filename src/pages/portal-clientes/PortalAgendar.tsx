@@ -163,7 +163,7 @@ function IndicadorProgresso({ etapaAtual }: { etapaAtual: number }) {
 export default function PortalAgendar() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, clienteId } = useAuth();
+  const { user, clienteId, portalToken } = useAuth();
   const { establishmentId, slug } = usePortal();
   const { autoStart, loading: onboardingLoading } = useOnboarding('portal_agendar');
   useEffect(() => { autoStart(); }, [onboardingLoading]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -172,6 +172,16 @@ export default function PortalAgendar() {
   const preSelectedId = useRef(searchParams.get('servico')).current;
 
   const [etapa, setEtapa] = useState<Etapa>(1);
+
+  // Assim que o agendamento é confirmado, leva a cliente para a URL que carrega
+  // o token permanente dela (ver PortalEntrarApp). É lá, com o token já na URL,
+  // que ela normalmente vê o banner "Instalar App" — assim, se ela instalar o
+  // app nesse momento, ele vai reabrir direto com os dados dela carregados.
+  useEffect(() => {
+    if (etapa === 'sucesso' && slug && portalToken) {
+      navigate(`/portal/${slug}/app/${portalToken}`, { replace: true });
+    }
+  }, [etapa, slug, portalToken, navigate]);
 
   // ── Step 1 ──────────────────────────────────────────────────────────────────
   const [servicos, setServicos] = useState<ServicoComVariacoes[]>([]);
