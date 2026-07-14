@@ -1,5 +1,5 @@
 ﻿import React, { useEffect, useState } from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
 
@@ -20,12 +20,26 @@ export default function Login() {
   // Nota: não redireciona quando isProfissional=false e slug=null — isso é um
   // estado TRANSITÓRIO entre o setUser() e o carregamento do perfil. Redirecionar
   // para /login nesse momento cria um loop infinito após sign-out + novo login.
-  if (!authLoading && user) {
-    if (isProfissional) {
-      return <Navigate to="/meu-estudio" replace />;
-    } else if (estabelecimentoSlug) {
-      return <Navigate to={`/portal/${estabelecimentoSlug}/catalogo`} replace />;
+  //
+  // Importante: precisa ser uma navegação de verdade (window.location), não
+  // <Navigate>/navigate() do React Router. Quem chega aqui vindo da landing page
+  // (Cadastre-se grátis → Já tenho login) nunca teve um carregamento real de
+  // página nesse domínio além da landing — e o Safari usa a URL do último
+  // carregamento real para "Adicionar à Tela de Início", ignorando trocas via
+  // history.pushState/replaceState. Sem isso, o app instalado sempre reabre na
+  // landing page em vez do painel.
+  useEffect(() => {
+    if (!authLoading && user) {
+      if (isProfissional) {
+        window.location.replace('/meu-estudio');
+      } else if (estabelecimentoSlug) {
+        window.location.replace(`/portal/${estabelecimentoSlug}/catalogo`);
+      }
     }
+  }, [authLoading, user, isProfissional, estabelecimentoSlug]);
+
+  if (!authLoading && user && (isProfissional || estabelecimentoSlug)) {
+    return null;
   }
 
   const handleLogin = async (e: React.FormEvent) => {

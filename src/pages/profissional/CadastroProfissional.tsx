@@ -1,11 +1,10 @@
-﻿import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+﻿import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { AlertCircle, Eye, EyeOff, Mail, Lock, User, Sparkles, Calendar, Link2, Phone } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import InstallBanner from '../../components/common/InstallBanner';
 
 export default function CadastroProfissional() {
-  const navigate = useNavigate();
   const [form, setForm] = useState({
     nome: '',
     email: '',
@@ -18,6 +17,21 @@ export default function CadastroProfissional() {
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  // Solidifica a URL "real" da página em /configuracoes um tempo depois da tela
+  // de sucesso aparecer — mesmo se a profissional instalar o app direto daqui
+  // (o InstallBanner logo abaixo convida pra isso). Sem isso, o app instalado
+  // reabriria sempre na landing page (última navegação real antes do cadastro,
+  // já que todo o fluxo daqui pra lá é só troca de rota via React Router, que o
+  // Safari ignora na hora de "Adicionar à Tela de Início"). O atraso dá tempo
+  // dela ler as dicas antes do redirecionamento automático.
+  useEffect(() => {
+    if (!success) return;
+    const timer = setTimeout(() => {
+      window.location.replace('/configuracoes');
+    }, 8000);
+    return () => clearTimeout(timer);
+  }, [success]);
 
   const formatPhone = (value: string) => {
     const numbers = value.replace(/\D/g, '');
@@ -432,7 +446,7 @@ export default function CadastroProfissional() {
             </div>
 
             <button
-              onClick={() => navigate('/configuracoes', { replace: true })}
+              onClick={() => window.location.replace('/configuracoes')}
               className="w-full py-3.5 bg-rose-600 hover:bg-rose-800 text-white rounded-xl text-sm font-semibold transition-all shadow-md cursor-pointer"
             >
               Começar a configurar
