@@ -18,19 +18,19 @@ export default function CadastroProfissional() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Solidifica a URL "real" da página em /configuracoes um tempo depois da tela
-  // de sucesso aparecer — mesmo se a profissional instalar o app direto daqui
-  // (o InstallBanner logo abaixo convida pra isso). Sem isso, o app instalado
-  // reabriria sempre na landing page (última navegação real antes do cadastro,
-  // já que todo o fluxo daqui pra lá é só troca de rota via React Router, que o
-  // Safari ignora na hora de "Adicionar à Tela de Início"). O atraso dá tempo
-  // dela ler as dicas antes do redirecionamento automático.
+  // Solidifica a URL "real" da página em /configuracoes quando a profissional
+  // instala o app direto desta tela (o InstallBanner logo abaixo convida pra
+  // isso), sem esperar ela clicar no botão "Começar a configurar". Sem isso, o
+  // app instalado reabriria sempre na landing page (última navegação real antes
+  // do cadastro, já que todo o fluxo daqui pra lá é só troca de rota via React
+  // Router, que o Safari ignora na hora de "Adicionar à Tela de Início"). Só
+  // dispara quando o navegador confirma a instalação — o clique manual no botão
+  // já cobre o caminho normal, sem forçar navegação em quem só está lendo a tela.
   useEffect(() => {
     if (!success) return;
-    const timer = setTimeout(() => {
-      window.location.replace('/configuracoes');
-    }, 8000);
-    return () => clearTimeout(timer);
+    const onInstalled = () => window.location.replace('/configuracoes');
+    window.addEventListener('appinstalled', onInstalled);
+    return () => window.removeEventListener('appinstalled', onInstalled);
   }, [success]);
 
   const formatPhone = (value: string) => {
