@@ -26,26 +26,35 @@ Deno.serve((req) => {
   const url = new URL(req.url);
   const slug = url.searchParams.get('slug');
   const token = url.searchParams.get('token');
+  const origin = url.searchParams.get('origin');
 
-  if (!slug || !token) {
-    return new Response('slug e token são obrigatórios', { status: 400, headers: corsHeaders });
+  if (!slug || !token || !origin) {
+    return new Response('slug, token e origin são obrigatórios', { status: 400, headers: corsHeaders });
   }
+
+  // Este manifest é servido pelo domínio da Edge Function (*.supabase.co),
+  // que é uma origem diferente do site. Pela spec do Web App Manifest,
+  // start_url/scope/ícones com caminho relativo (ex: "/portal/x") são
+  // resolvidos contra a origem do PRÓPRIO manifest, não a do site — por
+  // isso precisam ser URLs absolutas com a origem real, recebida via
+  // querystring (ver PortalLayout, que monta essa URL com window.location.origin).
+  const siteOrigin = origin.replace(/\/$/, '');
 
   const manifest = {
     name: 'Lash Agenda',
     short_name: 'Lash Agenda',
     description: 'Portal de agendamentos',
-    start_url: `/portal/${slug}/app/${token}`,
-    scope: `/portal/${slug}/`,
+    start_url: `${siteOrigin}/portal/${slug}/app/${token}`,
+    scope: `${siteOrigin}/portal/${slug}/`,
     display: 'standalone',
     orientation: 'any',
     background_color: '#FAF0F3',
     theme_color: '#D14175',
     icons: [
-      { src: '/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-      { src: '/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'maskable' },
-      { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-      { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+      { src: `${siteOrigin}/icon-192.png`, sizes: '192x192', type: 'image/png', purpose: 'any' },
+      { src: `${siteOrigin}/icon-192.png`, sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+      { src: `${siteOrigin}/icon-512.png`, sizes: '512x512', type: 'image/png', purpose: 'any' },
+      { src: `${siteOrigin}/icon-512.png`, sizes: '512x512', type: 'image/png', purpose: 'maskable' },
     ],
   };
 

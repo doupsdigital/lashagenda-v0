@@ -25,10 +25,12 @@ export default function PortalLayout() {
 
     if (isCliente && slug && portalToken) {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      manifestLink.setAttribute(
-        'href',
-        `${supabaseUrl}/functions/v1/portal-manifest?slug=${encodeURIComponent(slug)}&token=${encodeURIComponent(portalToken)}`
-      );
+      const params = new URLSearchParams({
+        slug,
+        token: portalToken,
+        origin: window.location.origin,
+      });
+      manifestLink.setAttribute('href', `${supabaseUrl}/functions/v1/portal-manifest?${params.toString()}`);
     }
 
     return () => {
