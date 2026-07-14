@@ -177,11 +177,16 @@ export default function PortalAgendar() {
   // o token permanente dela (ver PortalEntrarApp). É lá, com o token já na URL,
   // que ela normalmente vê o banner "Instalar App" — assim, se ela instalar o
   // app nesse momento, ele vai reabrir direto com os dados dela carregados.
+  //
+  // Importante: precisa ser uma navegação de verdade (window.location), não
+  // navigate() do React Router. O Safari usa a URL do último carregamento real
+  // de página para "Adicionar à Tela de Início" — troca feita só via
+  // history.pushState/replaceState (como o navigate() faz) é ignorada por ele.
   useEffect(() => {
     if (etapa === 'sucesso' && slug && portalToken) {
-      navigate(`/portal/${slug}/app/${portalToken}`, { replace: true });
+      window.location.replace(`/portal/${slug}/app/${portalToken}`);
     }
-  }, [etapa, slug, portalToken, navigate]);
+  }, [etapa, slug, portalToken]);
 
   // ── Step 1 ──────────────────────────────────────────────────────────────────
   const [servicos, setServicos] = useState<ServicoComVariacoes[]>([]);
