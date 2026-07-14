@@ -721,7 +721,7 @@ export default function Servicos() {
             {filteredServicos.map(serv => (
               <div
                 key={serv.id}
-                className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-3 transition-colors duration-150 hover:bg-bg/30"
+                className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-6 transition-colors duration-150 hover:bg-bg/30"
               >
                 {/* Thumbnail */}
                 <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden bg-rose-50 border border-rose-100 flex items-center justify-center flex-shrink-0">
@@ -769,7 +769,7 @@ export default function Servicos() {
                 <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
                   <button
                     onClick={() => handleEditServico(serv)}
-                    className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-text-secondary hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                    className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition-colors cursor-pointer"
                     title="Editar Serviço"
                   >
                     <Edit2 className="w-4 h-4" />
@@ -777,7 +777,7 @@ export default function Servicos() {
 
                   <button
                     onClick={() => handleDeleteServico(serv)}
-                    className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-text-secondary hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                    className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors cursor-pointer"
                     title="Excluir Serviço"
                   >
                     <Trash2 className="w-4 h-4" />

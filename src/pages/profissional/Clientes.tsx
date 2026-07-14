@@ -343,7 +343,7 @@ export default function Clientes() {
       </div>
 
       {/* Cadastro Automático */}
-      <div className="bg-rose-50/40 border border-rose-100 rounded-[14px] p-5 flex items-start gap-3">
+      <div className="bg-rose-50 border border-rose-200 rounded-[14px] p-5 flex items-start gap-3">
         <div className="w-9 h-9 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 flex-shrink-0">
           <Sparkles className="w-4 h-4" />
         </div>
