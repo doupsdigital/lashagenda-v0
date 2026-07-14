@@ -4,15 +4,11 @@ import { useOnboarding } from '../../hooks/useOnboarding';
 import { useAuth } from '../../contexts/AuthContext';
 import { Clock, Tag, Calendar, AlertCircle, Sparkles, RefreshCw, ChevronDown, HelpCircle, MapPin, AtSign } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import type { CategoriaServico, Servico, VariacaoServico } from '../../types';
+import type { Servico, VariacaoServico } from '../../types';
 import { usePortal } from '../../contexts/PortalContext';
 
 interface ServicoComVariacoes extends Servico {
   variacoes: VariacaoServico[];
-}
-
-interface CategoriaComServicos extends CategoriaServico {
-  servicos: ServicoComVariacoes[];
 }
 
 function formatDuracao(minutos: number): string {
@@ -141,10 +137,9 @@ export default function PortalCatalogo() {
     tourStartedRef.current = true;
     autoStart();
   }, [onboardingLoading, nomeNegocio]); // eslint-disable-line react-hooks/exhaustive-deps
-  const [categorias, setCategorias] = useState<CategoriaComServicos[]>([]);
+  const [servicos, setServicos] = useState<ServicoComVariacoes[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [categoriaAtiva, setCategoriaAtiva] = useState<string>('todas');
   const [faqAberto, setFaqAberto] = useState<number | null>(null);
 
   const fetchData = async () => {
@@ -152,54 +147,21 @@ export default function PortalCatalogo() {
     setLoading(true);
     setError(false);
     try {
-      const [catResult, servResult] = await Promise.all([
-        supabase
-          .from('categorias_servico')
-          .select('*')
-          .eq('estabelecimento_id', establishmentId)
-          .order('ordem', { ascending: true }),
-        supabase
-          .from('servicos')
-          .select('*, variacoes_servico(*)')
-          .eq('estabelecimento_id', establishmentId)
-          .eq('ativo', true)
-          .order('nome', { ascending: true }),
-      ]);
+      const { data, error: servError } = await supabase
+        .from('servicos')
+        .select('*, variacoes_servico(*)')
+        .eq('estabelecimento_id', establishmentId)
+        .eq('ativo', true)
+        .order('nome', { ascending: true });
 
-      if (catResult.error) throw catResult.error;
-      if (servResult.error) throw servResult.error;
+      if (servError) throw servError;
 
-      const servicos = servResult.data || [];
+      const mapped: ServicoComVariacoes[] = (data || []).map(s => ({
+        ...s,
+        variacoes: (s as any).variacoes_servico || [],
+      }));
 
-      const mapped: CategoriaComServicos[] = (catResult.data || [])
-        .map(cat => ({
-          ...cat,
-          servicos: servicos
-            .filter(s => s.categoria_id === cat.id)
-            .map(s => ({
-              ...s,
-              variacoes: (s as any).variacoes_servico || [],
-            })),
-        }))
-        .filter(cat => cat.servicos.length > 0)
-        .sort((a, b) => {
-          const nameA = a.nome.toLowerCase().trim();
-          const nameB = b.nome.toLowerCase().trim();
-          
-          const isCiliosA = nameA.includes('extensão de cílios') || nameA.includes('extensão de cilios');
-          const isCiliosB = nameB.includes('extensão de cílios') || nameB.includes('extensão de cilios');
-          const isSobrancelhasA = nameA.includes('design de sobrancelhas');
-          const isSobrancelhasB = nameB.includes('design de sobrancelhas');
-
-          if (isCiliosA && !isCiliosB) return -1;
-          if (!isCiliosA && isCiliosB) return 1;
-          if (isSobrancelhasA && !isSobrancelhasB) return 1;
-          if (!isSobrancelhasA && isSobrancelhasB) return -1;
-          
-          return nameA.localeCompare(nameB);
-        });
-
-      setCategorias(mapped);
+      setServicos(mapped);
     } catch {
       setError(true);
     } finally {
@@ -211,20 +173,10 @@ export default function PortalCatalogo() {
     fetchData();
   }, [establishmentId]);
 
-  const categoriasExibidas =
-    categoriaAtiva === 'todas'
-      ? categorias
-      : categorias.filter(c => c.id === categoriaAtiva);
-
   if (loading) {
     return (
       <div className="space-y-6">
         <div className="h-8 bg-gray-200 rounded-lg w-48 animate-pulse"></div>
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="h-8 bg-gray-100 rounded-full w-24 shrink-0 animate-pulse"></div>
-          ))}
-        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <SkeletonCard key={i} />
@@ -251,7 +203,7 @@ export default function PortalCatalogo() {
     );
   }
 
-  if (categorias.length === 0) {
+  if (servicos.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center gap-3">
         <Sparkles className="w-12 h-12 text-rose-200" />
@@ -319,50 +271,14 @@ export default function PortalCatalogo() {
         </button>
       </div>
 
-      {/* Pills de categoria */}
-      <div id="ob-portal-filtros" className="flex gap-2 overflow-x-auto pb-2">
-        <button
-          onClick={() => setCategoriaAtiva('todas')}
-          className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
-            categoriaAtiva === 'todas'
-              ? 'bg-rose-600 text-white'
-              : 'bg-white border border-border text-text-secondary hover:border-rose-300 hover:text-rose-600'
-          }`}
-        >
-          Todas
-        </button>
-        {categorias.map(cat => (
-          <button
-            key={cat.id}
-            onClick={() => setCategoriaAtiva(cat.id)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
-              categoriaAtiva === cat.id
-                ? 'bg-rose-600 text-white'
-                : 'bg-white border border-border text-text-secondary hover:border-rose-300 hover:text-rose-600'
-            }`}
-          >
-            {cat.nome}
-          </button>
-        ))}
-      </div>
-
-      {/* Seções por categoria */}
-      <div id="ob-portal-servicos-grid" className="space-y-10">
-        {categoriasExibidas.map(cat => (
-          <section key={cat.id}>
-            <h2 className="font-title font-semibold text-2xl text-text-primary mb-4 pb-2 border-b border-border">
-              {cat.nome}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {cat.servicos.map(serv => (
-                <ServicoCard
-                  key={serv.id}
-                  servico={serv}
-                  onAgendar={() => navigate(`/portal/${slug}/agendar?servico=${serv.id}`)}
-                />
-              ))}
-            </div>
-          </section>
+      {/* Catálogo de serviços */}
+      <div id="ob-portal-servicos-grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {servicos.map(serv => (
+          <ServicoCard
+            key={serv.id}
+            servico={serv}
+            onAgendar={() => navigate(`/portal/${slug}/agendar?servico=${serv.id}`)}
+          />
         ))}
       </div>
 

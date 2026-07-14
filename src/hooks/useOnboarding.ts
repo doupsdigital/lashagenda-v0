@@ -173,22 +173,15 @@ const STEPS: Record<OnboardingPageKey, DriveStep[]> = {
     {
       popover: {
         title: 'Seus serviços 💅',
-        description: 'Aqui você cadastra e organiza todos os serviços que oferece. Já deixamos alguns serviços pré-cadastrados com categorias e imagens para te dar uma base — fique à vontade para editar nomes, preços e durações conforme a sua realidade. Se preferir usar fotos suas no lugar das imagens padrão, é só substituir em cada serviço.',
+        description: 'Aqui você cadastra e organiza todos os serviços que oferece. Já deixamos alguns serviços pré-cadastrados com imagens para te dar uma base — fique à vontade para editar nomes, preços e durações conforme a sua realidade. Se preferir usar fotos suas no lugar das imagens padrão, é só substituir em cada serviço.',
         side: 'over' as any, align: 'center',
       },
     },
     {
-      element: '#ob-servicos-nova-cat',
-      popover: {
-        title: 'Categorias de serviço',
-        description: 'Organize seus serviços em categorias como "Extensão de Cílios", "Design de Sobrancelhas", etc. Facilita a navegação no portal.',
-      },
-    },
-    {
-      element: '#ob-servicos-novo-btn',
+      element: '#ob-servico-form',
       popover: {
         title: 'Novo serviço',
-        description: 'Cadastre um serviço com nome, preço, duração e uma foto ilustrativa. Você também pode criar variações (ex: Manutenção Fio a Fio, Volume Russo).',
+        description: 'Cadastre um serviço com nome, preço e duração. Se quiser, expanda "Adicionar mais detalhes" para incluir descrição e uma foto ilustrativa.',
       },
     },
     {
@@ -328,13 +321,6 @@ const STEPS: Record<OnboardingPageKey, DriveStep[]> = {
       },
     },
     {
-      element: '#ob-portal-filtros',
-      popover: {
-        title: 'Filtrar por categoria',
-        description: 'Use esses botões para ver só os serviços de uma categoria específica — como extensão de cílios ou design de sobrancelhas.',
-      },
-    },
-    {
       element: '#ob-portal-servicos-grid',
       popover: {
         title: 'Catálogo de serviços',
@@ -356,13 +342,6 @@ const STEPS: Record<OnboardingPageKey, DriveStep[]> = {
         title: 'Bem-vinda ao portal! 👋',
         description: 'Aqui você encontra todos os serviços disponíveis com preços e duração. Para agendar, é só criar uma conta gratuita — leva menos de 1 minuto!',
         side: 'over' as any, align: 'center',
-      },
-    },
-    {
-      element: '#ob-portal-filtros',
-      popover: {
-        title: 'Filtrar por categoria',
-        description: 'Use esses botões para ver só os serviços de uma categoria específica — como extensão de cílios ou design de sobrancelhas.',
       },
     },
     {

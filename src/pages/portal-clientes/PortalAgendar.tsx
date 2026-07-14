@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
-import type { CategoriaServico, Servico, VariacaoServico, HorarioAtendimento, BloqueioAgenda } from '../../types';
+import type { Servico, VariacaoServico, HorarioAtendimento, BloqueioAgenda } from '../../types';
 import { usePortal } from '../../contexts/PortalContext';
 import { useOnboarding } from '../../hooks/useOnboarding';
 
@@ -14,10 +14,6 @@ import { useOnboarding } from '../../hooks/useOnboarding';
 
 interface ServicoComVariacoes extends Servico {
   variacoes: VariacaoServico[];
-}
-
-interface CategoriaComServicos extends CategoriaServico {
-  servicos: ServicoComVariacoes[];
 }
 
 interface ItemSelecionado {
@@ -178,7 +174,7 @@ export default function PortalAgendar() {
   const [etapa, setEtapa] = useState<Etapa>(1);
 
   // ── Step 1 ──────────────────────────────────────────────────────────────────
-  const [categorias, setCategorias] = useState<CategoriaComServicos[]>([]);
+  const [servicos, setServicos] = useState<ServicoComVariacoes[]>([]);
   const [loadingServicos, setLoadingServicos] = useState(true);
   const [selecionados, setSelecionados] = useState<Map<string, ItemSelecionado>>(new Map());
 
@@ -244,60 +240,27 @@ export default function PortalAgendar() {
     (async () => {
       setLoadingServicos(true);
       try {
-        const [catRes, servRes] = await Promise.all([
-          supabase
-            .from('categorias_servico')
-            .select('*')
-            .eq('estabelecimento_id', establishmentId)
-            .order('ordem', { ascending: true }),
-          supabase
-            .from('servicos')
-            .select('*, variacoes_servico(*)')
-            .eq('estabelecimento_id', establishmentId)
-            .eq('ativo', true)
-            .order('nome', { ascending: true }),
-        ]);
+        const { data, error: servError } = await supabase
+          .from('servicos')
+          .select('*, variacoes_servico(*)')
+          .eq('estabelecimento_id', establishmentId)
+          .eq('ativo', true)
+          .order('nome', { ascending: true });
 
-        if (catRes.error) throw catRes.error;
-        if (servRes.error) throw servRes.error;
+        if (servError) throw servError;
 
-        const servicos = servRes.data || [];
+        const mapped: ServicoComVariacoes[] = (data || []).map(s => ({
+          ...s,
+          variacoes: (s as any).variacoes_servico || [],
+        }));
 
-        const mapped: CategoriaComServicos[] = (catRes.data || [])
-          .map(cat => ({
-            ...cat,
-            servicos: servicos
-              .filter(s => s.categoria_id === cat.id)
-              .map(s => ({ ...s, variacoes: (s as any).variacoes_servico || [] })),
-          }))
-          .filter(cat => cat.servicos.length > 0)
-          .sort((a, b) => {
-            const nameA = a.nome.toLowerCase().trim();
-            const nameB = b.nome.toLowerCase().trim();
-            
-            const isCiliosA = nameA.includes('extensão de cílios') || nameA.includes('extensão de cilios');
-            const isCiliosB = nameB.includes('extensão de cílios') || nameB.includes('extensão de cilios');
-            const isSobrancelhasA = nameA.includes('design de sobrancelhas');
-            const isSobrancelhasB = nameB.includes('design de sobrancelhas');
-
-            if (isCiliosA && !isCiliosB) return -1;
-            if (!isCiliosA && isCiliosB) return 1;
-            if (isSobrancelhasA && !isSobrancelhasB) return 1;
-            if (!isSobrancelhasA && isSobrancelhasB) return -1;
-            
-            return nameA.localeCompare(nameB);
-          });
-
-        setCategorias(mapped);
+        setServicos(mapped);
 
         if (preSelectedId) {
-          for (const cat of mapped) {
-            const serv = cat.servicos.find(s => s.id === preSelectedId);
-            if (serv) {
-              setSelecionados(new Map([[serv.id, { servico: serv, variacao: null }]]));
-              if (serv.variacoes.length === 0) setEtapa(2);
-              break;
-            }
+          const serv = mapped.find(s => s.id === preSelectedId);
+          if (serv) {
+            setSelecionados(new Map([[serv.id, { servico: serv, variacao: null }]]));
+            if (serv.variacoes.length === 0) setEtapa(2);
           }
         }
       } finally {
@@ -675,82 +638,77 @@ export default function PortalAgendar() {
               <Loader2 className="w-8 h-8 animate-spin text-rose-400" />
               <p className="text-sm">Carregando serviços...</p>
             </div>
-          ) : categorias.length === 0 ? (
+          ) : servicos.length === 0 ? (
             <p className="text-center text-text-muted py-16">Nenhum serviço disponível no momento.</p>
           ) : (
             <>
-              {categorias.map(cat => (
-                <div key={cat.id} className="bg-white border border-border rounded-2xl overflow-hidden">
-                  <div className="bg-rose-50/30 px-5 py-3 border-b border-border">
-                    <h3 className="font-title font-semibold text-lg text-text-primary">{cat.nome}</h3>
-                  </div>
-                  <div className="divide-y divide-border">
-                    {cat.servicos.map(serv => {
-                      const isChecked = selecionados.has(serv.id);
-                      const item = selecionados.get(serv.id);
-                      return (
-                        <div key={serv.id} className="p-5 space-y-3">
-                          <label className="flex items-start gap-3 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => toggleServico(serv)}
-                              className="mt-1 w-4 h-4 accent-rose-600 cursor-pointer shrink-0"
-                            />
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-start justify-between gap-2 flex-wrap">
-                                <span className="font-semibold text-text-primary">{serv.nome}</span>
-                                <div className="flex items-center gap-3 text-sm text-text-secondary shrink-0">
-                                  <span className="flex items-center gap-1">
-                                    <Clock className="w-3.5 h-3.5 text-rose-400" />
-                                    {formatDuracao(serv.duracao_minutos)}
-                                  </span>
-                                  <span className="flex items-center gap-1 font-semibold text-text-primary">
-                                    <Tag className="w-3.5 h-3.5 text-gold" />
-                                    {formatValor(serv.valor)}
-                                  </span>
-                                </div>
+              <div className="bg-white border border-border rounded-2xl overflow-hidden">
+                <div className="divide-y divide-border">
+                  {servicos.map(serv => {
+                    const isChecked = selecionados.has(serv.id);
+                    const item = selecionados.get(serv.id);
+                    return (
+                      <div key={serv.id} className="p-5 space-y-3">
+                        <label className="flex items-start gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => toggleServico(serv)}
+                            className="mt-1 w-4 h-4 accent-rose-600 cursor-pointer shrink-0"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-2 flex-wrap">
+                              <span className="font-semibold text-text-primary">{serv.nome}</span>
+                              <div className="flex items-center gap-3 text-sm text-text-secondary shrink-0">
+                                <span className="flex items-center gap-1">
+                                  <Clock className="w-3.5 h-3.5 text-rose-400" />
+                                  {formatDuracao(serv.duracao_minutos)}
+                                </span>
+                                <span className="flex items-center gap-1 font-semibold text-text-primary">
+                                  <Tag className="w-3.5 h-3.5 text-gold" />
+                                  {formatValor(serv.valor)}
+                                </span>
                               </div>
-                              {serv.descricao && (
-                                <p className="text-sm text-text-secondary mt-0.5">{serv.descricao}</p>
-                              )}
                             </div>
-                          </label>
+                            {serv.descricao && (
+                              <p className="text-sm text-text-secondary mt-0.5">{serv.descricao}</p>
+                            )}
+                          </div>
+                        </label>
 
-                          {/* Variações */}
-                          {isChecked && serv.variacoes.length > 0 && (
-                            <div className="ml-7 bg-rose-50/30 border border-rose-100 rounded-xl p-3 space-y-2">
-                              <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">
-                                Escolha uma opção <span className="text-red-500">*</span>
-                              </p>
-                              {serv.variacoes.map(v => (
-                                <label key={v.id} className="flex items-center gap-2.5 cursor-pointer">
-                                  <input
-                                    type="radio"
-                                    name={`variacao-${serv.id}`}
-                                    checked={item?.variacao?.id === v.id}
-                                    onChange={() => selecionarVariacao(serv.id, v)}
-                                    className="w-3.5 h-3.5 accent-rose-600 cursor-pointer"
-                                  />
-                                  <span className="text-sm text-text-secondary flex-1">{v.nome}</span>
-                                  <div className="flex items-center gap-2 text-xs text-text-secondary shrink-0">
-                                    {v.valor != null && (
-                                      <span className="font-medium text-text-primary">{formatValor(v.valor)}</span>
-                                    )}
-                                    {v.duracao_minutos != null && (
-                                      <span className="text-text-muted">• {formatDuracao(v.duracao_minutos)}</span>
-                                    )}
-                                  </div>
-                                </label>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
+                        {/* Variações */}
+                        {isChecked && serv.variacoes.length > 0 && (
+                          <div className="ml-7 bg-rose-50/30 border border-rose-100 rounded-xl p-3 space-y-2">
+                            <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">
+                              Escolha uma opção <span className="text-red-500">*</span>
+                            </p>
+                            {serv.variacoes.map(v => (
+                              <label key={v.id} className="flex items-center gap-2.5 cursor-pointer">
+                                <input
+                                  type="radio"
+                                  name={`variacao-${serv.id}`}
+                                  checked={item?.variacao?.id === v.id}
+                                  onChange={() => selecionarVariacao(serv.id, v)}
+                                  className="w-3.5 h-3.5 accent-rose-600 cursor-pointer"
+                                />
+                                <span className="text-sm text-text-secondary flex-1">{v.nome}</span>
+                                <div className="flex items-center gap-2 text-xs text-text-secondary shrink-0">
+                                  {v.valor != null && (
+                                    <span className="font-medium text-text-primary">{formatValor(v.valor)}</span>
+                                  )}
+                                  {v.duracao_minutos != null && (
+                                    <span className="text-text-muted">• {formatDuracao(v.duracao_minutos)}</span>
+                                  )}
+                                </div>
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
+              </div>
 
               {/* Resumo dinâmico */}
               {itens.length > 0 && (

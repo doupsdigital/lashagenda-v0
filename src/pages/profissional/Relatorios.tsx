@@ -114,15 +114,9 @@ export default function Relatorios() {
       const startIso = start.toISOString();
       const endIso = end.toISOString();
 
-      const [catsRes, servsRes] = await Promise.all([
-        supabase.from('categorias_servico').select('id, nome').eq('estabelecimento_id', estabelecimentoId),
-        supabase.from('servicos').select('id, nome, categoria_id').eq('estabelecimento_id', estabelecimentoId),
-      ]);
-      if (catsRes.error) throw catsRes.error;
+      const servsRes = await supabase.from('servicos').select('id, nome').eq('estabelecimento_id', estabelecimentoId);
       if (servsRes.error) throw servsRes.error;
 
-      const categoryMap = new Map<string, string>();
-      catsRes.data?.forEach(c => categoryMap.set(c.id, c.nome));
       const serviceMap = new Map<string, { nome: string }>();
       servsRes.data?.forEach(s => serviceMap.set(s.id, { nome: s.nome }));
 
