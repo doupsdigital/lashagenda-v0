@@ -173,8 +173,8 @@ export default function PortalAgendar() {
 
   const [etapa, setEtapa] = useState<Etapa>(1);
 
-  // Assim que o agendamento é confirmado, leva a cliente para a URL que carrega
-  // o token permanente dela (ver PortalEntrarApp). É lá, com o token já na URL,
+  // Depois que a cliente vê a confirmação, leva ela para a URL que carrega o
+  // token permanente dela (ver PortalEntrarApp). É lá, com o token já na URL,
   // que ela normalmente vê o banner "Instalar App" — assim, se ela instalar o
   // app nesse momento, ele vai reabrir direto com os dados dela carregados.
   //
@@ -182,9 +182,15 @@ export default function PortalAgendar() {
   // navigate() do React Router. O Safari usa a URL do último carregamento real
   // de página para "Adicionar à Tela de Início" — troca feita só via
   // history.pushState/replaceState (como o navigate() faz) é ignorada por ele.
+  // O atraso dá tempo dela ler a tela de confirmação antes do redirecionamento
+  // (se ela tocar em algum botão da tela antes disso, o componente desmonta e
+  // o timer é cancelado, sem redirecionar por cima da página que ela escolheu).
   useEffect(() => {
     if (etapa === 'sucesso' && slug && portalToken) {
-      window.location.replace(`/portal/${slug}/app/${portalToken}`);
+      const timer = setTimeout(() => {
+        window.location.replace(`/portal/${slug}/app/${portalToken}`);
+      }, 3500);
+      return () => clearTimeout(timer);
     }
   }, [etapa, slug, portalToken]);
 
