@@ -25,7 +25,47 @@ import {
   Timer,
   Palette,
   Phone,
+  ChevronDown,
+  Settings,
 } from 'lucide-react';
+
+interface SectionCardProps {
+  id?: string;
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  headerExtra?: React.ReactNode;
+  children: React.ReactNode;
+}
+
+function SectionCard({ id, icon: Icon, title, isOpen, onToggle, headerExtra, children }: SectionCardProps) {
+  return (
+    <div id={id} className="bg-white border border-border rounded-[14px] shadow-sm">
+      <div
+        onClick={onToggle}
+        className="flex items-center justify-between gap-3 px-6 py-6 flex-wrap cursor-pointer select-none"
+      >
+        <h3 className="font-title font-bold text-lg text-text-primary flex items-center gap-2">
+          <Icon className="w-5 h-5 text-rose-600" />
+          {title}
+        </h3>
+        <div className="flex items-center gap-3 flex-shrink-0">
+          {isOpen && headerExtra}
+          <ChevronDown
+            className={`w-5 h-5 text-text-muted transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          />
+        </div>
+      </div>
+
+      {isOpen && (
+        <div className="px-6 pb-6">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Configuracoes() {
   const { profile, user, refreshProfile, estabelecimentoId } = useAuth();
@@ -83,6 +123,18 @@ export default function Configuracoes() {
   const [savingAgendamento, setSavingAgendamento] = useState(false);
   const [agendamentoError, setAgendamentoError] = useState<string | null>(null);
 
+  // Estado dos cards expansíveis — "Dados do Perfil" começa aberto, os demais fechados
+  const [openSections, setOpenSections] = useState({
+    perfil: true,
+    negocio: false,
+    agendamento: false,
+    visual: false,
+    seguranca: false,
+  });
+  const toggleSection = (key: keyof typeof openSections) => {
+    setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
 
   const [successModal, setSuccessModal] = useState<{
     isOpen: boolean;
@@ -126,7 +178,7 @@ export default function Configuracoes() {
         setPaletaCores(data.paleta_cores || 'pink_classico');
         setModoEscuro(data.modo_escuro ?? false);
       }
-      
+
       setLoadingNegocio(false);
     }
     loadNegocio();
@@ -160,7 +212,7 @@ export default function Configuracoes() {
     try {
       const { error } = await supabase
         .from('usuarios')
-        .update({ 
+        .update({
           nome: nome.trim(),
           telefone: phoneDigits || null
         })
@@ -414,7 +466,7 @@ export default function Configuracoes() {
         title: 'Dados salvos!',
         description: 'Os dados do seu estúdio foram salvos com sucesso.',
       });
-      
+
       // Notificar layouts sobre a atualização do nome e logotipo em tempo real
       window.dispatchEvent(
         new CustomEvent('business-config-updated', {
@@ -497,28 +549,38 @@ export default function Configuracoes() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      {/* Top Banner */}
-      <div className="bg-white border border-border rounded-[14px] p-5 shadow-sm">
-        <h2 className="font-title font-semibold text-2xl text-text-primary">Configurações</h2>
-        <p className="text-xs text-text-secondary mt-0.5">
-          Gerencie seu perfil, dados do negócio e preferências de agendamento.
-        </p>
+    <div className="max-w-4xl mx-auto space-y-4">
+      {/* Top Banner — informativo, cor diferenciada dos cards abaixo */}
+      <div className="bg-rose-50 border border-rose-200 rounded-[14px] p-5 shadow-sm flex items-center justify-between gap-4">
+        <div>
+          <h2 className="font-title font-semibold text-2xl text-text-primary">Configurações</h2>
+          <p className="text-xs text-text-secondary mt-0.5">
+            Gerencie seu perfil, dados do negócio e preferências de agendamento.
+          </p>
+        </div>
+        <div className="w-11 h-11 rounded-full bg-rose-100 border border-rose-200 flex items-center justify-center flex-shrink-0">
+          <Settings className="w-5 h-5 text-rose-600" />
+        </div>
       </div>
 
-      {/* Grid: Avatar + Perfil/Senha */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Left Side: Avatar Panel */}
-        <div className="md:col-span-1 bg-white border border-border rounded-[14px] p-6 shadow-sm flex flex-col items-center justify-center text-center h-fit">
+      <SectionCard
+        id="ob-config-perfil"
+        icon={User}
+        title="Dados do Perfil"
+        isOpen={openSections.perfil}
+        onToggle={() => toggleSection('perfil')}
+      >
+        {/* Avatar */}
+        <div className="flex flex-col items-center text-center pb-4">
           <div className="relative group">
             {profile?.avatar_url ? (
               <img
                 src={profile.avatar_url}
                 alt={userName}
-                className="w-28 h-28 rounded-full object-cover border-2 border-rose-200 shadow-md"
+                className="w-20 h-20 rounded-full object-cover border-2 border-rose-200 shadow-md"
               />
             ) : (
-              <div className="w-28 h-28 rounded-full bg-rose-100 border-2 border-rose-200 text-rose-800 flex items-center justify-center font-title font-bold text-3xl shadow-sm">
+              <div className="w-20 h-20 rounded-full bg-rose-100 border-2 border-rose-200 text-rose-800 flex items-center justify-center font-title font-bold text-xl shadow-sm">
                 {initials}
               </div>
             )}
@@ -528,14 +590,14 @@ export default function Configuracoes() {
               disabled={uploadingAvatar}
               className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity cursor-pointer duration-200"
             >
-              <Camera className="w-6 h-6" />
+              <Camera className="w-5 h-5" />
             </button>
           </div>
 
-          <h3 className="font-title font-bold text-lg text-text-primary mt-4 truncate w-full">
+          <p className="font-title font-bold text-sm text-text-primary mt-2 truncate max-w-full">
             {userName}
-          </h3>
-          <p className="text-xs text-text-secondary truncate w-full">{userEmail}</p>
+          </p>
+          <p className="text-xs text-text-secondary truncate max-w-full">{userEmail}</p>
 
           <input
             type="file"
@@ -545,217 +607,123 @@ export default function Configuracoes() {
             className="hidden"
           />
 
-          <div className="flex flex-col gap-2 w-full mt-6">
+          <div className="flex items-center gap-2 mt-2.5">
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingAvatar}
-              className="flex items-center justify-center gap-1.5 px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-800 text-xs font-semibold rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+              className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-800 text-xs font-semibold rounded-lg transition-colors cursor-pointer disabled:opacity-50"
             >
-              <Camera className="w-4 h-4" />
+              <Camera className="w-3.5 h-3.5" />
               {uploadingAvatar ? 'Enviando...' : 'Alterar Foto'}
             </button>
             {profile?.avatar_url && (
               <button
                 onClick={handleRemoveAvatar}
                 disabled={uploadingAvatar}
-                className="flex items-center justify-center gap-1.5 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-800 text-xs font-semibold rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-800 text-xs font-semibold rounded-lg transition-colors cursor-pointer disabled:opacity-50"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-3.5 h-3.5" />
                 Remover Foto
               </button>
             )}
           </div>
         </div>
 
-        {/* Right Side: Forms Panel */}
-        <div className="md:col-span-2 space-y-6">
-          {/* Section 1: Profile Details */}
-          <div id="ob-config-perfil" className="bg-white border border-border rounded-[14px] p-6 shadow-sm">
-            <h3 className="font-title font-bold text-lg text-text-primary flex items-center gap-2 border-b border-border pb-3">
-              <User className="w-5 h-5 text-rose-600" />
-              Dados do Perfil
-            </h3>
+        <form onSubmit={handleUpdateProfile} className="mt-4 space-y-4">
+          {profileError && (
+            <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2.5">
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+              <p className="text-xs font-medium">{profileError}</p>
+            </div>
+          )}
 
-            <form onSubmit={handleUpdateProfile} className="mt-4 space-y-4">
-              {profileError && (
-                <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2.5">
-                  <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-                  <p className="text-xs font-medium">{profileError}</p>
-                </div>
-              )}
-
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
-                  E-mail de Acesso
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
-                    <Mail className="w-4 h-4" />
-                  </div>
-                  <input
-                    type="email"
-                    disabled
-                    value={userEmail}
-                    className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-muted text-sm cursor-not-allowed"
-                  />
-                </div>
-                <p className="text-[10px] text-text-secondary">
-                  O e-mail de acesso não pode ser alterado diretamente.
-                </p>
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+              E-mail de Acesso
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
+                <Mail className="w-4 h-4" />
               </div>
+              <input
+                type="email"
+                disabled
+                value={userEmail}
+                className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-muted text-sm cursor-not-allowed"
+              />
+            </div>
+            <p className="text-[10px] text-text-secondary">
+              O e-mail de acesso não pode ser alterado diretamente.
+            </p>
+          </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
-                  Nome Completo <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
-                    <UserCheck className="w-4 h-4" />
-                  </div>
-                  <input
-                    type="text"
-                    required
-                    value={nome}
-                    onChange={(e) => setNome(e.target.value)}
-                    disabled={loadingProfile}
-                    placeholder="Seu nome completo"
-                    className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
-                  />
-                </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+              Nome Completo <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
+                <UserCheck className="w-4 h-4" />
               </div>
+              <input
+                type="text"
+                required
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                disabled={loadingProfile}
+                placeholder="Seu nome completo"
+                className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
+              />
+            </div>
+          </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
-                  Telefone / WhatsApp
-                </label>
-                <div className="flex gap-2">
-                  <div className="flex items-center justify-center px-3 border border-border rounded-lg bg-bg text-text-secondary text-sm font-medium select-none">
-                    +55
-                  </div>
-                  <div className="relative flex-1">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
-                      <Phone className="w-4 h-4" />
-                    </div>
-                    <input
-                      type="text"
-                      value={telefone}
-                      onChange={(e) => setTelefone(formatPhone(e.target.value))}
-                      disabled={loadingProfile}
-                      placeholder="Seu número de WhatsApp"
-                      className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
-                    />
-                  </div>
-                </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+              Telefone / WhatsApp
+            </label>
+            <div className="flex gap-2">
+              <div className="flex items-center justify-center px-3 border border-border rounded-lg bg-bg text-text-secondary text-sm font-medium select-none">
+                +55
               </div>
-
-              <div className="flex justify-end pt-2">
-                <button
-                  type="submit"
+              <div className="relative flex-1">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
+                  <Phone className="w-4 h-4" />
+                </div>
+                <input
+                  type="text"
+                  value={telefone}
+                  onChange={(e) => setTelefone(formatPhone(e.target.value))}
                   disabled={loadingProfile}
-                  className="px-4 py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
-                >
-                  {loadingProfile ? 'Salvando...' : 'Salvar Perfil'}
-                </button>
+                  placeholder="Seu número de WhatsApp"
+                  className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
+                />
               </div>
-            </form>
+            </div>
           </div>
 
-          {/* Section 2: Security (Password Change) */}
-          <div className="bg-white border border-border rounded-[14px] p-6 shadow-sm">
-            <h3 className="font-title font-bold text-lg text-text-primary flex items-center gap-2 border-b border-border pb-3">
-              <Key className="w-5 h-5 text-rose-600" />
-              Segurança e Acesso
-            </h3>
-
-            <form onSubmit={handleUpdatePassword} className="mt-4 space-y-4">
-              {passwordError && (
-                <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2.5">
-                  <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-                  <p className="text-xs font-medium">{passwordError}</p>
-                </div>
-              )}
-
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
-                  Nova Senha <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type={showSenha ? 'text' : 'password'}
-                    required
-                    placeholder="No mínimo 6 caracteres"
-                    value={novaSenha}
-                    onChange={(e) => setNovaSenha(e.target.value)}
-                    disabled={loadingPassword}
-                    className="w-full px-3 py-2 pr-10 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowSenha(!showSenha)}
-                    disabled={loadingPassword}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-text-muted hover:text-rose-600 cursor-pointer disabled:opacity-50"
-                  >
-                    {showSenha ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
-                  Confirmar Nova Senha <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type={showConfirmSenha ? 'text' : 'password'}
-                    required
-                    placeholder="Repita a nova senha"
-                    value={confirmarSenha}
-                    onChange={(e) => setConfirmarSenha(e.target.value)}
-                    disabled={loadingPassword}
-                    className="w-full px-3 py-2 pr-10 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmSenha(!showConfirmSenha)}
-                    disabled={loadingPassword}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-text-muted hover:text-rose-600 cursor-pointer disabled:opacity-50"
-                  >
-                    {showConfirmSenha ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex justify-end pt-2">
-                <button
-                  type="submit"
-                  disabled={loadingPassword}
-                  className="px-4 py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
-                >
-                  {loadingPassword ? 'Atualizando...' : 'Atualizar Senha'}
-                </button>
-              </div>
-            </form>
+          <div className="flex justify-end pt-2">
+            <button
+              type="submit"
+              disabled={loadingProfile}
+              className="px-4 py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+            >
+              {loadingProfile ? 'Salvando...' : 'Salvar Perfil'}
+            </button>
           </div>
-        </div>
-      </div>
+        </form>
+      </SectionCard>
 
-      {/* Section 3: Dados do Meu Negócio */}
-      <div id="ob-config-negocio" className="bg-white border border-border rounded-[14px] p-6 shadow-sm">
-        <h3 className="font-title font-bold text-lg text-text-primary flex items-center gap-2 border-b border-border pb-3">
-          <Building2 className="w-5 h-5 text-rose-600" />
-          Dados do Meu Negócio
-        </h3>
-
+      <SectionCard
+        id="ob-config-negocio"
+        icon={Building2}
+        title="Dados do Meu Negócio"
+        isOpen={openSections.negocio}
+        onToggle={() => toggleSection('negocio')}
+      >
         {loadingNegocio ? (
-          <p className="text-sm text-text-secondary mt-4">Carregando...</p>
+          <p className="text-sm text-text-secondary">Carregando...</p>
         ) : (
-          <div className="mt-4 space-y-5">
+          <div className="space-y-5">
             {/* Logo Upload */}
             <div className="space-y-2">
               <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
@@ -919,140 +887,19 @@ export default function Configuracoes() {
             </div>
           </div>
         )}
-      </div>
+      </SectionCard>
 
-      {/* Section 4: Identidade Visual e Cores */}
-      <div id="ob-config-visual" className="bg-white border border-border rounded-[14px] p-6 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-3">
-          <h3 className="font-title font-bold text-lg text-text-primary flex items-center gap-2">
-            <Palette className="w-5 h-5 text-rose-600" />
-            Identidade Visual e Cores
-          </h3>
-
-          {/* Switch Modo Escuro */}
-          <div className="flex items-center gap-3 bg-bg/40 p-2 rounded-lg border border-border/50">
-            <span className="text-xs font-semibold text-text-primary uppercase tracking-wider">Modo Escuro (Dark Mode)</span>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={modoEscuro}
-              onClick={() => {
-                const newMode = !modoEscuro;
-                setModoEscuro(newMode);
-                applyPalette(paletaCores, newMode); // Instant reflection!
-              }}
-              className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-400 focus:ring-offset-2 ${
-                modoEscuro ? 'bg-rose-600' : 'bg-gray-300'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
-                  modoEscuro ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
-          </div>
-        </div>
-        
-        <p className="text-xs text-text-secondary mt-2">
-          Selecione a paleta de cores geral do sistema. A alteração é refletida em tempo real tanto no seu painel administrativo quanto no portal da cliente.
-        </p>
-
+      <SectionCard
+        id="ob-config-agendamento"
+        icon={CalendarClock}
+        title="Configurações de Agendamento"
+        isOpen={openSections.agendamento}
+        onToggle={() => toggleSection('agendamento')}
+      >
         {loadingNegocio ? (
-          <p className="text-sm text-text-secondary mt-4">Carregando...</p>
+          <p className="text-sm text-text-secondary">Carregando...</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-            {PALETTES_LIST.map((palette) => {
-              const isSelected = paletaCores === palette.id;
-              return (
-                <button
-                  key={palette.id}
-                  type="button"
-                  onClick={() => {
-                    setPaletaCores(palette.id);
-                    applyPalette(palette.id, modoEscuro); // Aplicação instantânea!
-                  }}
-                  className={`
-                    flex flex-col text-left p-4 rounded-xl border transition-all cursor-pointer relative group
-                    ${isSelected 
-                      ? 'border-rose-600 bg-rose-50/5 ring-1 ring-rose-400' 
-                      : 'border-border bg-bg/5 hover:bg-bg/15 hover:border-text-muted'}
-                  `}
-                >
-                  {/* Nome da Paleta */}
-                  <div className="flex items-center justify-between w-full">
-                    <span className="text-sm font-semibold text-text-primary">{palette.name}</span>
-                    {isSelected && (
-                      <span className="w-2 h-2 rounded-full bg-rose-600" />
-                    )}
-                  </div>
-
-                  {/* Descrição */}
-                  <span className="text-[11px] text-text-secondary mt-1 leading-relaxed flex-grow">
-                    {palette.description}
-                  </span>
-
-                  {/* Pré-visualização das Cores */}
-                  <div className="flex items-center gap-2 mt-4 pt-3 border-t border-border/40 w-full">
-                    <span className="text-[9px] font-bold text-text-muted uppercase tracking-wider">Cores:</span>
-                    <div className="flex items-center gap-1.5 ml-auto">
-                      {/* Cor Primária */}
-                      <span 
-                        className="w-5 h-5 rounded-full border border-black/5 shadow-sm block" 
-                        style={{ backgroundColor: palette.primaryColor }}
-                        title="Cor Principal"
-                      />
-                      {/* Cor Secundária */}
-                      <span 
-                        className="w-5 h-5 rounded-full border border-black/5 shadow-sm block" 
-                        style={{ backgroundColor: palette.accentColor }}
-                        title="Cor de Destaque"
-                      />
-                      {/* Cor de Fundo */}
-                      <span 
-                        className="w-5 h-5 rounded-full border border-black/5 shadow-sm block" 
-                        style={{ backgroundColor: palette.bgColor }}
-                        title="Fundo"
-                      />
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Feedback e botão de salvar */}
-        {visualError && (
-          <div className="mt-6 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2.5">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-            <p className="text-xs font-medium">{visualError}</p>
-          </div>
-        )}
-
-        <div className="flex justify-end pt-6 border-t border-border mt-6">
-          <button
-            type="button"
-            onClick={handleSaveVisual}
-            disabled={savingVisual || loadingNegocio || !configuracaoId}
-            className="px-5 py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
-          >
-            {savingVisual ? 'Salvando...' : 'Salvar Cores'}
-          </button>
-        </div>
-      </div>
-
-      {/* Section 4: Configurações de Agendamento */}
-      <div id="ob-config-agendamento" className="bg-white border border-border rounded-[14px] p-6 shadow-sm">
-        <h3 className="font-title font-bold text-lg text-text-primary flex items-center gap-2 border-b border-border pb-3">
-          <CalendarClock className="w-5 h-5 text-rose-600" />
-          Configurações de Agendamento
-        </h3>
-
-        {loadingNegocio ? (
-          <p className="text-sm text-text-secondary mt-4">Carregando...</p>
-        ) : (
-          <div className="mt-4 space-y-6">
+          <div className="space-y-6">
             {/* Toggle: Aprovação automática */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
@@ -1148,8 +995,211 @@ export default function Configuracoes() {
             {savingAgendamento ? 'Salvando...' : 'Salvar Configurações'}
           </button>
         </div>
-      </div>
+      </SectionCard>
 
+      <SectionCard
+        id="ob-config-visual"
+        icon={Palette}
+        title="Identidade Visual e Cores"
+        isOpen={openSections.visual}
+        onToggle={() => toggleSection('visual')}
+        headerExtra={
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center gap-3 bg-bg/40 p-2 rounded-lg border border-border/50"
+          >
+            <span className="text-xs font-semibold text-text-primary uppercase tracking-wider">Modo Escuro (Dark Mode)</span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={modoEscuro}
+              onClick={() => {
+                const newMode = !modoEscuro;
+                setModoEscuro(newMode);
+                applyPalette(paletaCores, newMode); // Instant reflection!
+              }}
+              className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-400 focus:ring-offset-2 ${
+                modoEscuro ? 'bg-rose-600' : 'bg-gray-300'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
+                  modoEscuro ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+        }
+      >
+        <p className="text-xs text-text-secondary mt-2">
+          Selecione a paleta de cores geral do sistema. A alteração é refletida em tempo real tanto no seu painel administrativo quanto no portal da cliente.
+        </p>
+
+        {loadingNegocio ? (
+          <p className="text-sm text-text-secondary mt-4">Carregando...</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+            {PALETTES_LIST.map((palette) => {
+              const isSelected = paletaCores === palette.id;
+              return (
+                <button
+                  key={palette.id}
+                  type="button"
+                  onClick={() => {
+                    setPaletaCores(palette.id);
+                    applyPalette(palette.id, modoEscuro); // Aplicação instantânea!
+                  }}
+                  className={`
+                    flex flex-col text-left p-4 rounded-xl border transition-all cursor-pointer relative group
+                    ${isSelected
+                      ? 'border-rose-600 bg-rose-50/5 ring-1 ring-rose-400'
+                      : 'border-border bg-bg/5 hover:bg-bg/15 hover:border-text-muted'}
+                  `}
+                >
+                  {/* Nome da Paleta */}
+                  <div className="flex items-center justify-between w-full">
+                    <span className="text-sm font-semibold text-text-primary">{palette.name}</span>
+                    {isSelected && (
+                      <span className="w-2 h-2 rounded-full bg-rose-600" />
+                    )}
+                  </div>
+
+                  {/* Descrição */}
+                  <span className="text-[11px] text-text-secondary mt-1 leading-relaxed flex-grow">
+                    {palette.description}
+                  </span>
+
+                  {/* Pré-visualização das Cores */}
+                  <div className="flex items-center gap-2 mt-4 pt-3 border-t border-border/40 w-full">
+                    <span className="text-[9px] font-bold text-text-muted uppercase tracking-wider">Cores:</span>
+                    <div className="flex items-center gap-1.5 ml-auto">
+                      {/* Cor Primária */}
+                      <span
+                        className="w-5 h-5 rounded-full border border-black/5 shadow-sm block"
+                        style={{ backgroundColor: palette.primaryColor }}
+                        title="Cor Principal"
+                      />
+                      {/* Cor Secundária */}
+                      <span
+                        className="w-5 h-5 rounded-full border border-black/5 shadow-sm block"
+                        style={{ backgroundColor: palette.accentColor }}
+                        title="Cor de Destaque"
+                      />
+                      {/* Cor de Fundo */}
+                      <span
+                        className="w-5 h-5 rounded-full border border-black/5 shadow-sm block"
+                        style={{ backgroundColor: palette.bgColor }}
+                        title="Fundo"
+                      />
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Feedback e botão de salvar */}
+        {visualError && (
+          <div className="mt-6 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2.5">
+            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+            <p className="text-xs font-medium">{visualError}</p>
+          </div>
+        )}
+
+        <div className="flex justify-end pt-6 border-t border-border mt-6">
+          <button
+            type="button"
+            onClick={handleSaveVisual}
+            disabled={savingVisual || loadingNegocio || !configuracaoId}
+            className="px-5 py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+          >
+            {savingVisual ? 'Salvando...' : 'Salvar Cores'}
+          </button>
+        </div>
+      </SectionCard>
+
+      <SectionCard
+        icon={Key}
+        title="Segurança e Acesso"
+        isOpen={openSections.seguranca}
+        onToggle={() => toggleSection('seguranca')}
+      >
+        <form onSubmit={handleUpdatePassword} className="space-y-4">
+          {passwordError && (
+            <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2.5">
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+              <p className="text-xs font-medium">{passwordError}</p>
+            </div>
+          )}
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+              Nova Senha <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <input
+                type={showSenha ? 'text' : 'password'}
+                required
+                placeholder="No mínimo 6 caracteres"
+                value={novaSenha}
+                onChange={(e) => setNovaSenha(e.target.value)}
+                disabled={loadingPassword}
+                className="w-full px-3 py-2 pr-10 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
+              />
+              <button
+                type="button"
+                onClick={() => setShowSenha(!showSenha)}
+                disabled={loadingPassword}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-text-muted hover:text-rose-600 cursor-pointer disabled:opacity-50"
+              >
+                {showSenha ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+              Confirmar Nova Senha <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <input
+                type={showConfirmSenha ? 'text' : 'password'}
+                required
+                placeholder="Repita a nova senha"
+                value={confirmarSenha}
+                onChange={(e) => setConfirmarSenha(e.target.value)}
+                disabled={loadingPassword}
+                className="w-full px-3 py-2 pr-10 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmSenha(!showConfirmSenha)}
+                disabled={loadingPassword}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-text-muted hover:text-rose-600 cursor-pointer disabled:opacity-50"
+              >
+                {showConfirmSenha ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div className="flex justify-end pt-2">
+            <button
+              type="submit"
+              disabled={loadingPassword}
+              className="px-4 py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+            >
+              {loadingPassword ? 'Atualizando...' : 'Atualizar Senha'}
+            </button>
+          </div>
+        </form>
+      </SectionCard>
+
+      {/* Section 6: Usar como App */}
       <InstallAppCard />
 
       <ConfirmModal
