@@ -24,8 +24,7 @@ export default function TrialWhatsAppButton({ installBannerVisible }: TrialWhats
           bottom: `calc(${rem}rem + env(safe-area-inset-bottom, 0px))`,
         }}
       >
-        <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-60 pointer-events-none" />
-        <MessageCircle className="w-6 h-6 relative" />
+        <MessageCircle className="w-6 h-6" />
       </button>
 
       {isModalOpen && <SupportModal onClose={() => setIsModalOpen(false)} />}
