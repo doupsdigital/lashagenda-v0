@@ -221,36 +221,36 @@ export default function PortalCatalogo() {
 
       {/* Card de apresentação do estúdio */}
       {temInfoCard && (
-        <div className="bg-white border border-border rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row gap-5 items-center sm:items-start">
+        <div className="bg-gradient-to-br from-rose-400 to-rose-600 rounded-2xl p-6 shadow-md flex flex-col sm:flex-row gap-5 items-center sm:items-start">
           {logoUrl && (
             <img
               src={logoUrl}
               alt={nomeNegocio || 'Studio'}
-              className="w-20 h-20 rounded-2xl object-cover flex-shrink-0 border border-border"
+              className="w-20 h-20 rounded-2xl object-cover flex-shrink-0 border-2 border-white/80 shadow-sm"
             />
           )}
           <div className="flex-1 min-w-0 space-y-2 text-center sm:text-left">
-            <h2 className="font-title font-bold text-2xl text-text-primary leading-tight">
+            <h2 className="font-title font-bold text-2xl text-white leading-tight">
               {nomeNegocio}
             </h2>
             {descricao && (
-              <p className="text-sm text-text-secondary leading-relaxed">{descricao}</p>
+              <p className="text-sm text-white/90 leading-relaxed italic">{descricao}</p>
             )}
-            <div className="flex flex-wrap gap-3 pt-1 justify-center sm:justify-start">
+            <div className="flex flex-wrap gap-2 pt-1 justify-center sm:justify-start">
               {instagram && (
                 <a
                   href={`https://instagram.com/${instagram.replace('@', '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-xs font-medium text-rose-600 hover:text-rose-800 transition-colors"
+                  className="flex items-center gap-1.5 text-xs font-semibold text-white bg-white/15 hover:bg-white/25 transition-colors px-2.5 py-1 rounded-full"
                 >
                   <AtSign className="w-3.5 h-3.5" />
                   {instagram.replace(/^@/, '')}
                 </a>
               )}
               {endereco && (
-                <span className="flex items-start gap-1.5 text-xs text-text-muted">
-                  <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-rose-600 mt-0.5" />
+                <span className="flex items-start gap-1.5 text-xs text-white bg-white/15 px-2.5 py-1 rounded-full">
+                  <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
                   {endereco}
                 </span>
               )}
