@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import type { FormEvent } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useOnboarding } from '../../hooks/useOnboarding';
@@ -38,31 +39,30 @@ interface SectionCardProps {
   title: string;
   isOpen: boolean;
   onToggle: () => void;
-  headerExtra?: React.ReactNode;
   children: React.ReactNode;
 }
 
-function SectionCard({ id, icon: Icon, title, isOpen, onToggle, headerExtra, children }: SectionCardProps) {
+function SectionCard({ id, icon: Icon, title, isOpen, onToggle, children }: SectionCardProps) {
   return (
-    <div id={id} className="bg-white border border-border rounded-[14px] shadow-sm">
+    <div id={id} className="bg-white border border-border rounded-[14px] shadow-sm overflow-hidden">
       <div
         onClick={onToggle}
-        className="flex items-center justify-between gap-3 px-6 py-6 flex-wrap cursor-pointer select-none"
+        className="px-6 py-6 cursor-pointer select-none"
+        style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
       >
-        <h3 className="font-title font-bold text-lg text-text-primary flex items-center gap-2">
-          <Icon className="w-5 h-5 text-rose-600" />
-          {title}
-        </h3>
-        <div className="flex items-center gap-3 flex-shrink-0">
-          {isOpen && headerExtra}
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="font-title font-bold text-xl md:text-lg text-white flex items-center gap-2 min-w-0">
+            <Icon className="w-6 h-6 md:w-5 md:h-5 text-white flex-shrink-0" />
+            <span className="truncate">{title}</span>
+          </h3>
           <ChevronDown
-            className={`w-5 h-5 text-text-muted transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+            className={`w-6 h-6 md:w-5 md:h-5 text-white/80 transition-transform duration-200 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}
           />
         </div>
       </div>
 
       {isOpen && (
-        <div className="px-6 pb-6">
+        <div className="p-6">
           {children}
         </div>
       )}
@@ -114,6 +114,8 @@ export default function Configuracoes() {
   const { profile, user, refreshProfile, estabelecimentoId } = useAuth();
   const { autoStart } = useOnboarding('configuracoes');
   const { eligible: guidedTourEligible, currentStep: guidedTourStep } = useGuidedTour();
+  const location = useLocation();
+  const navigate = useNavigate();
   // Contas cobertas pelo checklist guiado não recebem mais o tour automático
   // do driver.js nessa tela — ele continua disponível sob demanda pelo Ajuda.
   useEffect(() => { if (profile && !guidedTourEligible) autoStart(); }, [profile, guidedTourEligible]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -181,10 +183,14 @@ export default function Configuracoes() {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // Quando a etapa "Dados do Negócio" do checklist guiado está ativa, abre o
-  // card correspondente e rola até ele — só uma vez por montagem da tela.
+  // Abre o card "Dados do Negócio" e rola até ele quando a profissional chega
+  // aqui pelo botão "Ir para Configurações" do checklist guiado (sinalizado
+  // via state de navegação). Não deve repetir em visitas normais à tela
+  // (voltar de outra aba, por exemplo) enquanto a etapa continuar pendente.
   useEffect(() => {
-    if (guidedTourStep !== 'negocio') return;
+    const cameFromGuidedTour = (location.state as { fromGuidedTour?: boolean } | null)?.fromGuidedTour;
+    if (!cameFromGuidedTour || guidedTourStep !== 'negocio') return;
+    navigate(location.pathname, { replace: true, state: null });
     setOpenSections((prev) => ({ ...prev, negocio: true }));
     const t = setTimeout(() => {
       document.getElementById('ob-config-negocio')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -610,15 +616,18 @@ export default function Configuracoes() {
   return (
     <div className="max-w-4xl mx-auto space-y-4">
       {/* Top Banner — informativo, cor diferenciada dos cards abaixo */}
-      <div className="bg-rose-50 border border-rose-200 rounded-[14px] p-5 shadow-sm flex items-center justify-between gap-4">
+      <div
+        className="rounded-[14px] p-5 shadow-sm flex items-center justify-between gap-4 text-white relative overflow-hidden"
+        style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
+      >
         <div>
-          <h2 className="font-title font-semibold text-2xl text-text-primary">Configurações</h2>
-          <p className="text-xs text-text-secondary mt-0.5">
+          <h2 className="font-title font-semibold text-3xl md:text-2xl">Configurações</h2>
+          <p className="text-sm md:text-xs text-white/80 mt-1 md:mt-0.5">
             Gerencie seu perfil, dados do negócio e preferências de agendamento.
           </p>
         </div>
-        <div className="w-11 h-11 rounded-full bg-rose-100 border border-rose-200 flex items-center justify-center flex-shrink-0">
-          <Settings className="w-5 h-5 text-rose-600" />
+        <div className="w-12 h-12 md:w-11 md:h-11 rounded-full bg-white/20 border border-white/20 flex items-center justify-center flex-shrink-0">
+          <Settings className="w-6 h-6 md:w-5 md:h-5 text-white" />
         </div>
       </div>
 
@@ -653,10 +662,10 @@ export default function Configuracoes() {
             </button>
           </div>
 
-          <p className="font-title font-bold text-sm text-text-primary mt-2 truncate max-w-full">
+          <p className="font-title font-bold text-base md:text-sm text-text-primary mt-2 truncate max-w-full">
             {userName}
           </p>
-          <p className="text-xs text-text-secondary truncate max-w-full">{userEmail}</p>
+          <p className="text-sm md:text-xs text-text-secondary truncate max-w-full">{userEmail}</p>
 
           <input
             type="file"
@@ -670,18 +679,18 @@ export default function Configuracoes() {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingAvatar}
-              className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-800 text-xs font-semibold rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+              className="flex items-center justify-center gap-1.5 px-3.5 py-2 md:px-3 md:py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-800 text-sm md:text-xs font-semibold rounded-lg transition-colors cursor-pointer disabled:opacity-50"
             >
-              <Camera className="w-3.5 h-3.5" />
+              <Camera className="w-4 h-4 md:w-3.5 md:h-3.5" />
               {uploadingAvatar ? 'Enviando...' : 'Alterar Foto'}
             </button>
             {profile?.avatar_url && (
               <button
                 onClick={handleRemoveAvatar}
                 disabled={uploadingAvatar}
-                className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-800 text-xs font-semibold rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                className="flex items-center justify-center gap-1.5 px-3.5 py-2 md:px-3 md:py-1.5 bg-red-50 hover:bg-red-100 text-red-800 text-sm md:text-xs font-semibold rounded-lg transition-colors cursor-pointer disabled:opacity-50"
               >
-                <Trash2 className="w-3.5 h-3.5" />
+                <Trash2 className="w-4 h-4 md:w-3.5 md:h-3.5" />
                 Remover Foto
               </button>
             )}
@@ -691,13 +700,13 @@ export default function Configuracoes() {
         <form onSubmit={handleUpdateProfile} className="mt-4 space-y-4">
           {profileError && (
             <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2.5">
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-              <p className="text-xs font-medium">{profileError}</p>
+              <AlertCircle className="w-6 h-6 md:w-5 md:h-5 text-red-600 flex-shrink-0" />
+              <p className="text-sm md:text-xs font-medium">{profileError}</p>
             </div>
           )}
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+            <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
               E-mail de Acesso
             </label>
             <div className="relative">
@@ -708,16 +717,16 @@ export default function Configuracoes() {
                 type="email"
                 disabled
                 value={userEmail}
-                className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-muted text-sm cursor-not-allowed"
+                className="w-full pl-10 pr-4 py-3 md:py-2 border border-border rounded-lg bg-bg text-text-muted text-base md:text-sm cursor-not-allowed"
               />
             </div>
-            <p className="text-[10px] text-text-secondary">
+            <p className="text-xs md:text-[10px] text-text-secondary">
               O e-mail de acesso não pode ser alterado diretamente.
             </p>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+            <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
               Nome Completo <span className="text-red-500">*</span>
             </label>
             <div className="relative">
@@ -731,17 +740,17 @@ export default function Configuracoes() {
                 onChange={(e) => setNome(e.target.value)}
                 disabled={loadingProfile}
                 placeholder="Seu nome completo"
-                className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
+                className="w-full pl-10 pr-4 py-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
               />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+            <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
               Telefone / WhatsApp
             </label>
             <div className="flex gap-2">
-              <div className="flex items-center justify-center px-3 border border-border rounded-lg bg-bg text-text-secondary text-sm font-medium select-none">
+              <div className="flex items-center justify-center px-3 border border-border rounded-lg bg-bg text-text-secondary text-base md:text-sm font-medium select-none">
                 +55
               </div>
               <div className="relative flex-1">
@@ -754,7 +763,7 @@ export default function Configuracoes() {
                   onChange={(e) => setTelefone(formatPhone(e.target.value))}
                   disabled={loadingProfile}
                   placeholder="Seu número de WhatsApp"
-                  className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
+                  className="w-full pl-10 pr-4 py-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
                 />
               </div>
             </div>
@@ -764,7 +773,7 @@ export default function Configuracoes() {
             <button
               type="submit"
               disabled={loadingProfile}
-              className="px-4 py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+              className="px-5 py-3 md:px-4 md:py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-full md:rounded-lg text-base md:text-xs font-bold md:font-semibold transition-colors cursor-pointer"
             >
               {loadingProfile ? 'Salvando...' : 'Salvar Perfil'}
             </button>
@@ -780,12 +789,12 @@ export default function Configuracoes() {
         onToggle={() => toggleSection('negocio')}
       >
         {loadingNegocio ? (
-          <p className="text-sm text-text-secondary">Carregando...</p>
+          <p className="text-base md:text-sm text-text-secondary">Carregando...</p>
         ) : (
           <div className="space-y-5">
             {/* Logo Upload */}
             <div id="gt-negocio-logo" className="space-y-2">
-              <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+              <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                 Logo / Foto do Estúdio
               </label>
               <div className="flex items-center gap-4">
@@ -824,7 +833,7 @@ export default function Configuracoes() {
                     type="button"
                     onClick={() => logoFileInputRef.current?.click()}
                     disabled={uploadingLogo}
-                    className="flex items-center gap-1.5 px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-800 text-xs font-semibold rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                    className="flex items-center gap-1.5 px-3.5 py-2.5 md:px-3 md:py-2 bg-rose-50 hover:bg-rose-100 text-rose-800 text-sm md:text-xs font-semibold rounded-lg transition-colors cursor-pointer disabled:opacity-50"
                   >
                     <Camera className="w-4 h-4" />
                     {uploadingLogo ? 'Enviando...' : 'Alterar Logo'}
@@ -834,7 +843,7 @@ export default function Configuracoes() {
                       type="button"
                       onClick={handleRemoveLogo}
                       disabled={uploadingLogo}
-                      className="flex items-center gap-1.5 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-800 text-xs font-semibold rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                      className="flex items-center gap-1.5 px-3.5 py-2.5 md:px-3 md:py-2 bg-red-50 hover:bg-red-100 text-red-800 text-sm md:text-xs font-semibold rounded-lg transition-colors cursor-pointer disabled:opacity-50"
                     >
                       <Trash2 className="w-4 h-4" />
                       Remover Logo
@@ -846,7 +855,7 @@ export default function Configuracoes() {
 
             {/* Nome do negócio */}
             <div id="gt-negocio-nome" className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+              <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                 Nome do Negócio
               </label>
               <div className="relative">
@@ -858,14 +867,14 @@ export default function Configuracoes() {
                   value={nomeNegocio}
                   onChange={(e) => setNomeNegocio(e.target.value)}
                   placeholder="Ex: Lashes by Amanda, Studio da Ju"
-                  className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
+                  className="w-full pl-10 pr-4 py-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
                 />
               </div>
             </div>
 
             {/* Descrição */}
             <div id="gt-negocio-descricao" className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+              <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                 Descrição / Bio
               </label>
               <textarea
@@ -874,9 +883,9 @@ export default function Configuracoes() {
                 maxLength={300}
                 rows={3}
                 placeholder="Breve apresentação do seu trabalho..."
-                className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all resize-none"
+                className="w-full px-3.5 py-3 md:px-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all resize-none"
               />
-              <p className="text-[10px] text-text-secondary text-right">
+              <p className="text-xs md:text-[10px] text-text-secondary text-right">
                 {descricaoNegocio.length}/300
               </p>
             </div>
@@ -884,7 +893,7 @@ export default function Configuracoes() {
             {/* Instagram + Endereço */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div id="gt-negocio-instagram" className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+                <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                   Instagram
                 </label>
                 <div className="relative">
@@ -896,13 +905,13 @@ export default function Configuracoes() {
                     value={instagramNegocio}
                     onChange={(e) => setInstagramNegocio(e.target.value)}
                     placeholder="@seuperfil ou seuperfil"
-                    className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
+                    className="w-full pl-10 pr-4 py-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
                   />
                 </div>
               </div>
 
               <div id="gt-negocio-endereco" className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+                <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                   Endereço / Local de Atendimento
                 </label>
                 <div className="relative">
@@ -914,7 +923,7 @@ export default function Configuracoes() {
                     value={enderecoNegocio}
                     onChange={(e) => setEnderecoNegocio(e.target.value)}
                     placeholder="Ex: Rua X, nº Y — Setor Z"
-                    className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
+                    className="w-full pl-10 pr-4 py-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
                   />
                 </div>
               </div>
@@ -923,14 +932,14 @@ export default function Configuracoes() {
             {/* Feedback e botão de salvar */}
             {dadosError && (
               <div className="mt-6 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2.5">
-                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-                <p className="text-xs font-medium">{dadosError}</p>
+                <AlertCircle className="w-6 h-6 md:w-5 md:h-5 text-red-600 flex-shrink-0" />
+                <p className="text-sm md:text-xs font-medium">{dadosError}</p>
               </div>
             )}
             {dadosSuccess && (
               <div className="mt-6 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg flex items-center gap-2.5">
-                <Sparkles className="w-5 h-5 text-green-600 flex-shrink-0" />
-                <p className="text-xs font-medium">{dadosSuccess}</p>
+                <Sparkles className="w-6 h-6 md:w-5 md:h-5 text-green-600 flex-shrink-0" />
+                <p className="text-sm md:text-xs font-medium">{dadosSuccess}</p>
               </div>
             )}
 
@@ -939,7 +948,7 @@ export default function Configuracoes() {
                 type="button"
                 onClick={handleSaveDadosNegocio}
                 disabled={savingDados || loadingNegocio || !configuracaoId}
-                className="px-5 py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                className="px-6 py-3 md:px-5 md:py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-full md:rounded-lg text-base md:text-xs font-bold md:font-semibold transition-colors cursor-pointer"
               >
                 {savingDados ? 'Salvando...' : 'Salvar Dados'}
               </button>
@@ -956,20 +965,20 @@ export default function Configuracoes() {
         onToggle={() => toggleSection('agendamento')}
       >
         {loadingNegocio ? (
-          <p className="text-sm text-text-secondary">Carregando...</p>
+          <p className="text-base md:text-sm text-text-secondary">Carregando...</p>
         ) : (
           <div className="space-y-6">
             {/* Toggle: Aprovação automática */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+              <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                 Agendamento Automático
               </label>
               <div className="flex items-start justify-between gap-4 p-4 border border-border rounded-lg bg-bg">
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-text-primary">
+                  <p className="text-base md:text-sm font-medium text-text-primary">
                     Confirmar agendamentos do portal automaticamente
                   </p>
-                <p className="text-xs text-text-secondary mt-1">
+                <p className="text-sm md:text-xs text-text-secondary mt-1">
                   {aprovacaoAutomatica
                     ? 'Agendamentos feitos pelas clientes já ficam confirmados.'
                     : 'Agendamentos feitos pelas clientes ficam pendentes até você confirmar.'}
@@ -995,7 +1004,7 @@ export default function Configuracoes() {
 
           {/* Antecedência mínima */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+              <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                 Horas mínimas para cancelamento pela cliente
               </label>
               <div className="relative w-48">
@@ -1010,18 +1019,18 @@ export default function Configuracoes() {
                     const val = e.target.value;
                     setAntecedenciaHoras(val === '' ? '' : Number(val));
                   }}
-                  className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
+                  className="w-full pl-10 pr-4 py-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
                 />
               </div>
-              <p className="text-[10px] text-text-secondary">
+              <p className="text-xs md:text-[10px] text-text-secondary">
                 A cliente não poderá cancelar dentro desse prazo antes do horário agendado.
               </p>
             </div>
 
             {/* Mensagem pós-agendamento */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block flex items-center gap-1.5">
-                <MessageSquare className="w-3.5 h-3.5" />
+              <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block flex items-center gap-1.5">
+                <MessageSquare className="w-4 h-4 md:w-3.5 md:h-3.5" />
                 Mensagem exibida para a cliente após agendar
               </label>
               <textarea
@@ -1029,7 +1038,7 @@ export default function Configuracoes() {
                 onChange={(e) => setMensagemPosAgendamento(e.target.value)}
                 rows={3}
                 placeholder="Ex: Agendamento recebido! Confirmarei em breve pelo WhatsApp."
-                className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all resize-none"
+                className="w-full px-3.5 py-3 md:px-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all resize-none"
               />
             </div>
           </div>
@@ -1038,8 +1047,8 @@ export default function Configuracoes() {
         {/* Feedback e botão de salvar */}
         {agendamentoError && (
           <div className="mt-6 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2.5">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-            <p className="text-xs font-medium">{agendamentoError}</p>
+            <AlertCircle className="w-6 h-6 md:w-5 md:h-5 text-red-600 flex-shrink-0" />
+            <p className="text-sm md:text-xs font-medium">{agendamentoError}</p>
           </div>
         )}
 
@@ -1049,7 +1058,7 @@ export default function Configuracoes() {
             type="button"
             onClick={handleSaveAgendamento}
             disabled={savingAgendamento || loadingNegocio || !configuracaoId}
-            className="px-5 py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+            className="px-6 py-3 md:px-5 md:py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-full md:rounded-lg text-base md:text-xs font-bold md:font-semibold transition-colors cursor-pointer"
           >
             {savingAgendamento ? 'Salvando...' : 'Salvar Configurações'}
           </button>
@@ -1062,40 +1071,36 @@ export default function Configuracoes() {
         title="Identidade Visual e Cores"
         isOpen={openSections.visual}
         onToggle={() => toggleSection('visual')}
-        headerExtra={
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-3 bg-bg/40 p-2 rounded-lg border border-border/50"
-          >
-            <span className="text-xs font-semibold text-text-primary uppercase tracking-wider">Modo Escuro (Dark Mode)</span>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={modoEscuro}
-              onClick={() => {
-                const newMode = !modoEscuro;
-                setModoEscuro(newMode);
-                applyPalette(paletaCores, newMode); // Instant reflection!
-              }}
-              className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-400 focus:ring-offset-2 ${
-                modoEscuro ? 'bg-rose-600' : 'bg-gray-300'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
-                  modoEscuro ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
-          </div>
-        }
       >
-        <p className="text-xs text-text-secondary mt-2">
+        <p className="text-sm md:text-xs text-text-secondary">
           Selecione a paleta de cores geral do sistema. A alteração é refletida em tempo real tanto no seu painel administrativo quanto no portal da cliente.
         </p>
 
+        <div className="flex items-center justify-between gap-4 p-4 border border-border rounded-lg bg-bg mt-4">
+          <span className="text-sm md:text-xs font-semibold text-text-primary uppercase tracking-wider">Modo Escuro (Dark Mode)</span>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={modoEscuro}
+            onClick={() => {
+              const newMode = !modoEscuro;
+              setModoEscuro(newMode);
+              applyPalette(paletaCores, newMode); // Instant reflection!
+            }}
+            className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-400 focus:ring-offset-2 ${
+              modoEscuro ? 'bg-rose-600' : 'bg-gray-300'
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
+                modoEscuro ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
+        </div>
+
         {loadingNegocio ? (
-          <p className="text-sm text-text-secondary mt-4">Carregando...</p>
+          <p className="text-base md:text-sm text-text-secondary mt-4">Carregando...</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
             {PALETTES_LIST.map((palette) => {
@@ -1117,36 +1122,36 @@ export default function Configuracoes() {
                 >
                   {/* Nome da Paleta */}
                   <div className="flex items-center justify-between w-full">
-                    <span className="text-sm font-semibold text-text-primary">{palette.name}</span>
+                    <span className="text-base md:text-sm font-semibold text-text-primary">{palette.name}</span>
                     {isSelected && (
                       <span className="w-2 h-2 rounded-full bg-rose-600" />
                     )}
                   </div>
 
                   {/* Descrição */}
-                  <span className="text-[11px] text-text-secondary mt-1 leading-relaxed flex-grow">
+                  <span className="text-xs md:text-[11px] text-text-secondary mt-1 leading-relaxed flex-grow">
                     {palette.description}
                   </span>
 
                   {/* Pré-visualização das Cores */}
                   <div className="flex items-center gap-2 mt-4 pt-3 border-t border-border/40 w-full">
-                    <span className="text-[9px] font-bold text-text-muted uppercase tracking-wider">Cores:</span>
+                    <span className="text-xs md:text-[9px] font-bold text-text-muted uppercase tracking-wider">Cores:</span>
                     <div className="flex items-center gap-1.5 ml-auto">
                       {/* Cor Primária */}
                       <span
-                        className="w-5 h-5 rounded-full border border-black/5 shadow-sm block"
+                        className="w-6 h-6 md:w-5 md:h-5 rounded-full border border-black/5 shadow-sm block"
                         style={{ backgroundColor: palette.primaryColor }}
                         title="Cor Principal"
                       />
                       {/* Cor Secundária */}
                       <span
-                        className="w-5 h-5 rounded-full border border-black/5 shadow-sm block"
+                        className="w-6 h-6 md:w-5 md:h-5 rounded-full border border-black/5 shadow-sm block"
                         style={{ backgroundColor: palette.accentColor }}
                         title="Cor de Destaque"
                       />
                       {/* Cor de Fundo */}
                       <span
-                        className="w-5 h-5 rounded-full border border-black/5 shadow-sm block"
+                        className="w-6 h-6 md:w-5 md:h-5 rounded-full border border-black/5 shadow-sm block"
                         style={{ backgroundColor: palette.bgColor }}
                         title="Fundo"
                       />
@@ -1161,8 +1166,8 @@ export default function Configuracoes() {
         {/* Feedback e botão de salvar */}
         {visualError && (
           <div className="mt-6 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2.5">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-            <p className="text-xs font-medium">{visualError}</p>
+            <AlertCircle className="w-6 h-6 md:w-5 md:h-5 text-red-600 flex-shrink-0" />
+            <p className="text-sm md:text-xs font-medium">{visualError}</p>
           </div>
         )}
 
@@ -1171,7 +1176,7 @@ export default function Configuracoes() {
             type="button"
             onClick={handleSaveVisual}
             disabled={savingVisual || loadingNegocio || !configuracaoId}
-            className="px-5 py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+            className="px-6 py-3 md:px-5 md:py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-full md:rounded-lg text-base md:text-xs font-bold md:font-semibold transition-colors cursor-pointer"
           >
             {savingVisual ? 'Salvando...' : 'Salvar Cores'}
           </button>
@@ -1187,13 +1192,13 @@ export default function Configuracoes() {
         <form onSubmit={handleUpdatePassword} className="space-y-4">
           {passwordError && (
             <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2.5">
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-              <p className="text-xs font-medium">{passwordError}</p>
+              <AlertCircle className="w-6 h-6 md:w-5 md:h-5 text-red-600 flex-shrink-0" />
+              <p className="text-sm md:text-xs font-medium">{passwordError}</p>
             </div>
           )}
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+            <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
               Nova Senha <span className="text-red-500">*</span>
             </label>
             <div className="relative">
@@ -1204,7 +1209,7 @@ export default function Configuracoes() {
                 value={novaSenha}
                 onChange={(e) => setNovaSenha(e.target.value)}
                 disabled={loadingPassword}
-                className="w-full px-3 py-2 pr-10 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
+                className="w-full px-3.5 py-3 md:px-3 md:py-2 pr-10 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
               />
               <button
                 type="button"
@@ -1212,13 +1217,13 @@ export default function Configuracoes() {
                 disabled={loadingPassword}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-text-muted hover:text-rose-600 cursor-pointer disabled:opacity-50"
               >
-                {showSenha ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showSenha ? <EyeOff className="w-5 h-5 md:w-4 md:h-4" /> : <Eye className="w-5 h-5 md:w-4 md:h-4" />}
               </button>
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+            <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
               Confirmar Nova Senha <span className="text-red-500">*</span>
             </label>
             <div className="relative">
@@ -1229,7 +1234,7 @@ export default function Configuracoes() {
                 value={confirmarSenha}
                 onChange={(e) => setConfirmarSenha(e.target.value)}
                 disabled={loadingPassword}
-                className="w-full px-3 py-2 pr-10 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
+                className="w-full px-3.5 py-3 md:px-3 md:py-2 pr-10 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 transition-all"
               />
               <button
                 type="button"
@@ -1238,9 +1243,9 @@ export default function Configuracoes() {
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-text-muted hover:text-rose-600 cursor-pointer disabled:opacity-50"
               >
                 {showConfirmSenha ? (
-                  <EyeOff className="w-4 h-4" />
+                  <EyeOff className="w-5 h-5 md:w-4 md:h-4" />
                 ) : (
-                  <Eye className="w-4 h-4" />
+                  <Eye className="w-5 h-5 md:w-4 md:h-4" />
                 )}
               </button>
             </div>
@@ -1250,7 +1255,7 @@ export default function Configuracoes() {
             <button
               type="submit"
               disabled={loadingPassword}
-              className="px-4 py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+              className="px-5 py-3 md:px-4 md:py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-full md:rounded-lg text-base md:text-xs font-bold md:font-semibold transition-colors cursor-pointer"
             >
               {loadingPassword ? 'Atualizando...' : 'Atualizar Senha'}
             </button>

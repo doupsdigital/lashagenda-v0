@@ -166,7 +166,7 @@ function FullSheet({ step, stepIndex, totalSteps, skip, completeStep }: {
                 </div>
               ) : (
                 <button
-                  onClick={() => navigate(meta.rota)}
+                  onClick={() => navigate(meta.rota, { state: { fromGuidedTour: true } })}
                   className={`mt-5 w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 text-white rounded-full text-base font-bold transition-all cursor-pointer ${meta.corBotao}`}
                 >
                   {meta.ctaLabel}
