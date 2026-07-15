@@ -400,15 +400,15 @@ export default function Servicos() {
 
       {/* FORM: Novo / Editar Serviço — sempre visível, sem modal */}
       <div id="ob-servico-form" ref={formRef} className="bg-white border border-border rounded-[14px] p-6 shadow-sm">
-        <h2 className="font-title font-semibold text-xl text-text-primary mb-5 flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-rose-600" />
+        <h2 className="font-title font-semibold text-2xl md:text-xl text-text-primary mb-5 flex items-center gap-2">
+          <Sparkles className="w-6 h-6 md:w-5 md:h-5 text-rose-600" />
           {editingServico ? 'Editar Serviço' : 'Novo Serviço'}
         </h2>
 
         <form onSubmit={handleSaveServico} className="space-y-4">
           {/* Nome */}
           <div id="gt-servico-nome" className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+            <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
               Nome do Serviço <span className="text-red-500">*</span>
             </label>
             <input
@@ -417,14 +417,14 @@ export default function Servicos() {
               placeholder="Ex: Volume Russo"
               value={servicoNome}
               onChange={(e) => setServicoNome(e.target.value)}
-              className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
+              className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-xl bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
             />
           </div>
 
           {/* Preço & Duração */}
           <div className="grid grid-cols-2 gap-4">
             <div id="gt-servico-preco" className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+              <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
                 Preço (R$) <span className="text-red-500">*</span>
               </label>
               <input
@@ -435,11 +435,11 @@ export default function Servicos() {
                 placeholder="0.00"
                 value={servicoValor}
                 onChange={(e) => setServicoValor(e.target.value === '' ? '' : parseFloat(e.target.value) || 0)}
-                className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
+                className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-xl bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
               />
             </div>
             <div id="gt-servico-duracao" className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+              <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
                 Duração (min) <span className="text-red-500">*</span>
               </label>
               <input
@@ -448,7 +448,7 @@ export default function Servicos() {
                 min="1"
                 value={servicoDuracao}
                 onChange={(e) => setServicoDuracao(e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
-                className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-xl bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
               />
             </div>
           </div>
@@ -457,9 +457,9 @@ export default function Servicos() {
           <button
             type="button"
             onClick={() => setShowOptionalFields(prev => !prev)}
-            className="flex items-center gap-1.5 text-xs font-semibold text-rose-600 hover:text-rose-800 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 text-sm md:text-xs font-semibold text-rose-600 hover:text-rose-800 transition-colors cursor-pointer"
           >
-            <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showOptionalFields ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 md:w-3.5 md:h-3.5 transition-transform ${showOptionalFields ? 'rotate-180' : ''}`} />
             {showOptionalFields ? 'Ocultar dados opcionais' : 'Adicionar mais detalhes (opcional)'}
           </button>
 
@@ -467,7 +467,7 @@ export default function Servicos() {
             <div className="space-y-5 pt-1 animate-fade-in">
               {/* Descrição */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
                   Descrição <span className="text-text-muted font-normal normal-case">(aparece no portal da cliente)</span>
                 </label>
                 <textarea
@@ -476,14 +476,14 @@ export default function Servicos() {
                   value={servicoDescricao}
                   onChange={(e) => setServicoDescricao(e.target.value)}
                   maxLength={300}
-                  className="w-full px-3 py-2 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted resize-none"
+                  className="w-full px-3.5 py-3 md:px-3 md:py-2 border border-border rounded-xl bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted resize-none"
                 />
-                <p className="text-[11px] text-text-muted text-right">{servicoDescricao.length}/300</p>
+                <p className="text-xs md:text-[11px] text-text-muted text-right">{servicoDescricao.length}/300</p>
               </div>
 
               {/* Foto do serviço */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
                   Foto do Serviço <span className="text-text-muted font-normal normal-case">(opcional)</span>
                 </label>
                 <input
@@ -500,14 +500,14 @@ export default function Servicos() {
                       <button
                         type="button"
                         onClick={() => imagemFileInputRef.current?.click()}
-                        className="px-3 py-1.5 bg-white text-text-primary rounded-lg text-xs font-semibold cursor-pointer"
+                        className="px-3.5 py-2 md:px-3 md:py-1.5 bg-white text-text-primary rounded-lg text-sm md:text-xs font-semibold cursor-pointer"
                       >
                         Trocar foto
                       </button>
                       <button
                         type="button"
                         onClick={handleRemoverImagem}
-                        className="px-3 py-1.5 bg-red-500 text-white rounded-lg text-xs font-semibold cursor-pointer"
+                        className="px-3.5 py-2 md:px-3 md:py-1.5 bg-red-500 text-white rounded-lg text-sm md:text-xs font-semibold cursor-pointer"
                       >
                         Remover
                       </button>
@@ -519,9 +519,9 @@ export default function Servicos() {
                     onClick={() => imagemFileInputRef.current?.click()}
                     className="w-full max-w-sm aspect-video rounded-xl border-2 border-dashed border-border hover:border-rose-300 hover:bg-rose-50/30 transition-colors flex flex-col items-center justify-center gap-2 text-text-muted cursor-pointer"
                   >
-                    <ImagePlus className="w-7 h-7" />
-                    <span className="text-xs font-medium">Clique para adicionar uma foto</span>
-                    <span className="text-[10px]">A imagem será comprimida automaticamente</span>
+                    <ImagePlus className="w-8 h-8 md:w-7 md:h-7" />
+                    <span className="text-sm md:text-xs font-medium">Clique para adicionar uma foto</span>
+                    <span className="text-xs md:text-[10px]">A imagem será comprimida automaticamente</span>
                   </button>
                 )}
               </div>
@@ -529,14 +529,14 @@ export default function Servicos() {
               {/* Preview: como vai aparecer no portal */}
               <div className="space-y-3 bg-bg/40 border border-border rounded-xl p-4">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-text-secondary mb-0.5">Como vai aparecer no portal</p>
-                  <p className="text-[10px] text-text-muted">Atualiza em tempo real</p>
+                  <p className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary mb-0.5">Como vai aparecer no portal</p>
+                  <p className="text-xs md:text-[10px] text-text-muted">Atualiza em tempo real</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Card preview — com imagem */}
                   <div>
-                    <p className="text-[10px] font-medium text-text-muted mb-2 flex items-center gap-1">
+                    <p className="text-xs md:text-[10px] font-medium text-text-muted mb-2 flex items-center gap-1">
                       <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
                       Com foto
                     </p>
@@ -571,7 +571,7 @@ export default function Servicos() {
 
                   {/* Card preview — sem imagem */}
                   <div>
-                    <p className="text-[10px] font-medium text-text-muted mb-2 flex items-center gap-1">
+                    <p className="text-xs md:text-[10px] font-medium text-text-muted mb-2 flex items-center gap-1">
                       <span className="w-2 h-2 rounded-full bg-gray-400 inline-block" />
                       Sem foto
                     </p>
@@ -596,7 +596,7 @@ export default function Servicos() {
                   </div>
                 </div>
 
-                <p className="text-[10px] text-text-muted leading-relaxed pt-2 border-t border-border">
+                <p className="text-xs md:text-[10px] text-text-muted leading-relaxed pt-2 border-t border-border">
                   A foto é opcional. Serviços sem foto exibem o card no formato simples, como mostrado acima.
                 </p>
               </div>
@@ -605,8 +605,8 @@ export default function Servicos() {
 
           {servicoError && (
             <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-800 px-3 py-2 rounded-lg">
-              <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-600" />
-              <p className="text-xs font-medium">{servicoError}</p>
+              <AlertCircle className="w-5 h-5 md:w-4 md:h-4 flex-shrink-0 text-red-600" />
+              <p className="text-sm md:text-xs font-medium">{servicoError}</p>
             </div>
           )}
 
@@ -615,7 +615,7 @@ export default function Servicos() {
               <button
                 type="button"
                 onClick={resetForm}
-                className="px-4 py-3 border border-border rounded-xl text-sm font-medium text-text-secondary hover:bg-bg transition-colors cursor-pointer"
+                className="px-4 py-3.5 md:py-3 border border-border rounded-full md:rounded-xl text-base md:text-sm font-medium text-text-secondary hover:bg-bg transition-colors cursor-pointer"
               >
                 Cancelar edição
               </button>
@@ -623,9 +623,9 @@ export default function Servicos() {
             <button
               type="submit"
               disabled={uploadingImagem}
-              className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+              className="flex-1 flex items-center justify-center gap-1.5 py-3.5 md:py-3 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-full md:rounded-xl text-base md:text-sm font-bold md:font-semibold transition-colors cursor-pointer"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-5 h-5 md:w-4 md:h-4" />
               {uploadingImagem ? 'Enviando imagem...' : editingServico ? 'Salvar Alterações' : 'Adicionar Serviço'}
             </button>
           </div>
@@ -635,12 +635,12 @@ export default function Servicos() {
       {/* Aviso: base de serviços de exemplo (mostrado só no primeiro acesso) */}
       {showExampleBanner && (
         <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-[14px] p-4 sm:p-5">
-          <div className="w-9 h-9 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
-            <Sparkles className="w-4.5 h-4.5 text-amber-600" />
+          <div className="w-11 h-11 md:w-9 md:h-9 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+            <Sparkles className="w-5 h-5 md:w-4 md:h-4 text-amber-600" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-semibold text-amber-900">Esses são serviços de exemplo</p>
-            <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
+            <p className="text-base md:text-sm font-semibold text-amber-900">Esses são serviços de exemplo</p>
+            <p className="text-sm md:text-xs text-amber-800 mt-0.5 leading-relaxed">
               Preparamos o Fio a Fio Clássico e o Volume Russo como base pra você já começar — são os serviços mais pedidos. Edite os preços e detalhes à vontade, ou apague e cadastre os seus.
             </p>
           </div>
@@ -649,7 +649,7 @@ export default function Servicos() {
             className="text-amber-600 hover:text-amber-800 flex-shrink-0 p-1 rounded-full hover:bg-amber-100 transition-colors cursor-pointer"
             aria-label="Fechar aviso"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5 md:w-4 md:h-4" />
           </button>
         </div>
       )}
@@ -657,21 +657,21 @@ export default function Servicos() {
       {/* LISTA: Seus Serviços */}
       <div className="bg-white border border-border rounded-[14px] shadow-sm">
         <div className="px-6 py-5 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h3 className="font-title font-semibold text-lg text-text-primary flex items-center gap-2">
+          <h3 className="font-title font-semibold text-xl md:text-lg text-text-primary flex items-center gap-2">
             Seus Serviços
-            <span className="text-xs font-sans font-medium px-2 py-0.5 rounded-full bg-rose-100 text-rose-700">
+            <span className="text-sm md:text-xs font-sans font-medium px-2.5 py-1 md:px-2 md:py-0.5 rounded-full bg-rose-100 text-rose-700">
               {servicos.length} cadastrado{servicos.length === 1 ? '' : 's'}
             </span>
           </h3>
 
           <div className="relative sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-text-muted" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 md:w-4 md:h-4 text-text-muted" />
             <input
               type="text"
               placeholder="Buscar serviço por nome..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
+              className="w-full pl-10 pr-4 py-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
             />
           </div>
         </div>
@@ -679,7 +679,7 @@ export default function Servicos() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 text-text-secondary">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-600 mb-2"></div>
-            <p className="text-sm">Carregando serviços...</p>
+            <p className="text-base md:text-sm">Carregando serviços...</p>
           </div>
         ) : filteredServicos.length === 0 ? (
           <div className="p-12 text-center text-text-secondary">
@@ -688,13 +688,13 @@ export default function Servicos() {
             </div>
             {servicos.length === 0 ? (
               <>
-                <p className="font-title font-medium text-lg text-text-primary">Nenhum serviço ainda</p>
-                <p className="text-sm text-text-muted mt-1">Cadastre seu primeiro serviço acima para as clientes começarem a agendar.</p>
+                <p className="font-title font-medium text-xl md:text-lg text-text-primary">Nenhum serviço ainda</p>
+                <p className="text-base md:text-sm text-text-muted mt-1">Cadastre seu primeiro serviço acima para as clientes começarem a agendar.</p>
               </>
             ) : (
               <>
-                <p className="font-title font-medium text-lg text-text-primary">Nenhum serviço encontrado</p>
-                <p className="text-sm text-text-muted mt-1">Experimente alterar os filtros de busca.</p>
+                <p className="font-title font-medium text-xl md:text-lg text-text-primary">Nenhum serviço encontrado</p>
+                <p className="text-base md:text-sm text-text-muted mt-1">Experimente alterar os filtros de busca.</p>
               </>
             )}
           </div>
@@ -706,7 +706,7 @@ export default function Servicos() {
                 className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-6 transition-colors duration-150 hover:bg-bg/30"
               >
                 {/* Thumbnail */}
-                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden bg-rose-50 border border-rose-100 flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-xl overflow-hidden bg-rose-50 border border-rose-100 flex items-center justify-center flex-shrink-0">
                   {serv.imagem_url ? (
                     <img src={serv.imagem_url} alt="" className="w-full h-full object-cover" />
                   ) : (
@@ -716,18 +716,18 @@ export default function Servicos() {
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-text-primary text-sm sm:text-base truncate">{serv.nome}</p>
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-text-secondary mt-0.5">
+                  <p className="font-semibold text-text-primary text-base truncate">{serv.nome}</p>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm md:text-xs text-text-secondary mt-0.5">
                     <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-text-muted" />
+                      <Clock className="w-4 h-4 md:w-3.5 md:h-3.5 text-text-muted" />
                       {serv.duracao_minutos} min
                     </span>
                     <span className="flex items-center gap-1">
-                      <Coins className="w-3.5 h-3.5 text-text-muted" />
+                      <Coins className="w-4 h-4 md:w-3.5 md:h-3.5 text-text-muted" />
                       R$ {Number(serv.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </span>
                     {serv.variacoes_servico && serv.variacoes_servico.length > 0 && (
-                      <span className="bg-gold-light/40 text-gold text-[10px] font-medium px-2 py-0.5 rounded border border-gold-light/60">
+                      <span className="bg-gold-light/40 text-gold text-xs md:text-[10px] font-medium px-2 py-0.5 rounded border border-gold-light/60">
                         {serv.variacoes_servico.length} variações
                       </span>
                     )}
@@ -735,7 +735,7 @@ export default function Servicos() {
 
                   {/* Variações legadas (não é mais possível criar novas por aqui) */}
                   {serv.variacoes_servico && serv.variacoes_servico.length > 0 && (
-                    <div className="text-[11px] text-text-muted flex flex-wrap gap-x-2 gap-y-1 mt-1.5">
+                    <div className="text-xs md:text-[11px] text-text-muted flex flex-wrap gap-x-2 gap-y-1 mt-1.5">
                       <span className="font-medium">Opções:</span>
                       {serv.variacoes_servico.map((v, i) => (
                         <span key={v.id}>
@@ -751,18 +751,18 @@ export default function Servicos() {
                 <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
                   <button
                     onClick={() => handleEditServico(serv)}
-                    className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition-colors cursor-pointer"
+                    className="w-9 h-9 flex items-center justify-center text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition-colors cursor-pointer"
                     title="Editar Serviço"
                   >
-                    <Edit2 className="w-4 h-4" />
+                    <Edit2 className="w-5 h-5 md:w-4 md:h-4" />
                   </button>
 
                   <button
                     onClick={() => handleDeleteServico(serv)}
-                    className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors cursor-pointer"
+                    className="w-9 h-9 flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors cursor-pointer"
                     title="Excluir Serviço"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-5 h-5 md:w-4 md:h-4" />
                   </button>
                 </div>
               </div>
