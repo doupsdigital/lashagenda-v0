@@ -291,21 +291,28 @@ export default function MeusHorarios() {
         className="rounded-[14px] p-5 shadow-sm text-white relative overflow-hidden"
         style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
       >
-        <h2 className="font-title font-semibold text-2xl">Meus Horários</h2>
-        <p className="text-xs text-white/80 mt-0.5">
-          Configure seu expediente semanal e registre períodos de folga ou indisponibilidade.
-        </p>
+        <Clock
+          className="absolute -top-3 -right-3 w-24 h-24 text-white/15 rotate-12 pointer-events-none select-none"
+          strokeWidth={1.25}
+        />
+
+        <div className="relative z-10">
+          <h2 className="font-title font-semibold text-3xl md:text-2xl">Meus Horários</h2>
+          <p className="text-sm md:text-xs text-white/80 mt-1 md:mt-0.5">
+            Configure seu expediente semanal e registre períodos de folga ou indisponibilidade.
+          </p>
+        </div>
       </div>
 
       {/* Seção 1: Expediente Semanal */}
       <div id="ob-horarios-grid" className="bg-white border border-border rounded-[14px] p-6 shadow-sm">
-        <h3 className="font-title font-bold text-lg text-text-primary flex items-center gap-2 border-b border-border pb-3">
-          <Clock className="w-5 h-5 text-rose-600" />
+        <h3 className="font-title font-bold text-xl md:text-lg text-text-primary flex items-center gap-2 border-b border-border pb-3">
+          <Clock className="w-6 h-6 md:w-5 md:h-5 text-rose-600" />
           Expediente Semanal
         </h3>
 
         {loadingHorarios ? (
-          <p className="text-sm text-text-secondary mt-4">Carregando...</p>
+          <p className="text-base md:text-sm text-text-secondary mt-4">Carregando...</p>
         ) : (
           <div className="mt-4 space-y-2">
             {DIAS_SEMANA.map((nomeDia, i) => (
@@ -320,10 +327,10 @@ export default function MeusHorarios() {
                     type="checkbox"
                     checked={dias[i].ativo}
                     onChange={() => handleDiaToggle(i)}
-                    className="w-4 h-4 accent-rose-600 cursor-pointer"
+                    className="w-5 h-5 md:w-4 md:h-4 accent-rose-600 cursor-pointer"
                   />
                   <span
-                    className={`text-sm font-medium ${
+                    className={`text-base md:text-sm font-medium ${
                       dias[i].ativo ? 'text-text-primary' : 'text-text-secondary'
                     }`}
                   >
@@ -334,21 +341,21 @@ export default function MeusHorarios() {
                 {dias[i].ativo && (
                   <div className="flex items-center gap-3 flex-wrap">
                     <div className="flex items-center gap-1.5">
-                      <label className="text-xs text-text-secondary whitespace-nowrap">Início</label>
+                      <label className="text-sm md:text-xs text-text-secondary whitespace-nowrap">Início</label>
                       <input
                         type="time"
                         value={dias[i].hora_inicio}
                         onChange={(e) => handleHorarioChange(i, 'hora_inicio', e.target.value)}
-                        className="px-2 py-1.5 border border-border rounded-lg text-sm text-text-primary bg-white focus:outline-none focus:ring-1 focus:ring-rose-400"
+                        className="px-2.5 py-2 md:px-2 md:py-1.5 border border-border rounded-lg text-base md:text-sm text-text-primary bg-white focus:outline-none focus:ring-1 focus:ring-rose-400"
                       />
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <label className="text-xs text-text-secondary whitespace-nowrap">Fim</label>
+                      <label className="text-sm md:text-xs text-text-secondary whitespace-nowrap">Fim</label>
                       <input
                         type="time"
                         value={dias[i].hora_fim}
                         onChange={(e) => handleHorarioChange(i, 'hora_fim', e.target.value)}
-                        className="px-2 py-1.5 border border-border rounded-lg text-sm text-text-primary bg-white focus:outline-none focus:ring-1 focus:ring-rose-400"
+                        className="px-2.5 py-2 md:px-2 md:py-1.5 border border-border rounded-lg text-base md:text-sm text-text-primary bg-white focus:outline-none focus:ring-1 focus:ring-rose-400"
                       />
                     </div>
                   </div>
@@ -360,8 +367,8 @@ export default function MeusHorarios() {
 
         {horariosError && (
           <div className="mt-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2.5">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-            <p className="text-xs font-medium">{horariosError}</p>
+            <AlertCircle className="w-6 h-6 md:w-5 md:h-5 text-red-600 flex-shrink-0" />
+            <p className="text-sm md:text-xs font-medium">{horariosError}</p>
           </div>
         )}
 
@@ -370,7 +377,7 @@ export default function MeusHorarios() {
           <button
             onClick={handleSaveHorarios}
             disabled={savingHorarios || loadingHorarios}
-            className="px-4 py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+            className="px-5 py-3 md:px-4 md:py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-full md:rounded-lg text-base md:text-xs font-bold md:font-semibold transition-colors cursor-pointer"
           >
             {savingHorarios ? 'Salvando...' : 'Salvar Expediente'}
           </button>
@@ -379,15 +386,15 @@ export default function MeusHorarios() {
 
       {/* Seção 2: Bloqueios e Folgas */}
       <div id="ob-horarios-bloqueios" className="bg-white border border-border rounded-[14px] p-6 shadow-sm">
-        <h3 className="font-title font-bold text-lg text-text-primary flex items-center gap-2 border-b border-border pb-3">
-          <CalendarOff className="w-5 h-5 text-rose-600" />
+        <h3 className="font-title font-bold text-xl md:text-lg text-text-primary flex items-center gap-2 border-b border-border pb-3">
+          <CalendarOff className="w-6 h-6 md:w-5 md:h-5 text-rose-600" />
           Bloqueios e Folgas
         </h3>
 
         <form onSubmit={handleAddBloqueio} className="mt-4">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+              <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                 Data Início <span className="text-red-500">*</span>
               </label>
               <input
@@ -395,11 +402,11 @@ export default function MeusHorarios() {
                 required
                 value={novoDataInicio}
                 onChange={(e) => setNovoDataInicio(e.target.value)}
-                className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                className="w-full px-3.5 py-3 md:px-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+              <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                 Data Fim <span className="text-red-500">*</span>
               </label>
               <input
@@ -408,11 +415,11 @@ export default function MeusHorarios() {
                 value={novoDataFim}
                 min={novoDataInicio || undefined}
                 onChange={(e) => setNovoDataFim(e.target.value)}
-                className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                className="w-full px-3.5 py-3 md:px-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+              <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                 Motivo (opcional)
               </label>
               <input
@@ -420,20 +427,20 @@ export default function MeusHorarios() {
                 value={novoMotivo}
                 onChange={(e) => setNovoMotivo(e.target.value)}
                 placeholder="Ex: Férias, feriado..."
-                className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                className="w-full px-3.5 py-3 md:px-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+              <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                 Tipo de Bloqueio
               </label>
               <select
                 value={diaInteiro ? 'dia_inteiro' : 'horario_especifico'}
                 onChange={(e) => setDiaInteiro(e.target.value === 'dia_inteiro')}
-                className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 cursor-pointer"
+                className="w-full px-3.5 py-3 md:px-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 cursor-pointer"
               >
                 <option value="dia_inteiro">Dia Inteiro</option>
                 <option value="horario_especifico">Horário Específico</option>
@@ -443,7 +450,7 @@ export default function MeusHorarios() {
             {!diaInteiro && (
               <>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+                  <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                     Hora Início <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -451,11 +458,11 @@ export default function MeusHorarios() {
                     required
                     value={horaInicio}
                     onChange={(e) => setHoraInicio(e.target.value)}
-                    className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                    className="w-full px-3.5 py-3 md:px-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+                  <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                     Hora Fim <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -463,7 +470,7 @@ export default function MeusHorarios() {
                     required
                     value={horaFim}
                     onChange={(e) => setHoraFim(e.target.value)}
-                    className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                    className="w-full px-3.5 py-3 md:px-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                   />
                 </div>
               </>
@@ -472,8 +479,8 @@ export default function MeusHorarios() {
 
           {bloqueioError && (
             <div className="mt-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2.5">
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-              <p className="text-xs font-medium">{bloqueioError}</p>
+              <AlertCircle className="w-6 h-6 md:w-5 md:h-5 text-red-600 flex-shrink-0" />
+              <p className="text-sm md:text-xs font-medium">{bloqueioError}</p>
             </div>
           )}
 
@@ -482,9 +489,9 @@ export default function MeusHorarios() {
             <button
               type="submit"
               disabled={savingBloqueio}
-              className="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+              className="flex items-center gap-2 px-5 py-3 md:px-4 md:py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-full md:rounded-lg text-base md:text-xs font-bold md:font-semibold transition-colors cursor-pointer"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-5 h-5 md:w-4 md:h-4" />
               {savingBloqueio ? 'Adicionando...' : 'Adicionar Bloqueio'}
             </button>
           </div>
@@ -492,16 +499,16 @@ export default function MeusHorarios() {
 
         {/* Lista de bloqueios */}
         <div className="mt-6 space-y-2">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-text-secondary mb-3">
+          <h4 className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary mb-3">
             Bloqueios Cadastrados
           </h4>
 
           {loadingBloqueios ? (
-            <p className="text-sm text-text-secondary">Carregando...</p>
+            <p className="text-base md:text-sm text-text-secondary">Carregando...</p>
           ) : bloqueios.length === 0 ? (
             <div className="text-center py-8 text-text-secondary">
               <CalendarOff className="w-8 h-8 mx-auto mb-2 opacity-30" />
-              <p className="text-sm">Nenhum bloqueio cadastrado.</p>
+              <p className="text-base md:text-sm">Nenhum bloqueio cadastrado.</p>
             </div>
           ) : (
             bloqueios.map((b) => (
@@ -510,7 +517,7 @@ export default function MeusHorarios() {
                 className="flex items-center justify-between gap-3 p-3 border border-border rounded-lg bg-bg hover:border-rose-200 transition-colors"
               >
                 <div>
-                  <p className="text-sm font-medium text-text-primary">
+                  <p className="text-base md:text-sm font-medium text-text-primary">
                     {b.data_inicio === b.data_fim ? (
                       formatDate(b.data_inicio)
                     ) : (
@@ -523,15 +530,15 @@ export default function MeusHorarios() {
                     )}
                   </p>
                   {b.motivo && (
-                    <p className="text-xs text-text-secondary mt-0.5">{b.motivo}</p>
+                    <p className="text-sm md:text-xs text-text-secondary mt-0.5">{b.motivo}</p>
                   )}
                 </div>
                 <button
                   onClick={() => setBloqueioToDelete(b)}
-                  className="p-1.5 text-text-secondary hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer flex-shrink-0"
+                  className="p-2 md:p-1.5 text-text-secondary hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer flex-shrink-0"
                   title="Excluir bloqueio"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-5 h-5 md:w-4 md:h-4" />
                 </button>
               </div>
             ))
@@ -560,14 +567,14 @@ export default function MeusHorarios() {
               <CheckCircle className="w-9 h-9" />
             </div>
             <div className="space-y-1">
-              <h3 className="font-title font-bold text-xl text-text-primary">Salvo com Sucesso!</h3>
-              <p className="text-xs text-text-secondary leading-relaxed">{horariosSuccess}</p>
+              <h3 className="font-title font-bold text-2xl md:text-xl text-text-primary">Salvo com Sucesso!</h3>
+              <p className="text-sm md:text-xs text-text-secondary leading-relaxed">{horariosSuccess}</p>
             </div>
             <div className="pt-2">
               <button
                 type="button"
                 onClick={() => setHorariosSuccess(null)}
-                className="w-full py-2.5 bg-rose-600 hover:bg-rose-800 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                className="w-full py-3.5 md:py-2.5 bg-rose-600 hover:bg-rose-800 text-white rounded-full md:rounded-lg text-base md:text-xs font-bold md:font-semibold transition-colors cursor-pointer"
               >
                 Concluir
               </button>
@@ -583,14 +590,14 @@ export default function MeusHorarios() {
               <CheckCircle className="w-9 h-9" />
             </div>
             <div className="space-y-1">
-              <h3 className="font-title font-bold text-xl text-text-primary">Bloqueio Confirmado!</h3>
-              <p className="text-xs text-text-secondary leading-relaxed">{bloqueioSuccess}</p>
+              <h3 className="font-title font-bold text-2xl md:text-xl text-text-primary">Bloqueio Confirmado!</h3>
+              <p className="text-sm md:text-xs text-text-secondary leading-relaxed">{bloqueioSuccess}</p>
             </div>
             <div className="pt-2">
               <button
                 type="button"
                 onClick={() => setBloqueioSuccess(null)}
-                className="w-full py-2.5 bg-rose-600 hover:bg-rose-800 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                className="w-full py-3.5 md:py-2.5 bg-rose-600 hover:bg-rose-800 text-white rounded-full md:rounded-lg text-base md:text-xs font-bold md:font-semibold transition-colors cursor-pointer"
               >
                 Concluir
               </button>
