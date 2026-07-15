@@ -617,17 +617,18 @@ export default function Configuracoes() {
     <div className="max-w-4xl mx-auto space-y-4">
       {/* Top Banner — informativo, cor diferenciada dos cards abaixo */}
       <div
-        className="rounded-[14px] p-5 shadow-sm flex items-center justify-between gap-4 text-white relative overflow-hidden"
+        className="rounded-[14px] p-5 shadow-sm text-white relative overflow-hidden"
         style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
       >
-        <div>
+        <Settings
+          className="absolute -top-3 -right-3 w-24 h-24 text-white/15 rotate-12 pointer-events-none select-none"
+          strokeWidth={1.25}
+        />
+        <div className="relative z-10">
           <h2 className="font-title font-semibold text-3xl md:text-2xl">Configurações</h2>
           <p className="text-sm md:text-xs text-white/80 mt-1 md:mt-0.5">
             Gerencie seu perfil, dados do negócio e preferências de agendamento.
           </p>
-        </div>
-        <div className="w-12 h-12 md:w-11 md:h-11 rounded-full bg-white/20 border border-white/20 flex items-center justify-center flex-shrink-0">
-          <Settings className="w-6 h-6 md:w-5 md:h-5 text-white" />
         </div>
       </div>
 
