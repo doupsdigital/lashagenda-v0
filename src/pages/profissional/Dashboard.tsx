@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useSubscription } from '../../hooks/useSubscription';
+import { useOnboarding } from '../../hooks/useOnboarding';
 import PushPermissionBanner from '../../components/common/PushPermissionBanner';
 import InstallBanner from '../../components/common/InstallBanner';
 import {
@@ -59,6 +60,7 @@ export default function Dashboard() {
   const { estabelecimentoId, estabelecimentoSlug, profile } = useAuth();
   const { isPremium } = useSubscription();
   const navigate = useNavigate();
+  const { autoStart } = useOnboarding('meu_estudio', { isPremium });
 
   const [pendingAppointments, setPendingAppointments] = useState(0);
   const [todayAppointments, setTodayAppointments] = useState<any[]>([]);
@@ -75,6 +77,12 @@ export default function Dashboard() {
   const [isStatusInfoOpen, setIsStatusInfoOpen] = useState(false);
 
   const firstName = profile?.nome?.split(' ')[0] || '';
+
+  // Dispara o tour de onboarding na primeira visita
+  useEffect(() => {
+    if (!profile) return;
+    autoStart();
+  }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchData = async () => {
     if (!estabelecimentoId) return;

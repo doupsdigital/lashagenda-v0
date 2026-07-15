@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useOnboarding } from '../../hooks/useOnboarding';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -28,7 +29,9 @@ interface ServicoWithRelations extends Servico {
 }
 
 export default function Servicos() {
-  const { estabelecimentoId, isPaginaVista, markPageSeen } = useAuth();
+  const { estabelecimentoId, profile, isPaginaVista, markPageSeen } = useAuth();
+  const { autoStart } = useOnboarding('servicos');
+  useEffect(() => { if (profile) autoStart(); }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const formRef = useRef<HTMLDivElement>(null);
 

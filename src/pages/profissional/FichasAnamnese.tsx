@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { useOnboarding } from '../../hooks/useOnboarding';
 import { Search, ClipboardPen, ChevronRight, AlertCircle } from 'lucide-react';
 import type { Cliente } from '../../types';
 
@@ -20,7 +21,9 @@ function temFichaPreenchida(cliente: ClienteListItem): boolean {
 
 export default function FichasAnamnese() {
   const navigate = useNavigate();
-  const { estabelecimentoId } = useAuth();
+  const { estabelecimentoId, profile } = useAuth();
+  const { autoStart } = useOnboarding('fichas_anamnese');
+  useEffect(() => { if (profile) autoStart(); }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
   const [clientes, setClientes] = useState<ClienteListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

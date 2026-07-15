@@ -6,7 +6,6 @@ import TabBar from './TabBar';
 import TrialBanner from '../common/TrialBanner';
 import FloatingHelpButton from '../common/FloatingHelpButton';
 import TrialWhatsAppButton from '../common/TrialWhatsAppButton';
-import FirstStepsWidget from '../common/FirstStepsWidget';
 import { useSubscription } from '../../hooks/useSubscription';
 import { useInstallPrompt } from '../../contexts/InstallPromptContext';
 import { Sparkles } from 'lucide-react';
@@ -93,9 +92,6 @@ export default function Layout() {
 
       {/* TabBar — mobile only */}
       <TabBar />
-
-      {/* Checklist de primeiros passos — some sozinho quando concluído ou dispensado */}
-      <FirstStepsWidget />
 
       {/* Botão de ajuda flutuante */}
       <FloatingHelpButton whatsAppVisible={isTrial} installBannerVisible={installBannerVisible} />

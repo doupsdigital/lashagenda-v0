@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'react-router-dom';
+import { useOnboarding } from '../../hooks/useOnboarding';
 import { supabase } from '../../lib/supabase';
 import {
   Plus,
@@ -62,7 +63,7 @@ const DIAS_SEMANA = [
 ];
 
 export default function Agendamentos() {
-  const { isProfissional, estabelecimentoId } = useAuth();
+  const { isProfissional, estabelecimentoId, profile } = useAuth();
   const location = useLocation();
   const [viewMode, setViewMode] = useState<'mensal' | 'semanal' | 'diaria'>(() => {
     if (typeof window !== 'undefined' && window.innerWidth < 1024) {
@@ -81,6 +82,9 @@ export default function Agendamentos() {
   const [servicos, setServicos] = useState<(Servico & { variacoes_servico?: VariacaoServico[] })[]>([]);
   const [agendamentos, setAgendamentos] = useState<AgendamentoWithRelations[]>([]);
   const [bloqueios, setBloqueios] = useState<BloqueioAgenda[]>([]);
+
+  const { autoStart } = useOnboarding('agendamentos', { hasPending: agendamentos.some(a => a.status === 'pendente') });
+  useEffect(() => { if (profile) autoStart(); }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
