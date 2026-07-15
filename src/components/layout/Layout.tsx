@@ -6,6 +6,7 @@ import TabBar from './TabBar';
 import TrialBanner from '../common/TrialBanner';
 import FloatingHelpButton from '../common/FloatingHelpButton';
 import TrialWhatsAppButton from '../common/TrialWhatsAppButton';
+import GuidedTourSheet from '../common/GuidedTourSheet';
 import { useSubscription } from '../../hooks/useSubscription';
 import { useInstallPrompt } from '../../contexts/InstallPromptContext';
 import { Sparkles } from 'lucide-react';
@@ -98,6 +99,9 @@ export default function Layout() {
 
       {/* Botão flutuante de WhatsApp — somente durante o período de trial */}
       {isTrial && <TrialWhatsAppButton installBannerVisible={installBannerVisible} />}
+
+      {/* Checklist guiado de primeiros passos (contas novas) */}
+      <GuidedTourSheet />
     </div>
   );
 }

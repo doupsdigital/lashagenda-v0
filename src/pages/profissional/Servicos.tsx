@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useOnboarding } from '../../hooks/useOnboarding';
+import { useGuidedTour } from '../../hooks/useGuidedTour';
+import { useGuidedTourFieldTips } from '../../hooks/useGuidedTourFieldTips';
+import type { DriveStep } from 'driver.js';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -28,16 +31,60 @@ interface ServicoWithRelations extends Servico {
   _count_agendamentos?: number;
 }
 
+// Tooltips de campo do checklist guiado — formulário de novo serviço + a
+// lista de serviços já cadastrados, conteúdo próprio e independente do tour
+// do botão Ajuda.
+const SERVICOS_FIELD_TIPS: DriveStep[] = [
+  {
+    element: '#gt-servico-nome',
+    popover: {
+      title: 'Nome do serviço',
+      description: 'O nome que suas clientes veem ao escolher um serviço no portal.',
+    },
+  },
+  {
+    element: '#gt-servico-preco',
+    popover: {
+      title: 'Preço',
+      description: 'Valor cobrado pelo serviço. Dá pra ajustar quando quiser.',
+    },
+  },
+  {
+    element: '#gt-servico-duracao',
+    popover: {
+      title: 'Duração',
+      description: 'Tempo do atendimento em minutos — usado pra montar sua agenda de horários disponíveis.',
+    },
+  },
+  {
+    element: '#ob-servicos-lista',
+    popover: {
+      title: 'Você já tem 2 serviços prontos',
+      description: 'Fio a Fio Clássico e Volume Russo já estão cadastrados como base. Edite os preços e detalhes à vontade, ou apague e cadastre os seus.',
+    },
+  },
+];
+
 export default function Servicos() {
   const { estabelecimentoId, profile, isPaginaVista, markPageSeen } = useAuth();
   const { autoStart } = useOnboarding('servicos');
-  useEffect(() => { if (profile) autoStart(); }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { eligible: guidedTourEligible } = useGuidedTour();
+  // Contas cobertas pelo checklist guiado não recebem mais o tour automático
+  // do driver.js nessa tela — ele continua disponível sob demanda pelo Ajuda.
+  useEffect(() => { if (profile && !guidedTourEligible) autoStart(); }, [profile, guidedTourEligible]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const formRef = useRef<HTMLDivElement>(null);
 
   const [servicos, setServicos] = useState<ServicoWithRelations[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // O último passo aponta pra lista de serviços já cadastrados — só faz
+  // sentido incluir se ela realmente tiver algum serviço nesse momento.
+  useGuidedTourFieldTips(
+    'servicos',
+    servicos.length > 0 ? SERVICOS_FIELD_TIPS : SERVICOS_FIELD_TIPS.filter(s => s.element !== '#ob-servicos-lista')
+  );
 
   // Selected item for editing (null = modo criação)
   const [editingServico, setEditingServico] = useState<ServicoWithRelations | null>(null);
@@ -360,7 +407,7 @@ export default function Servicos() {
 
         <form onSubmit={handleSaveServico} className="space-y-4">
           {/* Nome */}
-          <div className="space-y-1.5">
+          <div id="gt-servico-nome" className="space-y-1.5">
             <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
               Nome do Serviço <span className="text-red-500">*</span>
             </label>
@@ -376,7 +423,7 @@ export default function Servicos() {
 
           {/* Preço & Duração */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
+            <div id="gt-servico-preco" className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
                 Preço (R$) <span className="text-red-500">*</span>
               </label>
@@ -391,7 +438,7 @@ export default function Servicos() {
                 className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
               />
             </div>
-            <div className="space-y-1.5">
+            <div id="gt-servico-duracao" className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
                 Duração (min) <span className="text-red-500">*</span>
               </label>

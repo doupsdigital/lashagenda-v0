@@ -3,6 +3,9 @@ import type { FormEvent } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useOnboarding } from '../../hooks/useOnboarding';
+import { useGuidedTour } from '../../hooks/useGuidedTour';
+import { useGuidedTourFieldTips } from '../../hooks/useGuidedTourFieldTips';
+import type { DriveStep } from 'driver.js';
 import { PALETTES_LIST, applyPalette } from '../../utils/theme';
 import ConfirmModal from '../../components/common/ConfirmModal';
 import InstallAppCard from '../../components/common/InstallAppCard';
@@ -67,10 +70,53 @@ function SectionCard({ id, icon: Icon, title, isOpen, onToggle, headerExtra, chi
   );
 }
 
+// Tooltips de campo do checklist guiado — só os campos de "Dados do Meu
+// Negócio", conteúdo próprio e independente do tour do botão Ajuda.
+const NEGOCIO_FIELD_TIPS: DriveStep[] = [
+  {
+    element: '#gt-negocio-logo',
+    popover: {
+      title: 'Logo ou foto do estúdio',
+      description: 'Opcional, mas deixa seu portal mais profissional. Pode trocar quando quiser.',
+    },
+  },
+  {
+    element: '#gt-negocio-nome',
+    popover: {
+      title: 'Nome do negócio',
+      description: 'É esse nome que aparece pras suas clientes no portal de agendamento.',
+    },
+  },
+  {
+    element: '#gt-negocio-descricao',
+    popover: {
+      title: 'Descrição / Bio',
+      description: 'Conte um pouco sobre seu trabalho — aparece na apresentação do seu portal.',
+    },
+  },
+  {
+    element: '#gt-negocio-instagram',
+    popover: {
+      title: 'Instagram',
+      description: 'Opcional. Se preencher, vira um link clicável direto no seu portal.',
+    },
+  },
+  {
+    element: '#gt-negocio-endereco',
+    popover: {
+      title: 'Endereço',
+      description: 'Opcional. Ajuda suas clientes a saber onde fica o atendimento.',
+    },
+  },
+];
+
 export default function Configuracoes() {
   const { profile, user, refreshProfile, estabelecimentoId } = useAuth();
   const { autoStart } = useOnboarding('configuracoes');
-  useEffect(() => { if (profile) autoStart(); }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { eligible: guidedTourEligible, currentStep: guidedTourStep } = useGuidedTour();
+  // Contas cobertas pelo checklist guiado não recebem mais o tour automático
+  // do driver.js nessa tela — ele continua disponível sob demanda pelo Ajuda.
+  useEffect(() => { if (profile && !guidedTourEligible) autoStart(); }, [profile, guidedTourEligible]); // eslint-disable-line react-hooks/exhaustive-deps
   const fileInputRef = useRef<HTMLInputElement>(null);
   const logoFileInputRef = useRef<HTMLInputElement>(null);
 
@@ -135,6 +181,19 @@ export default function Configuracoes() {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
+  // Quando a etapa "Dados do Negócio" do checklist guiado está ativa, abre o
+  // card correspondente e rola até ele — só uma vez por montagem da tela.
+  useEffect(() => {
+    if (guidedTourStep !== 'negocio') return;
+    setOpenSections((prev) => ({ ...prev, negocio: true }));
+    const t = setTimeout(() => {
+      document.getElementById('ob-config-negocio')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 300);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useGuidedTourFieldTips('negocio', NEGOCIO_FIELD_TIPS);
 
   const [successModal, setSuccessModal] = useState<{
     isOpen: boolean;
@@ -725,7 +784,7 @@ export default function Configuracoes() {
         ) : (
           <div className="space-y-5">
             {/* Logo Upload */}
-            <div className="space-y-2">
+            <div id="gt-negocio-logo" className="space-y-2">
               <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                 Logo / Foto do Estúdio
               </label>
@@ -786,7 +845,7 @@ export default function Configuracoes() {
             </div>
 
             {/* Nome do negócio */}
-            <div className="space-y-1.5">
+            <div id="gt-negocio-nome" className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                 Nome do Negócio
               </label>
@@ -805,7 +864,7 @@ export default function Configuracoes() {
             </div>
 
             {/* Descrição */}
-            <div className="space-y-1.5">
+            <div id="gt-negocio-descricao" className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                 Descrição / Bio
               </label>
@@ -824,7 +883,7 @@ export default function Configuracoes() {
 
             {/* Instagram + Endereço */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
+              <div id="gt-negocio-instagram" className="space-y-1.5">
                 <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                   Instagram
                 </label>
@@ -842,7 +901,7 @@ export default function Configuracoes() {
                 </div>
               </div>
 
-              <div className="space-y-1.5">
+              <div id="gt-negocio-endereco" className="space-y-1.5">
                 <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                   Endereço / Local de Atendimento
                 </label>

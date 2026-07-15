@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useSubscription } from '../../hooks/useSubscription';
 import { useOnboarding } from '../../hooks/useOnboarding';
+import { useGuidedTour } from '../../hooks/useGuidedTour';
 import PushPermissionBanner from '../../components/common/PushPermissionBanner';
 import InstallBanner from '../../components/common/InstallBanner';
 import {
@@ -61,6 +62,7 @@ export default function Dashboard() {
   const { isPremium } = useSubscription();
   const navigate = useNavigate();
   const { autoStart } = useOnboarding('meu_estudio', { isPremium });
+  const { eligible: guidedTourEligible, visible: guidedTourVisible, currentStep: guidedTourStep } = useGuidedTour();
 
   const [pendingAppointments, setPendingAppointments] = useState(0);
   const [todayAppointments, setTodayAppointments] = useState<any[]>([]);
@@ -80,9 +82,9 @@ export default function Dashboard() {
 
   // Dispara o tour de onboarding na primeira visita
   useEffect(() => {
-    if (!profile) return;
+    if (!profile || guidedTourEligible) return;
     autoStart();
-  }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [profile, guidedTourEligible]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchData = async () => {
     if (!estabelecimentoId) return;
@@ -410,7 +412,11 @@ export default function Dashboard() {
       )}
 
       {/* ── COMPARTILHAR AGENDA ── */}
-      <div id="onboarding-share-link" className="rounded-2xl p-6 text-white relative overflow-hidden shadow-sm flex flex-col items-center text-center" style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}>
+      <div
+        id="onboarding-share-link"
+        className={`rounded-2xl p-6 text-white relative overflow-hidden shadow-sm flex flex-col items-center text-center transition-all ${guidedTourVisible && guidedTourStep === 'link' ? 'ring-4 ring-rose-300 animate-pulse' : ''}`}
+        style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
+      >
         <h2 className="font-title font-bold text-lg md:text-xl mb-1">Compartilhe sua Agenda</h2>
         <p className="text-sm text-white/75 mb-4 max-w-md">
           Envie o link do seu portal exclusivo para suas clientes agendarem sozinhas, a qualquer hora do dia.
