@@ -287,9 +287,12 @@ export default function MeusHorarios() {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       {/* Header */}
-      <div className="bg-white border border-border rounded-[14px] p-5 shadow-sm">
-        <h2 className="font-title font-semibold text-2xl text-text-primary">Meus Horários</h2>
-        <p className="text-xs text-text-secondary mt-0.5">
+      <div
+        className="rounded-[14px] p-5 shadow-sm text-white relative overflow-hidden"
+        style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
+      >
+        <h2 className="font-title font-semibold text-2xl">Meus Horários</h2>
+        <p className="text-xs text-white/80 mt-0.5">
           Configure seu expediente semanal e registre períodos de folga ou indisponibilidade.
         </p>
       </div>
