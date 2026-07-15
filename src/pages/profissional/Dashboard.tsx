@@ -281,7 +281,7 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
 
       <PushPermissionBanner />
       <InstallBanner />
@@ -320,14 +320,14 @@ export default function Dashboard() {
       {isPremium ? (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
 
-          <div id="onboarding-card-faturamento" className="bg-white border border-border rounded-2xl p-5 md:p-4 flex items-start justify-between shadow-sm">
+          <div id="onboarding-card-faturamento" className="bg-white border border-border rounded-2xl p-4 flex items-start justify-between shadow-sm">
             <div className="min-w-0">
               <p className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-text-muted leading-tight">Faturamento do Mês</p>
-              <p className="font-title font-semibold text-3xl md:text-2xl text-rose-600 mt-2 md:mt-1.5">
+              <p className="font-title font-semibold text-3xl md:text-2xl text-rose-600 mt-1.5">
                 {heroLoading ? '—' : `R$ ${heroRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
               </p>
             </div>
-            <div className="w-11 h-11 md:w-9 md:h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
+            <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
               <Coins className="w-4 h-4" />
             </div>
           </div>
@@ -335,15 +335,15 @@ export default function Dashboard() {
           <div
             id="onboarding-card-hoje"
             onClick={() => navigate('/agendamentos', { state: { filterToday: true } })}
-            className="bg-white border border-border rounded-2xl p-5 md:p-4 flex items-start justify-between shadow-sm cursor-pointer hover:border-rose-200 hover:shadow-md transition-all"
+            className="bg-white border border-border rounded-2xl p-4 flex items-start justify-between shadow-sm cursor-pointer hover:border-rose-200 hover:shadow-md transition-all"
           >
             <div className="min-w-0">
               <p className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-text-muted leading-tight">Agendamentos Hoje</p>
-              <p className="font-title font-semibold text-3xl md:text-2xl text-text-primary mt-2 md:mt-1.5">
+              <p className="font-title font-semibold text-3xl md:text-2xl text-text-primary mt-1.5">
                 {loading ? '—' : todayAppointments.length}
               </p>
             </div>
-            <div className="w-11 h-11 md:w-9 md:h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
+            <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
               <CalendarDays className="w-4 h-4" />
             </div>
           </div>
@@ -351,27 +351,27 @@ export default function Dashboard() {
           <div
             id="onboarding-card-pendentes"
             onClick={() => pendingAppointments > 0 && navigate('/agendamentos', { state: { openPending: true } })}
-            className={`bg-amber-50 border border-amber-200 rounded-2xl p-5 md:p-4 flex items-start justify-between shadow-sm ${pendingAppointments > 0 ? 'cursor-pointer hover:bg-amber-100/60 transition-colors' : ''}`}
+            className={`bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start justify-between shadow-sm ${pendingAppointments > 0 ? 'cursor-pointer hover:bg-amber-100/60 transition-colors' : ''}`}
           >
             <div className="min-w-0">
               <p className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-amber-600 leading-tight">Aguardando Confirmação</p>
-              <p className="font-title font-semibold text-3xl md:text-2xl text-amber-700 mt-2 md:mt-1.5">
+              <p className="font-title font-semibold text-3xl md:text-2xl text-amber-700 mt-1.5">
                 {loading ? '—' : pendingAppointments}
               </p>
             </div>
-            <div className="w-11 h-11 md:w-9 md:h-9 rounded-full bg-amber-100 flex items-center justify-center text-amber-500 flex-shrink-0 ml-2">
+            <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center text-amber-500 flex-shrink-0 ml-2">
               <Clock className="w-4 h-4" />
             </div>
           </div>
 
-          <div id="onboarding-card-clientes" className="bg-white border border-border rounded-2xl p-5 md:p-4 flex items-start justify-between shadow-sm">
+          <div id="onboarding-card-clientes" className="bg-white border border-border rounded-2xl p-4 flex items-start justify-between shadow-sm">
             <div className="min-w-0">
               <p className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-text-muted leading-tight">Novas Clientes</p>
-              <p className="font-title font-semibold text-3xl md:text-2xl text-text-primary mt-2 md:mt-1.5">
+              <p className="font-title font-semibold text-3xl md:text-2xl text-text-primary mt-1.5">
                 {heroLoading ? '—' : heroNewClients}
               </p>
             </div>
-            <div className="w-11 h-11 md:w-9 md:h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
+            <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
               <UserPlus className="w-4 h-4" />
             </div>
           </div>
@@ -383,27 +383,27 @@ export default function Dashboard() {
           <div
             id="onboarding-card-hoje"
             onClick={() => pendingAppointments > 0 && navigate('/agendamentos', { state: { openPending: true } })}
-            className={`bg-amber-50 border border-amber-200 rounded-2xl p-5 md:p-4 flex items-start justify-between shadow-sm ${pendingAppointments > 0 ? 'cursor-pointer hover:bg-amber-100/60 transition-colors' : ''}`}
+            className={`bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start justify-between shadow-sm ${pendingAppointments > 0 ? 'cursor-pointer hover:bg-amber-100/60 transition-colors' : ''}`}
           >
             <div className="min-w-0">
               <p className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-amber-600 leading-tight">Aguardando Confirmação</p>
-              <p className="font-title font-semibold text-3xl md:text-2xl text-amber-700 mt-2 md:mt-1.5">
+              <p className="font-title font-semibold text-3xl md:text-2xl text-amber-700 mt-1.5">
                 {loading ? '—' : pendingAppointments}
               </p>
             </div>
-            <div className="w-11 h-11 md:w-9 md:h-9 rounded-full bg-amber-100 flex items-center justify-center text-amber-500 flex-shrink-0 ml-2">
+            <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center text-amber-500 flex-shrink-0 ml-2">
               <Clock className="w-4 h-4" />
             </div>
           </div>
 
-          <div id="onboarding-card-faturamento" className="bg-white border border-border rounded-2xl p-5 md:p-4 flex items-start justify-between shadow-sm">
+          <div id="onboarding-card-faturamento" className="bg-white border border-border rounded-2xl p-4 flex items-start justify-between shadow-sm">
             <div className="min-w-0">
               <p className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-text-muted leading-tight">Faturado Hoje</p>
-              <p className="font-title font-semibold text-3xl md:text-2xl text-rose-600 mt-2 md:mt-1.5">
+              <p className="font-title font-semibold text-3xl md:text-2xl text-rose-600 mt-1.5">
                 {loading ? '—' : `R$ ${todayRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
               </p>
             </div>
-            <div className="w-11 h-11 md:w-9 md:h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
+            <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
               <Coins className="w-4 h-4" />
             </div>
           </div>
@@ -414,17 +414,17 @@ export default function Dashboard() {
       {/* ── COMPARTILHAR AGENDA ── */}
       <div
         id="onboarding-share-link"
-        className={`rounded-2xl p-6 text-white relative overflow-hidden shadow-sm flex flex-col items-center text-center transition-all ${guidedTourVisible && guidedTourStep === 'link' ? 'ring-4 ring-rose-300 animate-pulse' : ''}`}
+        className={`rounded-2xl p-5 md:p-6 text-white relative overflow-hidden shadow-sm flex flex-col items-center text-center transition-all ${guidedTourVisible && guidedTourStep === 'link' ? 'ring-4 ring-rose-300 animate-pulse' : ''}`}
         style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
       >
         <h2 className="font-title font-bold text-xl mb-1.5 md:mb-1">Compartilhe sua Agenda</h2>
-        <p className="text-base md:text-sm text-white/75 mb-5 md:mb-4 max-w-md text-balance">
+        <p className="text-base md:text-sm text-white/75 mb-3 md:mb-4 max-w-md text-balance">
           Envie o link do seu portal para suas clientes agendarem sozinhas, quando quiserem.
         </p>
         <button
           onClick={handleCopyLink}
           disabled={!estabelecimentoSlug}
-          className="inline-flex items-center gap-2 px-6 py-3.5 md:px-5 md:py-2.5 bg-white/15 hover:bg-white/25 disabled:opacity-50 backdrop-blur-sm border border-white/20 rounded-full md:rounded-xl text-base md:text-sm font-bold md:font-semibold transition-all cursor-pointer"
+          className="inline-flex items-center gap-2 px-6 py-3 md:px-5 md:py-2.5 bg-white/15 hover:bg-white/25 disabled:opacity-50 backdrop-blur-sm border border-white/20 rounded-full md:rounded-xl text-base md:text-sm font-bold md:font-semibold transition-all cursor-pointer"
         >
           {linkCopied ? <Check className="w-5 h-5 md:w-4 md:h-4" /> : <Copy className="w-5 h-5 md:w-4 md:h-4" />}
           {linkCopied ? 'Link copiado!' : 'Copiar Link Público'}
