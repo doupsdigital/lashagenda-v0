@@ -246,13 +246,18 @@ export default function Clientes() {
       )}
 
       {/* Nova Cliente — formulário inline */}
-      <div id="ob-clientes-add-btn" className="bg-white border border-border rounded-[14px] p-6 shadow-sm">
-        <h2 className="font-title font-semibold text-2xl md:text-xl text-text-primary mb-5 flex items-center gap-2">
-          <UserPlus className="w-6 h-6 md:w-5 md:h-5 text-rose-600" />
-          Nova Cliente
-        </h2>
+      <div id="ob-clientes-add-btn" className="bg-white border border-border rounded-[14px] shadow-sm overflow-hidden">
+        <div
+          className="px-6 py-4 md:py-3.5 flex items-center gap-2"
+          style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
+        >
+          <UserPlus className="w-6 h-6 md:w-5 md:h-5 text-white" />
+          <h2 className="font-title font-semibold text-2xl md:text-xl text-white">
+            Nova Cliente
+          </h2>
+        </div>
 
-        <form onSubmit={handleSave} className="space-y-4">
+        <form onSubmit={handleSave} className="space-y-4 p-6">
           <div className="space-y-1.5">
             <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
               Nome <span className="text-red-500">*</span>
@@ -378,14 +383,17 @@ export default function Clientes() {
 
       {/* Sua Lista */}
       <div id="ob-clientes-lista" className="bg-white border border-border rounded-[14px] overflow-hidden shadow-sm">
-        <div className="p-5 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <h2 className="font-title font-semibold text-2xl md:text-xl text-text-primary">Sua Lista</h2>
-            <span className="text-sm md:text-xs font-semibold px-3 py-1.5 md:px-2.5 md:py-1 rounded-full bg-rose-50 text-rose-600">
-              {filteredClientes.length} cadastrados
-            </span>
-          </div>
-          <div id="ob-clientes-search" className="relative w-full md:max-w-xs">
+        <div
+          className="px-6 py-4 md:py-3.5 flex items-center gap-2.5"
+          style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
+        >
+          <h2 className="font-title font-semibold text-2xl md:text-xl text-white">Sua Lista</h2>
+          <span className="text-sm md:text-xs font-semibold px-3 py-1.5 md:px-2.5 md:py-1 rounded-full bg-white/20 text-white">
+            {filteredClientes.length} cadastrados
+          </span>
+        </div>
+        <div className="p-5 border-b border-border">
+          <div id="ob-clientes-search" className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 md:w-4 md:h-4 text-text-muted" />
             <input
               type="text"
