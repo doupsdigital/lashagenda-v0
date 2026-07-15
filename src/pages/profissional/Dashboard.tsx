@@ -280,6 +280,33 @@ export default function Dashboard() {
     </div>
   );
 
+  const shareLinkCard = (
+    <div
+      id="onboarding-share-link"
+      className={`rounded-2xl p-5 md:p-6 bg-gradient-to-br from-rose-200 to-rose-100 border border-rose-200/60 relative overflow-hidden shadow-sm h-full flex flex-col items-center justify-center text-center transition-all ${guidedTourVisible && guidedTourStep === 'link' ? 'ring-4 ring-rose-300 animate-pulse' : ''}`}
+    >
+      <CalendarCheck
+        className="absolute -top-3 -right-3 w-24 h-24 text-rose-300/50 rotate-12 pointer-events-none select-none"
+        strokeWidth={1.25}
+      />
+
+      <div className="relative z-10 flex flex-col items-center">
+        <h2 className="font-title font-bold text-xl text-rose-800 mb-1.5 md:mb-1">Compartilhe sua Agenda</h2>
+        <p className="text-base md:text-sm text-rose-800/70 mb-3 md:mb-4 max-w-md text-balance">
+          Envie o link do seu portal para suas clientes agendarem sozinhas, quando quiserem.
+        </p>
+        <button
+          onClick={handleCopyLink}
+          disabled={!estabelecimentoSlug}
+          className="inline-flex items-center gap-2 px-6 py-3 md:px-5 md:py-2.5 bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white rounded-full md:rounded-xl text-base md:text-sm font-bold md:font-semibold shadow-sm transition-all cursor-pointer"
+        >
+          {linkCopied ? <Check className="w-5 h-5 md:w-4 md:h-4" /> : <Copy className="w-5 h-5 md:w-4 md:h-4" />}
+          {linkCopied ? 'Link copiado!' : 'Copiar Link Público'}
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="space-y-4 md:space-y-6">
 
@@ -411,25 +438,8 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── COMPARTILHAR AGENDA ── */}
-      <div
-        id="onboarding-share-link"
-        className={`rounded-2xl p-5 md:p-6 text-white relative overflow-hidden shadow-sm flex flex-col items-center text-center transition-all ${guidedTourVisible && guidedTourStep === 'link' ? 'ring-4 ring-rose-300 animate-pulse' : ''}`}
-        style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
-      >
-        <h2 className="font-title font-bold text-xl mb-1.5 md:mb-1">Compartilhe sua Agenda</h2>
-        <p className="text-base md:text-sm text-white/75 mb-3 md:mb-4 max-w-md text-balance">
-          Envie o link do seu portal para suas clientes agendarem sozinhas, quando quiserem.
-        </p>
-        <button
-          onClick={handleCopyLink}
-          disabled={!estabelecimentoSlug}
-          className="inline-flex items-center gap-2 px-6 py-3 md:px-5 md:py-2.5 bg-white/15 hover:bg-white/25 disabled:opacity-50 backdrop-blur-sm border border-white/20 rounded-full md:rounded-xl text-base md:text-sm font-bold md:font-semibold transition-all cursor-pointer"
-        >
-          {linkCopied ? <Check className="w-5 h-5 md:w-4 md:h-4" /> : <Copy className="w-5 h-5 md:w-4 md:h-4" />}
-          {linkCopied ? 'Link copiado!' : 'Copiar Link Público'}
-        </button>
-      </div>
+      {/* ── COMPARTILHAR AGENDA (largura toda, so no Premium -- no free/trial ela entra pareada com Proximas clientes la embaixo) ── */}
+      {isPremium && shareLinkCard}
 
       {/* ── AÇÕES RÁPIDAS + PRÓXIMOS CLIENTES (apenas Premium) ── */}
       {isPremium ? (
@@ -498,7 +508,10 @@ export default function Dashboard() {
 
         </div>
       ) : (
-        proximosClientesCard
+        <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-5">
+          {shareLinkCard}
+          {proximosClientesCard}
+        </div>
       )}
 
       {isStatusInfoOpen && createPortal(
