@@ -210,7 +210,7 @@ function CompactBanner({ step, completeStep }: { step: GuidedTourStep; completeS
 
   return (
     <div
-      className="fixed inset-x-0 z-[45] bottom-[76px] md:bottom-6 px-4 animate-slide-up"
+      className="fixed inset-x-0 z-[45] bottom-[84px] md:bottom-6 px-4 animate-slide-up"
     >
       <div
         className="mx-auto max-w-lg shadow-2xl rounded-[24px] px-6 py-5"

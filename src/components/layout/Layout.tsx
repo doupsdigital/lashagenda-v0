@@ -86,7 +86,7 @@ export default function Layout() {
           </div>
         )}
 
-        <main className="flex-1 p-4 md:p-8 pb-[76px] md:pb-8 max-w-[1600px] w-full mx-auto">
+        <main className="flex-1 p-4 md:p-8 pb-[88px] md:pb-8 max-w-[1600px] w-full mx-auto">
           <Outlet />
         </main>
       </div>
