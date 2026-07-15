@@ -109,27 +109,34 @@ export default function LinkAgendamento() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <div>
-        <h1 className="font-title font-bold text-2xl text-text-primary flex items-center gap-2">
-          <Link2 className="w-6 h-6 text-rose-600" />
-          Link de Agendamento
-        </h1>
-        <p className="text-sm text-text-secondary mt-1">
-          Compartilhe este link com suas clientes para que elas possam ver seus serviços e agendar horários.
-        </p>
+      <div
+        className="rounded-[14px] p-5 shadow-sm text-white relative overflow-hidden"
+        style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
+      >
+        <Link2
+          className="absolute -top-3 -right-3 w-24 h-24 text-white/15 rotate-12 pointer-events-none select-none"
+          strokeWidth={1.25}
+        />
+
+        <div className="relative z-10">
+          <h1 className="font-title font-semibold text-3xl md:text-2xl">Link de Agendamento</h1>
+          <p className="text-sm md:text-xs text-white/80 mt-1 md:mt-0.5">
+            Compartilhe este link com suas clientes para que elas possam ver seus serviços e agendar horários.
+          </p>
+        </div>
       </div>
 
       <div className="bg-white border border-border rounded-[14px] p-6 shadow-sm space-y-5">
-        <p className="text-xs text-text-secondary">
+        <p className="text-sm md:text-xs text-text-secondary">
           Este é o link único do seu portal. Suas clientes acessam para ver seus serviços e agendar. Coloque na bio do Instagram ou compartilhe no WhatsApp.
         </p>
 
         {/* Link atual */}
-        <div id="ob-link-display" className="flex items-center gap-0 p-3 bg-bg rounded-xl border border-border overflow-hidden">
-          <span className="text-xs text-text-muted flex-shrink-0 hidden sm:block">
+        <div id="ob-link-display" className="flex items-center gap-0 p-3.5 md:p-3 bg-bg rounded-xl border border-border overflow-hidden">
+          <span className="text-sm md:text-xs text-text-muted flex-shrink-0 hidden sm:block">
             {window.location.origin}/portal/
           </span>
-          <span className="text-xs font-bold text-primary truncate">
+          <span className="text-base md:text-sm font-bold text-rose-600 truncate">
             {estabelecimentoSlug || '...'}
           </span>
         </div>
@@ -140,12 +147,12 @@ export default function LinkAgendamento() {
             type="button"
             onClick={handleCopyLink}
             disabled={!estabelecimentoSlug}
-            className="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-300 text-white rounded-lg text-xs font-semibold transition-all cursor-pointer"
+            className="flex items-center gap-2 px-4 py-3 md:py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-300 text-white rounded-lg text-sm md:text-xs font-semibold transition-all cursor-pointer"
           >
             {slugCopied ? (
-              <><Check className="w-4 h-4" /> Link copiado!</>
+              <><Check className="w-4 h-4 md:w-3.5 md:h-3.5" /> Link copiado!</>
             ) : (
-              <><Copy className="w-4 h-4" /> Copiar link</>
+              <><Copy className="w-4 h-4 md:w-3.5 md:h-3.5" /> Copiar link</>
             )}
           </button>
 
@@ -153,9 +160,9 @@ export default function LinkAgendamento() {
             href={estabelecimentoSlug ? `/portal/${estabelecimentoSlug}` : '#'}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 bg-bg hover:bg-border text-text-primary border border-border rounded-lg text-xs font-semibold transition-colors"
+            className="flex items-center gap-2 px-4 py-3 md:py-2 bg-bg hover:bg-border text-text-primary border border-border rounded-lg text-sm md:text-xs font-semibold transition-colors"
           >
-            <ExternalLink className="w-4 h-4" />
+            <ExternalLink className="w-4 h-4 md:w-3.5 md:h-3.5" />
             Ver portal
           </a>
 
@@ -163,24 +170,24 @@ export default function LinkAgendamento() {
             href={`https://wa.me/?text=${encodeURIComponent(`Olá! Você pode agendar um horário comigo aqui: ${window.location.origin}/portal/${estabelecimentoSlug || ''}`)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 bg-green-50 hover:bg-green-100 text-green-800 border border-green-200 rounded-lg text-xs font-semibold transition-colors"
+            className="flex items-center gap-2 px-4 py-3 md:py-2 bg-green-50 hover:bg-green-100 text-green-800 border border-green-200 rounded-lg text-sm md:text-xs font-semibold transition-colors"
           >
-            <Share2 className="w-4 h-4" />
+            <Share2 className="w-4 h-4 md:w-3.5 md:h-3.5" />
             Compartilhar no WhatsApp
           </a>
         </div>
 
         {/* Personalizar slug */}
         <div id="ob-link-personalizar" className="border-t border-border pt-5">
-          <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block mb-1">
+          <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block mb-1">
             Personalizar link
           </label>
-          <p className="text-[10px] text-text-secondary mb-3">
+          <p className="text-xs md:text-[10px] text-text-secondary mb-3">
             Use apenas letras minúsculas, números e hífens. Ex: <strong>studio-da-ju</strong>, <strong>lashes-by-ana</strong>
           </p>
 
           <div className="flex items-center rounded-lg border border-border bg-bg overflow-hidden focus-within:ring-1 focus-within:ring-rose-400">
-            <span className="text-xs text-text-muted px-3 py-2 bg-bg border-r border-border flex-shrink-0 hidden sm:block whitespace-nowrap">
+            <span className="text-sm md:text-xs text-text-muted px-3.5 py-3 md:px-3 md:py-2 bg-bg border-r border-border flex-shrink-0 hidden sm:block whitespace-nowrap">
               /portal/
             </span>
             <input
@@ -192,14 +199,14 @@ export default function LinkAgendamento() {
               }}
               placeholder="meu-studio"
               maxLength={60}
-              className="flex-1 px-3 py-2 bg-transparent text-text-primary text-sm focus:outline-none"
+              className="flex-1 px-3.5 py-3 md:px-3 md:py-2 bg-transparent text-text-primary text-base md:text-sm focus:outline-none"
             />
           </div>
 
           {slugError && (
             <div className="mt-3 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2.5">
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-              <p className="text-xs font-medium">{slugError}</p>
+              <AlertCircle className="w-6 h-6 md:w-5 md:h-5 text-red-600 flex-shrink-0" />
+              <p className="text-sm md:text-xs font-medium">{slugError}</p>
             </div>
           )}
 
@@ -208,7 +215,7 @@ export default function LinkAgendamento() {
               type="button"
               onClick={handleSaveSlug}
               disabled={savingSlug || !slugEdit.trim() || slugEdit.trim() === estabelecimentoSlug}
-              className="px-5 py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+              className="px-5 py-3 md:px-4 md:py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-full md:rounded-lg text-base md:text-xs font-bold md:font-semibold transition-colors cursor-pointer"
             >
               {savingSlug ? 'Salvando...' : 'Salvar Link'}
             </button>
