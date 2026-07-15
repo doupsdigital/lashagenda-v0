@@ -399,13 +399,18 @@ export default function Servicos() {
       )}
 
       {/* FORM: Novo / Editar Serviço — sempre visível, sem modal */}
-      <div id="ob-servico-form" ref={formRef} className="bg-white border border-border rounded-[14px] p-6 shadow-sm">
-        <h2 className="font-title font-semibold text-2xl md:text-xl text-text-primary mb-5 flex items-center gap-2">
-          <Sparkles className="w-6 h-6 md:w-5 md:h-5 text-rose-600" />
-          {editingServico ? 'Editar Serviço' : 'Novo Serviço'}
-        </h2>
+      <div id="ob-servico-form" ref={formRef} className="bg-white border border-border rounded-[14px] shadow-sm overflow-hidden">
+        <div
+          className="px-6 py-4 md:py-3.5 flex items-center gap-2"
+          style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
+        >
+          <Sparkles className="w-6 h-6 md:w-5 md:h-5 text-white" />
+          <h2 className="font-title font-semibold text-2xl md:text-xl text-white">
+            {editingServico ? 'Editar Serviço' : 'Novo Serviço'}
+          </h2>
+        </div>
 
-        <form onSubmit={handleSaveServico} className="space-y-4">
+        <form onSubmit={handleSaveServico} className="space-y-4 p-6">
           {/* Nome */}
           <div id="gt-servico-nome" className="space-y-1.5">
             <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
@@ -655,16 +660,20 @@ export default function Servicos() {
       )}
 
       {/* LISTA: Seus Serviços */}
-      <div className="bg-white border border-border rounded-[14px] shadow-sm">
-        <div className="px-6 py-5 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h3 className="font-title font-semibold text-xl md:text-lg text-text-primary flex items-center gap-2">
+      <div className="bg-white border border-border rounded-[14px] shadow-sm overflow-hidden">
+        <div
+          className="px-6 py-4 md:py-3.5 flex items-center gap-2"
+          style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
+        >
+          <h3 className="font-title font-semibold text-xl md:text-lg text-white">
             Seus Serviços
-            <span className="text-sm md:text-xs font-sans font-medium px-2.5 py-1 md:px-2 md:py-0.5 rounded-full bg-rose-100 text-rose-700">
-              {servicos.length} cadastrado{servicos.length === 1 ? '' : 's'}
-            </span>
           </h3>
-
-          <div className="relative sm:w-64">
+          <span className="text-sm md:text-xs font-sans font-medium px-2.5 py-1 md:px-2 md:py-0.5 rounded-full bg-white/20 text-white">
+            {servicos.length} cadastrado{servicos.length === 1 ? '' : 's'}
+          </span>
+        </div>
+        <div className="p-5 border-b border-border">
+          <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 md:w-4 md:h-4 text-text-muted" />
             <input
               type="text"
