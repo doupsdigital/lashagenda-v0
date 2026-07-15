@@ -1215,37 +1215,40 @@ export default function Agendamentos() {
       )}
 
       {/* Control Header Box */}
-      <div className="bg-white border border-border rounded-[14px] p-5 shadow-sm space-y-4">
+      <div
+        className="rounded-[14px] p-5 shadow-sm space-y-4 text-white relative overflow-hidden"
+        style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
+      >
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          
+
           {/* Title & Navigation */}
           <div className="flex flex-col gap-0.5">
             <div className="flex items-center justify-between gap-4">
-              <h2 className="font-title font-semibold text-2xl text-text-primary">Agendamentos</h2>
-              
-              <div className="flex items-center bg-bg rounded-lg p-0.5 border border-border/40">
-                <button 
+              <h2 className="font-title font-semibold text-3xl md:text-2xl">Agendamentos</h2>
+
+              <div className="flex items-center bg-white/15 backdrop-blur-sm rounded-lg p-0.5 border border-white/20">
+                <button
                   onClick={() => handleNavigateDate('prev')}
-                  className="p-1.5 hover:bg-white hover:text-rose-600 rounded-md transition-all text-text-secondary cursor-pointer"
+                  className="p-2 md:p-1.5 hover:bg-white/20 rounded-md transition-all text-white/80 hover:text-white cursor-pointer"
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft className="w-5 h-5 md:w-4 md:h-4" />
                 </button>
-                <button 
+                <button
                   onClick={() => handleNavigateDate('today')}
-                  className="px-3 py-1 text-xs font-semibold hover:bg-white hover:text-rose-600 rounded-md transition-all text-text-secondary cursor-pointer"
+                  className="px-3.5 py-1.5 md:px-3 md:py-1 text-sm md:text-xs font-semibold hover:bg-white/20 rounded-md transition-all text-white/80 hover:text-white cursor-pointer"
                 >
                   Hoje
                 </button>
-                <button 
+                <button
                   onClick={() => handleNavigateDate('next')}
-                  className="p-1.5 hover:bg-white hover:text-rose-600 rounded-md transition-all text-text-secondary cursor-pointer"
+                  className="p-2 md:p-1.5 hover:bg-white/20 rounded-md transition-all text-white/80 hover:text-white cursor-pointer"
                 >
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-5 h-5 md:w-4 md:h-4" />
                 </button>
               </div>
             </div>
 
-            <span className="font-title font-medium text-lg text-text-primary">
+            <span className="font-title font-medium text-xl md:text-lg text-white/80">
               {viewMode === 'diaria' && currentDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
               {viewMode === 'semanal' && `Semana de ${getStartOfWeek(currentDate).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}`}
               {viewMode === 'mensal' && currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase()}
@@ -1259,18 +1262,18 @@ export default function Agendamentos() {
         <button
           id="ob-agend-novo-btn"
           onClick={() => handleOpenForm(currentDate)}
-          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-3.5 md:py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-full md:rounded-lg text-sm md:text-xs font-bold md:font-semibold shadow-sm transition-colors cursor-pointer"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-5 h-5 md:w-4 md:h-4" />
           <span className="hidden sm:inline">Novo Agendamento</span>
           <span className="sm:hidden">Novo</span>
         </button>
 
         <button
           onClick={handleOpenTrancar}
-          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-3.5 md:py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-full md:rounded-lg text-sm md:text-xs font-bold md:font-semibold shadow-sm transition-colors cursor-pointer"
         >
-          <Lock className="w-4 h-4" />
+          <Lock className="w-5 h-5 md:w-4 md:h-4" />
           <span className="hidden sm:inline">Trancar Horário</span>
           <span className="sm:hidden">Trancar</span>
         </button>
@@ -1279,18 +1282,18 @@ export default function Agendamentos() {
           <button
             id="ob-agend-view-toggle"
             onClick={() => setViewDropdownOpen(o => !o)}
-            className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-3.5 md:py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-full md:rounded-lg text-sm md:text-xs font-bold md:font-semibold shadow-sm transition-colors cursor-pointer"
           >
             {viewMode === 'diaria' && 'Dia'}
             {viewMode === 'semanal' && 'Semana'}
             {viewMode === 'mensal' && 'Mês'}
-            <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${viewDropdownOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 md:w-3.5 md:h-3.5 transition-transform duration-200 ${viewDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {viewDropdownOpen && (
             <>
               <div className="fixed inset-0 z-20" onClick={() => setViewDropdownOpen(false)} />
-              <div className="absolute right-0 mt-1.5 w-36 bg-white rounded-lg shadow-lg border border-border overflow-hidden z-30 animate-fade-in">
+              <div className="absolute right-0 mt-1.5 w-40 md:w-36 bg-white rounded-lg shadow-lg border border-border overflow-hidden z-30 animate-fade-in">
                 {[
                   { id: 'diaria', label: 'Dia' },
                   { id: 'semanal', label: 'Semana' },
@@ -1299,7 +1302,7 @@ export default function Agendamentos() {
                   <button
                     key={mode.id}
                     onClick={() => { setViewMode(mode.id as any); setViewDropdownOpen(false); }}
-                    className={`w-full text-left px-4 py-2.5 text-xs font-semibold transition-colors cursor-pointer ${
+                    className={`w-full text-left px-4 py-3 md:py-2.5 text-sm md:text-xs font-semibold transition-colors cursor-pointer ${
                       viewMode === mode.id ? 'bg-rose-50 text-rose-600' : 'text-text-secondary hover:bg-bg'
                     }`}
                   >
@@ -1320,13 +1323,13 @@ export default function Agendamentos() {
             className="w-full flex items-center justify-between px-5 py-4 hover:bg-amber-50/50 transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-3">
-              <Clock className="w-4 h-4 text-amber-500" />
-              <span className="font-title font-semibold text-base text-text-primary">Aguardando confirmação</span>
-              <span className="bg-amber-100 text-amber-700 border border-amber-200 text-xs font-bold px-2 py-0.5 rounded-full">
+              <Clock className="w-5 h-5 md:w-4 md:h-4 text-amber-500" />
+              <span className="font-title font-semibold text-lg md:text-base text-text-primary">Aguardando confirmação</span>
+              <span className="bg-amber-100 text-amber-700 border border-amber-200 text-sm md:text-xs font-bold px-2.5 py-1 md:px-2 md:py-0.5 rounded-full">
                 {pendingAppts.length}
               </span>
             </div>
-            <ChevronDown className={`w-4 h-4 text-text-secondary transition-transform duration-200 ${pendingOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-5 h-5 md:w-4 md:h-4 text-text-secondary transition-transform duration-200 ${pendingOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {pendingOpen && (
@@ -1340,26 +1343,26 @@ export default function Agendamentos() {
                   <div key={appt.id} className="flex items-center justify-between gap-4 px-5 py-3.5 hover:bg-amber-50/30 transition-colors">
                     <div className="flex items-center gap-4 min-w-0">
                       <div className="min-w-0">
-                        <p className="font-semibold text-sm text-text-primary truncate">
+                        <p className="font-semibold text-base md:text-sm text-text-primary truncate">
                           {appt.cliente?.nome} {appt.cliente?.sobrenome}
                         </p>
-                        <p className="text-xs text-text-secondary mt-0.5">{dateLabel} às {timeLabel}</p>
+                        <p className="text-sm md:text-xs text-text-secondary mt-0.5">{dateLabel} às {timeLabel}</p>
                       </div>
-                      <p className="text-xs text-text-muted truncate hidden sm:block">{servicos}</p>
+                      <p className="text-sm md:text-xs text-text-muted truncate hidden sm:block">{servicos}</p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <button
                         onClick={() => handleOpenApproveModal(appt)}
-                        className="flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+                        className="flex items-center gap-1 px-3.5 py-2 md:px-3 md:py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm md:text-xs font-semibold rounded-lg transition-colors cursor-pointer"
                       >
-                        <CheckCircle className="w-3.5 h-3.5" />
+                        <CheckCircle className="w-4 h-4 md:w-3.5 md:h-3.5" />
                         Aprovar
                       </button>
                       <button
                         onClick={() => handleOpenRejectModal(appt)}
-                        className="flex items-center gap-1 px-3 py-1.5 border border-red-300 text-red-600 hover:bg-red-50 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+                        className="flex items-center gap-1 px-3.5 py-2 md:px-3 md:py-1.5 border border-red-300 text-red-600 hover:bg-red-50 text-sm md:text-xs font-semibold rounded-lg transition-colors cursor-pointer"
                       >
-                        <XCircle className="w-3.5 h-3.5" />
+                        <XCircle className="w-4 h-4 md:w-3.5 md:h-3.5" />
                         Recusar
                       </button>
                     </div>
@@ -1388,8 +1391,8 @@ export default function Agendamentos() {
                 const isToday = new Date().toDateString() === day.toDateString();
                 return (
                   <div key={day.toISOString()} className={`py-3 border-r border-border flex flex-col items-center justify-center gap-0.5 last:border-r-0 ${isToday ? 'bg-rose-50/40' : ''}`}>
-                    <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">{DIAS_SEMANA[day.getDay()].sigla}</span>
-                    <span className={`w-7 h-7 flex items-center justify-center rounded-full text-sm font-semibold font-title ${isToday ? 'bg-rose-600 text-white shadow-sm' : 'text-text-primary'}`}>
+                    <span className="text-xs md:text-[10px] font-bold text-text-secondary uppercase tracking-wider">{DIAS_SEMANA[day.getDay()].sigla}</span>
+                    <span className={`w-8 h-8 md:w-7 md:h-7 flex items-center justify-center rounded-full text-base md:text-sm font-semibold font-title ${isToday ? 'bg-rose-600 text-white shadow-sm' : 'text-text-primary'}`}>
                       {day.getDate()}
                     </span>
                   </div>
@@ -1483,8 +1486,8 @@ export default function Agendamentos() {
         <div id="ob-agend-grid" className="bg-white border border-border rounded-[14px] overflow-hidden shadow-sm flex flex-col">
           <div className="grid grid-cols-[60px_1fr] border-b border-border bg-rose-50/10 text-center">
             <div className="py-3 border-r border-border" />
-            <div className="py-3 flex items-center justify-center gap-1.5 font-title font-semibold text-lg text-text-primary">
-              <CalendarDays className="w-5 h-5 text-rose-600" />
+            <div className="py-3 flex items-center justify-center gap-1.5 font-title font-semibold text-xl md:text-lg text-text-primary">
+              <CalendarDays className="w-6 h-6 md:w-5 md:h-5 text-rose-600" />
               {currentDate.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' }).toUpperCase()}
             </div>
           </div>
@@ -1539,20 +1542,21 @@ export default function Agendamentos() {
                       key={appt.id}
                       style={{ top: `${top}px`, height: `${height}px` }}
                       onClick={() => handleOpenDetail(appt)}
-                      className={`absolute left-2 right-2 rounded-lg border border-l-[4px] overflow-hidden flex flex-col shadow-sm cursor-pointer z-10 transition-all ${colors.border} ${accentBorder} ${colors.bg} ${height < 45 ? 'px-2 py-[2px]' : height < 70 ? 'px-2.5 py-1' : 'px-3 py-1.5'}`}
+                      className={`absolute left-2 right-2 rounded-lg border border-l-[4px] overflow-hidden flex flex-col shadow-sm cursor-pointer z-10 transition-all ${colors.border} ${accentBorder} ${colors.bg} ${height < 40 ? 'px-2 py-0.5' : height < 70 ? 'px-2.5 py-1' : 'px-3 py-1.5'}`}
                     >
-                      {/* Linha 1: Nome + Horário */}
+                      {/* Linha 1: Nome + Horário — destacados, são o que mais importa escanear rápido */}
                       <div className="flex items-center justify-between gap-2">
-                        <p className={`font-bold truncate flex-1 leading-none ${height < 45 ? 'text-[10px]' : height < 70 ? 'text-xs leading-tight' : 'text-sm leading-tight'}`}>
+                        <p className={`font-bold truncate flex-1 leading-none ${height < 40 ? 'text-xs' : height < 70 ? 'text-sm leading-tight' : 'text-base leading-tight'}`}>
                           {appt.cliente?.nome} {appt.cliente?.sobrenome}
                         </p>
-                        <span className={`font-semibold opacity-75 whitespace-nowrap flex-shrink-0 leading-none ${height < 45 ? 'text-[9px]' : height < 70 ? 'text-[10px]' : 'text-xs'}`}>
+                        <span className={`font-bold opacity-90 whitespace-nowrap flex-shrink-0 leading-none ${height < 40 ? 'text-[10px]' : height < 70 ? 'text-xs' : 'text-sm'}`}>
                           {apptDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
-                      {/* Linha 2: Serviço — só exibe se houver espaço (>= 28px) */}
-                      {height >= 28 && (
-                        <p className={`opacity-75 truncate leading-none ${height < 45 ? 'text-[9px] mt-0.5' : height < 70 ? 'text-[10px] mt-0.5' : 'text-xs mt-1'}`}>
+                      {/* Linha 2: Serviço — em agendamentos muito curtos (<40min) fica de fora pra
+                          não espremer o nome; a partir daí sempre exibida, tamanho mais discreto */}
+                      {height >= 40 && (
+                        <p className={`opacity-75 truncate leading-none ${height < 70 ? 'text-[10px] mt-0.5' : 'text-xs mt-1'}`}>
                           {appt.agendamento_servicos?.map(s => s.servico?.nome || servicos.find(ls => ls.id === s.servico_id)?.nome).filter(Boolean).join(', ')}
                           {height >= 70 && appt.observacoes && (
                             <span className="opacity-60 italic ml-1">· {appt.observacoes}</span>
@@ -1569,7 +1573,7 @@ export default function Agendamentos() {
                           ) : (
                             <span />
                           )}
-                          <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-semibold border leading-none ${
+                          <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-semibold border leading-none ${
                             appt.status === 'cancelado' ? 'bg-gray-100 text-gray-500 border-gray-200' :
                             appt.status === 'concluido' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' :
                             appt.status === 'pendente' ? 'bg-amber-100 text-amber-800 border-amber-200' :
@@ -1595,7 +1599,7 @@ export default function Agendamentos() {
       {/* VISUALIZAÇÃO MENSAL */}
       {!loading && viewMode === 'mensal' && (
         <div id="ob-agend-grid" className="bg-white border border-border rounded-[14px] overflow-hidden shadow-sm flex flex-col">
-          <div className="grid grid-cols-7 border-b border-border bg-rose-50/10 text-center text-xs font-bold text-text-secondary py-3">
+          <div className="grid grid-cols-7 border-b border-border bg-rose-50/10 text-center text-sm md:text-xs font-bold text-text-secondary py-3">
             {DIAS_SEMANA.map(d => (
               <span key={d.valor}>{d.nome}</span>
             ))}
@@ -1671,36 +1675,36 @@ export default function Agendamentos() {
             
             {/* Header */}
             <div className="bg-gradient-to-br from-rose-600 to-rose-500 px-6 py-4 flex items-center justify-between flex-shrink-0">
-              <h4 className="font-title font-bold text-lg text-white">
+              <h4 className="font-title font-bold text-xl md:text-lg text-white">
                 Detalhes do Agendamento
               </h4>
               <button
                 onClick={() => setIsDetailOpen(false)}
                 className="text-rose-200 hover:text-white cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-6 h-6 md:w-5 md:h-5" />
               </button>
             </div>
 
             {/* Content */}
             <div className="p-6 space-y-5 overflow-y-auto flex-1">
-              
+
               {/* Client Info (Link to Profile) */}
               <div className="bg-rose-50/20 border border-border/80 rounded-xl p-3.5 flex items-center justify-between">
                 <div>
-                  <span className="text-[9px] font-bold text-text-secondary uppercase tracking-wider">Cliente</span>
-                  <Link 
+                  <span className="text-xs md:text-[9px] font-bold text-text-secondary uppercase tracking-wider">Cliente</span>
+                  <Link
                     to={`/clientes/${selectedAppt.cliente?.id}`}
-                    className="block font-title font-semibold text-base text-rose-800 hover:text-rose-950 underline leading-snug mt-0.5"
+                    className="block font-title font-semibold text-lg md:text-base text-rose-800 hover:text-rose-950 underline leading-snug mt-0.5"
                     title="Ver ficha clínica da cliente"
                   >
                     {selectedAppt.cliente?.nome} {selectedAppt.cliente?.sobrenome}
                   </Link>
-                  <p className="text-[10px] text-text-secondary mt-0.5">WhatsApp: {selectedAppt.cliente?.whatsapp}</p>
+                  <p className="text-xs md:text-[10px] text-text-secondary mt-0.5">WhatsApp: {selectedAppt.cliente?.whatsapp}</p>
                 </div>
-                
+
                 {/* Status Badge */}
-                <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider
+                <span className={`text-xs md:text-[10px] font-bold px-3 py-1 md:px-2.5 md:py-0.5 rounded-full uppercase tracking-wider
                   ${selectedAppt.status === 'confirmado' ? 'bg-rose-100 text-rose-800 border border-rose-200' : ''}
                   ${selectedAppt.status === 'pendente' ? 'bg-amber-100 text-amber-700 border border-amber-200' : ''}
                   ${selectedAppt.status === 'concluido' ? 'bg-green-100 text-green-800 border border-green-200' : ''}
@@ -1712,11 +1716,11 @@ export default function Agendamentos() {
               </div>
 
               {/* Main parameters */}
-              <div className="space-y-3.5 text-xs">
+              <div className="space-y-3.5 text-sm md:text-xs">
 
                 {/* Date / Time */}
                 <div className="grid grid-cols-[100px_1fr] border-b border-border/40 pb-2">
-                  <span className="font-bold text-text-secondary uppercase text-[10px] tracking-wider">Data / Horário:</span>
+                  <span className="font-bold text-text-secondary uppercase text-xs md:text-[10px] tracking-wider">Data / Horário:</span>
                   <span className="text-text-primary font-medium">
                     {new Date(selectedAppt.data_hora).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })} às{' '}
                     {new Date(selectedAppt.data_hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
@@ -1725,24 +1729,24 @@ export default function Agendamentos() {
 
                 {/* Duration */}
                 <div className="grid grid-cols-[100px_1fr] border-b border-border/40 pb-2">
-                  <span className="font-bold text-text-secondary uppercase text-[10px] tracking-wider">Duração:</span>
+                  <span className="font-bold text-text-secondary uppercase text-xs md:text-[10px] tracking-wider">Duração:</span>
                   <span className="text-text-primary font-medium">{selectedAppt.duracao_minutos} minutos</span>
                 </div>
 
                 {/* List of services in details view */}
                 <div>
-                  <span className="font-bold text-text-secondary uppercase text-[10px] tracking-wider block mb-1">Procedimentos:</span>
+                  <span className="font-bold text-text-secondary uppercase text-xs md:text-[10px] tracking-wider block mb-1">Procedimentos:</span>
                   <div className="space-y-1 mt-1 bg-bg/25 border border-border/60 p-2.5 rounded-lg max-h-[120px] overflow-y-auto">
                     {selectedAppt.agendamento_servicos?.map((s, idx) => (
-                      <div key={idx} className="flex justify-between items-center text-xs text-text-primary">
+                      <div key={idx} className="flex justify-between items-center text-sm md:text-xs text-text-primary">
                         <span>
                           {s.servico?.nome}
-                          {s.variacao?.nome && <span className="text-[10px] bg-gold-light/40 text-gold border border-gold-light/60 px-1 py-0.5 rounded font-normal ml-1">{s.variacao.nome}</span>}
+                          {s.variacao?.nome && <span className="text-xs md:text-[10px] bg-gold-light/40 text-gold border border-gold-light/60 px-1 py-0.5 rounded font-normal ml-1">{s.variacao.nome}</span>}
                         </span>
                         <span className="font-semibold text-rose-800">R$ {Number(s.valor_cobrado).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                       </div>
                     ))}
-                    <div className="border-t border-border/40 pt-1.5 mt-1.5 flex justify-between items-center text-sm font-bold text-text-primary">
+                    <div className="border-t border-border/40 pt-1.5 mt-1.5 flex justify-between items-center text-base md:text-sm font-bold text-text-primary">
                       <span>Total</span>
                       <span className="text-rose-800">
                         R$ {selectedAppt.agendamento_servicos?.reduce((sum, s) => sum + Number(s.valor_cobrado), 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
@@ -1754,7 +1758,7 @@ export default function Agendamentos() {
                 {/* Observations */}
                 {selectedAppt.observacoes && (
                   <div className="grid grid-cols-[100px_1fr] border-b border-border/40 pb-2">
-                    <span className="font-bold text-text-secondary uppercase text-[10px] tracking-wider">Anotações:</span>
+                    <span className="font-bold text-text-secondary uppercase text-xs md:text-[10px] tracking-wider">Anotações:</span>
                     <span className="text-text-secondary italic">"{selectedAppt.observacoes}"</span>
                   </div>
                 )}
@@ -1767,16 +1771,16 @@ export default function Agendamentos() {
                   <>
                     <button
                       onClick={() => handleOpenApproveModal(selectedAppt)}
-                      className="flex items-center justify-center gap-1.5 py-2 w-full bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-semibold cursor-pointer"
+                      className="flex items-center justify-center gap-1.5 py-2.5 md:py-2 w-full bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm md:text-xs font-semibold cursor-pointer"
                     >
-                      <CheckCircle className="w-4 h-4" />
+                      <CheckCircle className="w-5 h-5 md:w-4 md:h-4" />
                       Confirmar Agendamento
                     </button>
                     <button
                       onClick={() => handleOpenRejectModal(selectedAppt)}
-                      className="flex items-center justify-center gap-1.5 py-2 px-3 border border-red-200 hover:bg-red-50 text-red-600 rounded-lg text-xs font-semibold cursor-pointer"
+                      className="flex items-center justify-center gap-1.5 py-2.5 md:py-2 px-3 border border-red-200 hover:bg-red-50 text-red-600 rounded-lg text-sm md:text-xs font-semibold cursor-pointer"
                     >
-                      <XCircle className="w-4 h-4" />
+                      <XCircle className="w-5 h-5 md:w-4 md:h-4" />
                       Recusar / Cancelar
                     </button>
                   </>
@@ -1787,40 +1791,40 @@ export default function Agendamentos() {
                     <div className="grid grid-cols-2 gap-2">
                       <button
                         onClick={() => handleChangeStatus(selectedAppt, 'concluido')}
-                        className="flex items-center justify-center gap-1.5 py-2 px-3 bg-green-600 hover:bg-green-800 text-white rounded-lg text-xs font-semibold cursor-pointer"
+                        className="flex items-center justify-center gap-1.5 py-2.5 md:py-2 px-3 bg-green-600 hover:bg-green-800 text-white rounded-lg text-sm md:text-xs font-semibold cursor-pointer"
                       >
-                        <CheckCircle className="w-4 h-4" />
+                        <CheckCircle className="w-5 h-5 md:w-4 md:h-4" />
                         Concluir Atendimento
                       </button>
                       <button
                         onClick={() => handleChangeStatus(selectedAppt, 'cancelado')}
-                        className="flex items-center justify-center gap-1.5 py-2 px-3 border border-red-200 hover:bg-red-50 text-red-600 rounded-lg text-xs font-semibold cursor-pointer"
+                        className="flex items-center justify-center gap-1.5 py-2.5 md:py-2 px-3 border border-red-200 hover:bg-red-50 text-red-600 rounded-lg text-sm md:text-xs font-semibold cursor-pointer"
                       >
-                        <XCircle className="w-4 h-4" />
+                        <XCircle className="w-5 h-5 md:w-4 md:h-4" />
                         Cancelar
                       </button>
                     </div>
                     {new Date(selectedAppt.data_hora) < new Date() && (
                       <button
                         onClick={() => handleMarkNoShow(selectedAppt)}
-                        className="flex items-center justify-center gap-1.5 py-2 w-full border border-red-300 hover:bg-red-50 text-red-700 rounded-lg text-xs font-semibold cursor-pointer"
+                        className="flex items-center justify-center gap-1.5 py-2.5 md:py-2 w-full border border-red-300 hover:bg-red-50 text-red-700 rounded-lg text-sm md:text-xs font-semibold cursor-pointer"
                       >
-                        <UserX className="w-4 h-4" />
+                        <UserX className="w-5 h-5 md:w-4 md:h-4" />
                         Marcar Falta (No-show)
                       </button>
                     )}
                     <button
                       onClick={() => handleOpenEditForm(selectedAppt)}
-                      className="flex items-center justify-center gap-1.5 py-2 w-full bg-rose-600 hover:bg-rose-800 text-white rounded-lg text-xs font-semibold cursor-pointer"
+                      className="flex items-center justify-center gap-1.5 py-2.5 md:py-2 w-full bg-rose-600 hover:bg-rose-800 text-white rounded-lg text-sm md:text-xs font-semibold cursor-pointer"
                     >
-                      <Edit2 className="w-4 h-4" />
+                      <Edit2 className="w-5 h-5 md:w-4 md:h-4" />
                       Editar Agendamento
                     </button>
                   </>
                 )}
 
                 {(selectedAppt.status === 'concluido' || selectedAppt.status === 'cancelado' || selectedAppt.status === 'falta') && (
-                  <p className="text-[11px] text-text-secondary italic text-center py-1 bg-bg rounded">
+                  <p className="text-xs md:text-[11px] text-text-secondary italic text-center py-1 bg-bg rounded">
                     Agendamentos concluídos, cancelados ou com falta não podem ser editados.
                   </p>
                 )}
@@ -1829,9 +1833,9 @@ export default function Agendamentos() {
                 {isProfissional && (
                   <button
                     onClick={() => handleDeleteAppointment(selectedAppt)}
-                    className="flex items-center justify-center gap-1.5 py-2 w-full border border-border hover:bg-red-50 hover:text-red-600 text-text-secondary rounded-lg text-xs font-semibold cursor-pointer"
+                    className="flex items-center justify-center gap-1.5 py-2.5 md:py-2 w-full border border-border hover:bg-red-50 hover:text-red-600 text-text-secondary rounded-lg text-sm md:text-xs font-semibold cursor-pointer"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-5 h-5 md:w-4 md:h-4" />
                     Excluir permanentemente
                   </button>
                 )}
@@ -1849,35 +1853,35 @@ export default function Agendamentos() {
             <div className="bg-white rounded-[14px] border border-border shadow-xl w-full max-w-md flex flex-col max-h-[calc(100vh-2rem)] overflow-hidden animate-slide-up">
               {/* Header */}
               <div className="bg-gradient-to-br from-emerald-600 to-emerald-500 px-6 py-4 flex items-center justify-between flex-shrink-0">
-                <h4 className="font-title font-bold text-lg text-white flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-emerald-100" />
+                <h4 className="font-title font-bold text-xl md:text-lg text-white flex items-center gap-2">
+                  <CheckCircle className="w-6 h-6 md:w-5 md:h-5 text-emerald-100" />
                   Concluir Atendimento
                 </h4>
                 <button
                   onClick={() => setConcludeAppt(null)}
                   className="text-emerald-200 hover:text-white cursor-pointer"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-6 h-6 md:w-5 md:h-5" />
                 </button>
               </div>
 
               <div className="p-6 space-y-5 overflow-y-auto flex-1">
                 {/* Client */}
-                <div className="text-sm text-text-primary">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary block mb-0.5">Cliente</span>
+                <div className="text-base md:text-sm text-text-primary">
+                  <span className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-text-secondary block mb-0.5">Cliente</span>
                   <span className="font-semibold">{clientName}</span>
                 </div>
 
                 {/* Services summary */}
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary block mb-1.5">Procedimentos</span>
+                  <span className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-text-secondary block mb-1.5">Procedimentos</span>
                   <div className="bg-bg/25 border border-border/60 p-3 rounded-lg space-y-1.5">
                     {concludeAppt.agendamento_servicos?.map((s, idx) => (
-                      <div key={idx} className="flex justify-between items-center text-xs text-text-primary">
+                      <div key={idx} className="flex justify-between items-center text-sm md:text-xs text-text-primary">
                         <span>
                           {s.servico?.nome}
                           {s.variacao?.nome && (
-                            <span className="text-[10px] bg-gold-light/40 text-gold border border-gold-light/60 px-1 py-0.5 rounded font-normal ml-1">
+                            <span className="text-xs md:text-[10px] bg-gold-light/40 text-gold border border-gold-light/60 px-1 py-0.5 rounded font-normal ml-1">
                               {s.variacao.nome}
                             </span>
                           )}
@@ -1887,7 +1891,7 @@ export default function Agendamentos() {
                         </span>
                       </div>
                     ))}
-                    <div className="border-t border-border/40 pt-1.5 mt-1.5 flex justify-between items-center text-sm font-bold text-text-primary">
+                    <div className="border-t border-border/40 pt-1.5 mt-1.5 flex justify-between items-center text-base md:text-sm font-bold text-text-primary">
                       <span>Total</span>
                       <span className="text-rose-800">
                         R$ {totalServicos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
@@ -1906,17 +1910,17 @@ export default function Agendamentos() {
                         setConcludeUseCustom(e.target.checked);
                         if (e.target.checked) setConcludeCustomValue(totalServicos);
                       }}
-                      className="w-4 h-4 accent-rose-600 cursor-pointer"
+                      className="w-5 h-5 md:w-4 md:h-4 accent-rose-600 cursor-pointer"
                     />
                     <div>
-                      <span className="text-xs font-semibold text-text-primary">Valor recebido diferente?</span>
-                      <span className="text-[10px] text-text-muted block">Habilite se houve desconto ou valor negociado.</span>
+                      <span className="text-sm md:text-xs font-semibold text-text-primary">Valor recebido diferente?</span>
+                      <span className="text-xs md:text-[10px] text-text-muted block">Habilite se houve desconto ou valor negociado.</span>
                     </div>
                   </label>
 
                   {concludeUseCustom && (
                     <div className="space-y-1.5 animate-fade-in">
-                      <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                      <label className="text-sm md:text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
                         Valor recebido (R$)
                       </label>
                       <input
@@ -1925,10 +1929,10 @@ export default function Agendamentos() {
                         min="0"
                         value={concludeCustomValue}
                         onChange={(e) => setConcludeCustomValue(parseFloat(e.target.value) || 0)}
-                        className="w-full px-3 py-2.5 border border-border rounded-lg bg-bg text-text-primary text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-green-400"
+                        className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-green-400"
                       />
                       {concludeCustomValue < totalServicos && concludeCustomValue >= 0 && (
-                        <p className="text-[10px] text-amber-600 font-medium">
+                        <p className="text-xs md:text-[10px] text-amber-600 font-medium">
                           Desconto de R$ {(totalServicos - concludeCustomValue).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} aplicado.
                         </p>
                       )}
@@ -1938,8 +1942,8 @@ export default function Agendamentos() {
 
                 {/* Final value summary */}
                 <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-center">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 block mb-1">Valor a registrar</span>
-                  <span className="text-2xl font-title font-bold text-emerald-900">
+                  <span className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-emerald-800 block mb-1">Valor a registrar</span>
+                  <span className="text-3xl md:text-2xl font-title font-bold text-emerald-900">
                     R$ {(concludeUseCustom ? concludeCustomValue : totalServicos).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
@@ -1950,7 +1954,7 @@ export default function Agendamentos() {
                     type="button"
                     onClick={() => setConcludeAppt(null)}
                     disabled={concludeSaving}
-                    className="px-4 py-2 border border-border rounded-lg text-xs font-medium text-text-secondary hover:bg-bg transition-colors cursor-pointer"
+                    className="px-4 py-2.5 md:py-2 border border-border rounded-lg text-sm md:text-xs font-medium text-text-secondary hover:bg-bg transition-colors cursor-pointer"
                   >
                     Voltar
                   </button>
@@ -1958,9 +1962,9 @@ export default function Agendamentos() {
                     type="button"
                     onClick={handleConcludeConfirm}
                     disabled={concludeSaving}
-                    className="px-5 py-2.5 bg-green-600 hover:bg-green-800 disabled:bg-green-300 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5"
+                    className="px-5 py-3 md:py-2.5 bg-green-600 hover:bg-green-800 disabled:bg-green-300 text-white rounded-lg text-sm md:text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5"
                   >
-                    <CheckCircle className="w-4 h-4" />
+                    <CheckCircle className="w-5 h-5 md:w-4 md:h-4" />
                     {concludeSaving ? 'Salvando...' : 'Concluir Atendimento'}
                   </button>
                 </div>
@@ -1978,23 +1982,23 @@ export default function Agendamentos() {
             
             {/* Header */}
             <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-rose-50/10 flex-shrink-0">
-              <h4 className="font-title font-semibold text-lg text-text-primary flex items-center gap-2">
-                <CalendarDays className="w-5 h-5 text-rose-600" />
+              <h4 className="font-title font-semibold text-xl md:text-lg text-text-primary flex items-center gap-2">
+                <CalendarDays className="w-6 h-6 md:w-5 md:h-5 text-rose-600" />
                 {editingAppt ? 'Editar Agendamento' : 'Agendar Novo Procedimento'}
               </h4>
-              <button 
+              <button
                 onClick={() => setIsModalOpen(false)}
                 className="text-text-secondary hover:text-rose-600 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-6 h-6 md:w-5 md:h-5" />
               </button>
             </div>
-            
+
             <form onSubmit={handleSaveAppointment} className="p-6 space-y-5 overflow-y-auto flex-1">
-              
+
               {/* Cliente Autocomplete Search */}
               <div className="space-y-1.5 relative">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary flex justify-between">
+                <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary flex justify-between">
                   <span>Buscar Cliente *</span>
                   {selectedCliente && <span className="text-green-600">✓ Selecionada</span>}
                 </label>
@@ -2002,12 +2006,12 @@ export default function Agendamentos() {
                 {selectedCliente ? (
                   <div className="flex items-center justify-between bg-rose-50 border border-rose-200 rounded-lg p-2.5">
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-rose-200 text-rose-800 flex items-center justify-center font-bold text-xs">
+                      <div className="w-8 h-8 md:w-7 md:h-7 rounded-full bg-rose-200 text-rose-800 flex items-center justify-center font-bold text-sm md:text-xs">
                         {selectedCliente.nome[0]}{(selectedCliente.sobrenome || '')[0]}
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-text-primary">{selectedCliente.nome} {selectedCliente.sobrenome}</p>
-                        <p className="text-[10px] text-text-secondary">Whats: {selectedCliente.whatsapp}</p>
+                        <p className="text-sm md:text-xs font-bold text-text-primary">{selectedCliente.nome} {selectedCliente.sobrenome}</p>
+                        <p className="text-xs md:text-[10px] text-text-secondary">Whats: {selectedCliente.whatsapp}</p>
                       </div>
                     </div>
                     {/* Only allow changing client when creating new appointment */}
@@ -2017,17 +2021,17 @@ export default function Agendamentos() {
                         onClick={() => setSelectedCliente(null)}
                         className="p-1 hover:bg-rose-100 rounded text-rose-600 cursor-pointer"
                       >
-                        <X className="w-4 h-4" />
+                        <X className="w-5 h-5 md:w-4 md:h-4" />
                       </button>
                     )}
                   </div>
                 ) : (
                   <>
                     <div className="relative">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-                      <input 
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 md:w-4 md:h-4 text-text-muted" />
+                      <input
                         ref={clientInputRef}
-                        type="text" 
+                        type="text"
                         required
                         placeholder="Nome ou WhatsApp do cliente..."
                         value={clientSearchQuery}
@@ -2036,12 +2040,12 @@ export default function Agendamentos() {
                           setShowClientDropdown(true);
                         }}
                         onFocus={() => setShowClientDropdown(true)}
-                        className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
+                        className="w-full pl-10 pr-4 py-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
                       />
                     </div>
 
                     {showClientDropdown && clientSearchQuery.trim().length >= 2 && (
-                      <div className="absolute top-full left-0 right-0 bg-white border border-border shadow-lg rounded-lg z-50 overflow-hidden mt-1 text-xs">
+                      <div className="absolute top-full left-0 right-0 bg-white border border-border shadow-lg rounded-lg z-50 overflow-hidden mt-1 text-sm md:text-xs">
                         {foundClientes.length === 0 ? (
                           <div className="p-3 text-center text-text-muted italic">Nenhuma cliente ativa encontrada.</div>
                         ) : (
@@ -2052,13 +2056,13 @@ export default function Agendamentos() {
                                 setSelectedCliente(client);
                                 setShowClientDropdown(false);
                               }}
-                              className="px-4 py-2.5 hover:bg-rose-50/50 cursor-pointer border-b border-border/40 last:border-0 flex items-center justify-between"
+                              className="px-4 py-3 md:py-2.5 hover:bg-rose-50/50 cursor-pointer border-b border-border/40 last:border-0 flex items-center justify-between"
                             >
                               <div>
                                 <p className="font-bold text-text-primary">{client.nome} {client.sobrenome}</p>
-                                <p className="text-[10px] text-text-secondary">WhatsApp: {client.whatsapp}</p>
+                                <p className="text-xs md:text-[10px] text-text-secondary">WhatsApp: {client.whatsapp}</p>
                               </div>
-                              <span className="text-[10px] text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded">Selecionar</span>
+                              <span className="text-xs md:text-[10px] text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded">Selecionar</span>
                             </div>
                           ))
                         )}
@@ -2071,7 +2075,7 @@ export default function Agendamentos() {
               {/* Data & Horário Início */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                  <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
                     Data *
                   </label>
                   <input 
@@ -2079,12 +2083,12 @@ export default function Agendamentos() {
                     required
                     value={formData}
                     onChange={(e) => handleDateChange(e.target.value)}
-                    className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                    className="w-full px-3.5 py-3 md:px-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                  <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
                     Hora de Início *
                   </label>
                   <input 
@@ -2092,14 +2096,14 @@ export default function Agendamentos() {
                     required
                     value={formHora}
                     onChange={(e) => setFormHora(e.target.value)}
-                    className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                    className="w-full px-3.5 py-3 md:px-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                   />
                 </div>
               </div>
 
               {/* Serviços Selection */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block border-b border-border pb-1">
+                <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block border-b border-border pb-1">
                   Selecione os Serviços *
                 </label>
                 <div className="space-y-2.5 max-h-[160px] overflow-y-auto pr-1">
@@ -2113,24 +2117,24 @@ export default function Agendamentos() {
                               type="checkbox"
                               checked={isChecked}
                               onChange={(e) => handleToggleServiceCheckbox(srv, e.target.checked)}
-                              className="w-4.5 h-4.5 accent-rose-600 cursor-pointer shrink-0"
+                              className="w-5 h-5 md:w-4 md:h-4 accent-rose-600 cursor-pointer shrink-0"
                             />
-                            <div className="text-xs min-w-0">
+                            <div className="text-sm md:text-xs min-w-0">
                               <p className="font-bold text-text-primary truncate">{srv.nome}</p>
-                              <p className="text-[10px] text-text-secondary mt-0.5">{srv.duracao_minutos} min • R$ {Number(srv.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                              <p className="text-xs md:text-[10px] text-text-secondary mt-0.5">{srv.duracao_minutos} min • R$ {Number(srv.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                             </div>
                           </label>
 
                           {/* Price Input */}
                           {isChecked && (
                             <div className="flex items-center gap-1 shrink-0">
-                              <span className="text-[10px] text-text-muted">R$</span>
+                              <span className="text-xs md:text-[10px] text-text-muted">R$</span>
                               <input
                                 type="number"
                                 step="0.01"
                                 value={selectedServices[srv.id].valor}
                                 onChange={(e) => handleServicePriceChange(srv.id, parseFloat(e.target.value) || 0)}
-                                className="w-16 px-1.5 py-0.5 border border-border rounded text-[10px] text-right focus:outline-none focus:ring-1 focus:ring-rose-400"
+                                className="w-16 px-1.5 py-1 md:py-0.5 border border-border rounded text-xs md:text-[10px] text-right focus:outline-none focus:ring-1 focus:ring-rose-400"
                               />
                             </div>
                           )}
@@ -2142,7 +2146,7 @@ export default function Agendamentos() {
                             <select
                               value={selectedServices[srv.id].variacao_id}
                               onChange={(e) => handleFormVariationChange(srv.id, e.target.value)}
-                              className="w-full px-2 py-1 border border-border rounded text-[10px] bg-white text-text-primary cursor-pointer focus:outline-none"
+                              className="w-full px-2 py-1.5 md:py-1 border border-border rounded text-xs md:text-[10px] bg-white text-text-primary cursor-pointer focus:outline-none"
                             >
                               {srv.variacoes_servico.map(v => (
                                 <option key={v.id} value={v.id}>{v.nome}</option>
@@ -2157,24 +2161,24 @@ export default function Agendamentos() {
               </div>
 
               {/* Recalculated outputs */}
-              <div className="grid grid-cols-2 gap-4 bg-rose-50/25 border border-rose-100 p-3 rounded-lg text-xs font-semibold text-text-primary">
+              <div className="grid grid-cols-2 gap-4 bg-rose-50/25 border border-rose-100 p-3 rounded-lg text-sm md:text-xs font-semibold text-text-primary">
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-rose-600" />
+                  <Clock className="w-5 h-5 md:w-4 md:h-4 text-rose-600" />
                   <span>Duração:</span>
-                  <input 
+                  <input
                     type="number"
                     min="1"
                     value={formDuracao}
                     onChange={(e) => setFormDuracao(parseInt(e.target.value) || 0)}
-                    className="w-16 px-1.5 py-0.5 border border-border rounded bg-white font-bold text-center focus:outline-none focus:ring-1 focus:ring-rose-400"
+                    className="w-16 px-1.5 py-1 md:py-0.5 border border-border rounded bg-white font-bold text-center focus:outline-none focus:ring-1 focus:ring-rose-400"
                   />
                   <span>min</span>
                 </div>
-                
+
                 <div className="flex items-center gap-2 justify-end">
-                  <Coins className="w-4 h-4 text-rose-600" />
+                  <Coins className="w-5 h-5 md:w-4 md:h-4 text-rose-600" />
                   <span>Total sugerido:</span>
-                  <span className="font-title font-semibold text-sm text-rose-800">
+                  <span className="font-title font-semibold text-base md:text-sm text-rose-800">
                     R$ {Object.values(selectedServices).reduce((sum, s) => sum + s.valor, 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
@@ -2182,7 +2186,7 @@ export default function Agendamentos() {
 
               {/* Observações */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
                   Observações
                 </label>
                 <textarea 
@@ -2190,7 +2194,7 @@ export default function Agendamentos() {
                   placeholder="Instruções especiais ou anotações..."
                   value={formObs}
                   onChange={(e) => setFormObs(e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
+                  className="w-full px-3.5 py-3 md:px-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
                 />
               </div>
 
@@ -2200,14 +2204,14 @@ export default function Agendamentos() {
                   type="button"
                   onClick={() => setIsModalOpen(false)}
                   disabled={saving}
-                  className="px-4 py-2 border border-border rounded-lg text-xs font-medium text-text-secondary hover:bg-bg transition-colors cursor-pointer"
+                  className="px-4 py-2.5 md:py-2 border border-border rounded-lg text-sm md:text-xs font-medium text-text-secondary hover:bg-bg transition-colors cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-4 py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                  className="px-4 py-2.5 md:py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-sm md:text-xs font-semibold transition-colors cursor-pointer"
                 >
                   {saving ? 'Salvando...' : (editingAppt ? 'Salvar Alterações' : 'Criar Agendamento')}
                 </button>
@@ -2224,19 +2228,19 @@ export default function Agendamentos() {
             {/* Header especial para conclusão */}
             {successModal.tipo === 'conclusao' ? (
               <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 px-6 pt-6 pb-5 text-center text-white">
-                <div className="mx-auto w-14 h-14 rounded-full bg-amber-400/25 flex items-center justify-center mb-3">
-                  <Coins className="w-7 h-7 text-amber-300" />
+                <div className="mx-auto w-16 h-16 md:w-14 md:h-14 rounded-full bg-amber-400/25 flex items-center justify-center mb-3">
+                  <Coins className="w-8 h-8 md:w-7 md:h-7 text-amber-300" />
                 </div>
-                <h3 className="font-title font-bold text-xl leading-snug">
+                <h3 className="font-title font-bold text-2xl md:text-xl leading-snug">
                   Atendimento Concluído!
                 </h3>
-                <p className="text-emerald-100 text-xs mt-1">
+                <p className="text-emerald-100 text-sm md:text-xs mt-1">
                   O valor já aparece nos seus relatórios.
                 </p>
                 {successModal.valor !== undefined && (
                   <div className="mt-4 bg-white/15 rounded-xl px-4 py-3 inline-block">
-                    <p className="text-[10px] uppercase tracking-wider text-emerald-200 mb-0.5">Valor recebido</p>
-                    <p className="font-title font-bold text-2xl text-white">
+                    <p className="text-xs md:text-[10px] uppercase tracking-wider text-emerald-200 mb-0.5">Valor recebido</p>
+                    <p className="font-title font-bold text-3xl md:text-2xl text-white">
                       R$ {successModal.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </p>
                   </div>
@@ -2247,28 +2251,28 @@ export default function Agendamentos() {
                 <div className="mx-auto w-16 h-16 rounded-full bg-green-50 border border-green-200 flex items-center justify-center text-green-600 mb-3 animate-pulse">
                   <CheckCircle className="w-9 h-9" />
                 </div>
-                <h3 className="font-title font-bold text-xl text-text-primary">{successModal.title}</h3>
-                <p className="text-xs text-text-secondary mt-1">Os dados foram registrados com sucesso no sistema.</p>
+                <h3 className="font-title font-bold text-2xl md:text-xl text-text-primary">{successModal.title}</h3>
+                <p className="text-sm md:text-xs text-text-secondary mt-1">Os dados foram registrados com sucesso no sistema.</p>
               </div>
             )}
 
             {/* Details */}
             <div className="px-6 py-4 space-y-4">
-              <div className="bg-bg/40 border border-border/80 rounded-xl p-4 text-xs space-y-2.5">
+              <div className="bg-bg/40 border border-border/80 rounded-xl p-4 text-sm md:text-xs space-y-2.5">
                 <div className="flex justify-between border-b border-border/40 pb-1.5">
-                  <span className="font-bold text-text-secondary uppercase text-[10px] tracking-wider">Cliente</span>
+                  <span className="font-bold text-text-secondary uppercase text-xs md:text-[10px] tracking-wider">Cliente</span>
                   <span className="font-semibold text-text-primary">{successModal.clientName}</span>
                 </div>
                 <div className="flex justify-between border-b border-border/40 pb-1.5">
-                  <span className="font-bold text-text-secondary uppercase text-[10px] tracking-wider">Procedimento(s)</span>
+                  <span className="font-bold text-text-secondary uppercase text-xs md:text-[10px] tracking-wider">Procedimento(s)</span>
                   <span className="font-semibold text-text-primary max-w-[200px] truncate text-right">{successModal.services}</span>
                 </div>
                 <div className="flex justify-between border-b border-border/40 pb-1.5">
-                  <span className="font-bold text-text-secondary uppercase text-[10px] tracking-wider">Data</span>
+                  <span className="font-bold text-text-secondary uppercase text-xs md:text-[10px] tracking-wider">Data</span>
                   <span className="font-semibold text-text-primary">{successModal.dateStr}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-bold text-text-secondary uppercase text-[10px] tracking-wider">Horário</span>
+                  <span className="font-bold text-text-secondary uppercase text-xs md:text-[10px] tracking-wider">Horário</span>
                   <span className="font-semibold text-text-primary">{successModal.timeStr}</span>
                 </div>
               </div>
@@ -2276,7 +2280,7 @@ export default function Agendamentos() {
               <button
                 type="button"
                 onClick={() => setSuccessModal(null)}
-                className={`w-full py-2.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                className={`w-full py-3 md:py-2.5 rounded-lg text-sm md:text-xs font-semibold transition-colors cursor-pointer ${
                   successModal.tipo === 'conclusao'
                     ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
                     : 'bg-rose-600 hover:bg-rose-800 text-white'
@@ -2307,11 +2311,11 @@ export default function Agendamentos() {
             <div className="p-6">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h3 className="font-title font-bold text-xl text-text-primary flex items-center gap-2">
-                    <Lock className="w-5 h-5 text-rose-600" />
+                  <h3 className="font-title font-bold text-2xl md:text-xl text-text-primary flex items-center gap-2">
+                    <Lock className="w-6 h-6 md:w-5 md:h-5 text-rose-600" />
                     Trancar Horário
                   </h3>
-                  <p className="text-[11px] font-semibold text-text-secondary uppercase tracking-wider mt-0.5">
+                  <p className="text-xs md:text-[11px] font-semibold text-text-secondary uppercase tracking-wider mt-0.5">
                     Folga, feriado ou pausa
                   </p>
                 </div>
@@ -2319,14 +2323,14 @@ export default function Agendamentos() {
                   onClick={() => setIsTrancarOpen(false)}
                   className="text-text-secondary hover:text-rose-600 transition-colors p-1 rounded-full hover:bg-bg cursor-pointer flex-shrink-0"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-6 h-6 md:w-5 md:h-5" />
                 </button>
               </div>
 
               <form onSubmit={handleSubmitTrancar} className="space-y-4 mt-5">
                 {/* Data */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+                  <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                     Data
                   </label>
                   <input
@@ -2334,20 +2338,20 @@ export default function Agendamentos() {
                     required
                     value={trancarData}
                     onChange={(e) => setTrancarData(e.target.value)}
-                    className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                    className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-xl bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                   />
                 </div>
 
                 {/* Dia inteiro / período específico */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+                  <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                     O que travar
                   </label>
                   <div className="flex bg-bg rounded-lg p-0.5 border border-border/40">
                     <button
                       type="button"
                       onClick={() => setTrancarDiaInteiro(true)}
-                      className={`flex-1 px-3 py-2 rounded-md text-xs font-semibold transition-all cursor-pointer ${trancarDiaInteiro
+                      className={`flex-1 px-3 py-2.5 md:py-2 rounded-md text-sm md:text-xs font-semibold transition-all cursor-pointer ${trancarDiaInteiro
                         ? 'bg-white text-rose-600 shadow-sm border border-border/30'
                         : 'text-text-secondary hover:text-rose-600'}`}
                     >
@@ -2356,7 +2360,7 @@ export default function Agendamentos() {
                     <button
                       type="button"
                       onClick={() => setTrancarDiaInteiro(false)}
-                      className={`flex-1 px-3 py-2 rounded-md text-xs font-semibold transition-all cursor-pointer ${!trancarDiaInteiro
+                      className={`flex-1 px-3 py-2.5 md:py-2 rounded-md text-sm md:text-xs font-semibold transition-all cursor-pointer ${!trancarDiaInteiro
                         ? 'bg-white text-rose-600 shadow-sm border border-border/30'
                         : 'text-text-secondary hover:text-rose-600'}`}
                     >
@@ -2369,7 +2373,7 @@ export default function Agendamentos() {
                   <div className="space-y-2 animate-fade-in">
                     <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-1.5">
-                        <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+                        <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                           Início
                         </label>
                         <input
@@ -2377,11 +2381,11 @@ export default function Agendamentos() {
                           required={!trancarDiaInteiro}
                           value={trancarHoraInicio}
                           onChange={(e) => setTrancarHoraInicio(e.target.value)}
-                          className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                          className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-xl bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+                        <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                           Fim
                         </label>
                         <input
@@ -2389,7 +2393,7 @@ export default function Agendamentos() {
                           required={!trancarDiaInteiro}
                           value={trancarHoraFim}
                           onChange={(e) => setTrancarHoraFim(e.target.value)}
-                          className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                          className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-xl bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                         />
                       </div>
                     </div>
@@ -2397,7 +2401,7 @@ export default function Agendamentos() {
                     <button
                       type="button"
                       onClick={handleAplicarAtalhoAlmoco}
-                      className="text-[11px] font-semibold text-rose-600 hover:text-rose-800 cursor-pointer underline underline-offset-2"
+                      className="text-xs md:text-[11px] font-semibold text-rose-600 hover:text-rose-800 cursor-pointer underline underline-offset-2"
                     >
                       Atalho: horário de almoço (12:00–13:00)
                     </button>
@@ -2406,7 +2410,7 @@ export default function Agendamentos() {
 
                 {/* Motivo */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
+                  <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
                     Motivo <span className="text-text-muted font-normal normal-case">(opcional)</span>
                   </label>
                   <textarea
@@ -2414,20 +2418,20 @@ export default function Agendamentos() {
                     placeholder="Ex.: feriado, folga, compromisso pessoal..."
                     value={trancarMotivo}
                     onChange={(e) => setTrancarMotivo(e.target.value)}
-                    className="w-full px-3 py-2 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 resize-none"
+                    className="w-full px-3.5 py-3 md:px-3 md:py-2 border border-border rounded-xl bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 resize-none"
                   />
                 </div>
 
                 {trancarError && (
                   <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-800 px-3 py-2 rounded-lg">
-                    <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-600" />
-                    <p className="text-xs font-medium">{trancarError}</p>
+                    <AlertCircle className="w-5 h-5 md:w-4 md:h-4 flex-shrink-0 text-red-600" />
+                    <p className="text-sm md:text-xs font-medium">{trancarError}</p>
                   </div>
                 )}
 
                 <div className="flex items-center gap-2 bg-amber-50/50 border border-amber-100 rounded-lg p-3">
-                  <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                  <p className="text-[11px] text-amber-800 leading-relaxed">
+                  <AlertCircle className="w-5 h-5 md:w-4 md:h-4 text-amber-600 flex-shrink-0" />
+                  <p className="text-xs md:text-[11px] text-amber-800 leading-relaxed">
                     Se já houver agendamentos ativos nesse período, você verá um aviso antes de trancar — eles não são cancelados automaticamente.
                   </p>
                 </div>
@@ -2435,9 +2439,9 @@ export default function Agendamentos() {
                 <button
                   type="submit"
                   disabled={trancarSaving}
-                  className="w-full flex items-center justify-center gap-2 py-3 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+                  className="w-full flex items-center justify-center gap-2 py-3.5 md:py-3 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-xl text-base md:text-sm font-semibold transition-colors cursor-pointer"
                 >
-                  <Lock className="w-4 h-4" />
+                  <Lock className="w-5 h-5 md:w-4 md:h-4" />
                   {trancarSaving ? 'Trancando...' : 'Trancar Horário'}
                 </button>
               </form>
@@ -2467,9 +2471,9 @@ export default function Agendamentos() {
             {/* Header rose */}
             <div className="bg-gradient-to-br from-rose-600 to-rose-500 px-6 pt-3.5 pb-3.5 flex-shrink-0">
               <div className="flex items-start justify-between">
-                <h3 className="font-title font-bold text-lg text-white">Confirmar agendamento</h3>
+                <h3 className="font-title font-bold text-xl md:text-lg text-white">Confirmar agendamento</h3>
                 <button onClick={() => setApproveModalAppt(null)} className="text-rose-200 hover:text-white cursor-pointer mt-0.5">
-                  <X className="w-5 h-5" />
+                  <X className="w-6 h-6 md:w-5 md:h-5" />
                 </button>
               </div>
             </div>
@@ -2478,18 +2482,18 @@ export default function Agendamentos() {
             <div className="p-6 space-y-4 overflow-y-auto">
               <div className="bg-rose-50 border border-rose-100 rounded-xl px-4 py-4 space-y-3">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-rose-400">Cliente</p>
-                  <p className="font-semibold text-sm text-rose-900 mt-0.5">
+                  <p className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-rose-400">Cliente</p>
+                  <p className="font-semibold text-base md:text-sm text-rose-900 mt-0.5">
                     {approveModalAppt.cliente?.nome} {approveModalAppt.cliente?.sobrenome} —{' '}
                     {new Date(approveModalAppt.data_hora).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })} às{' '}
                     {new Date(approveModalAppt.data_hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
                 <div className="border-t border-rose-100 pt-3">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-rose-400">Serviço(s)</p>
-                  <p className="font-semibold text-sm text-rose-900 mt-0.5">{approveModalAppt.agendamento_servicos?.map(s => s.servico?.nome).filter(Boolean).join(', ') || '—'}</p>
+                  <p className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-rose-400">Serviço(s)</p>
+                  <p className="font-semibold text-base md:text-sm text-rose-900 mt-0.5">{approveModalAppt.agendamento_servicos?.map(s => s.servico?.nome).filter(Boolean).join(', ') || '—'}</p>
                   {approveModalAppt.observacoes && (
-                    <p className="text-rose-700 italic text-xs mt-1">"{approveModalAppt.observacoes}"</p>
+                    <p className="text-rose-700 italic text-sm md:text-xs mt-1">"{approveModalAppt.observacoes}"</p>
                   )}
                 </div>
               </div>
@@ -2498,23 +2502,23 @@ export default function Agendamentos() {
                 <button
                   onClick={() => handleApproveConfirm(true)}
                   disabled={approveSaving}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+                  className="flex items-center justify-center gap-2 w-full py-3 md:py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white rounded-xl text-base md:text-sm font-semibold transition-colors cursor-pointer"
                 >
-                  <CheckCircle className="w-4 h-4" />
+                  <CheckCircle className="w-5 h-5 md:w-4 md:h-4" />
                   {approveSaving ? 'Confirmando...' : 'Confirmar e enviar pelo WhatsApp'}
                 </button>
                 <button
                   onClick={() => handleApproveConfirm(false)}
                   disabled={approveSaving}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-rose-600 hover:bg-rose-800 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+                  className="flex items-center justify-center gap-2 w-full py-3 md:py-2.5 bg-rose-600 hover:bg-rose-800 disabled:opacity-60 text-white rounded-xl text-base md:text-sm font-semibold transition-colors cursor-pointer"
                 >
-                  <CheckCircle className="w-4 h-4" />
+                  <CheckCircle className="w-5 h-5 md:w-4 md:h-4" />
                   {approveSaving ? 'Confirmando...' : 'Confirmar sem enviar'}
                 </button>
                 <button
                   onClick={() => setApproveModalAppt(null)}
                   disabled={approveSaving}
-                  className="w-full py-2.5 border border-border hover:bg-bg text-text-secondary rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+                  className="w-full py-3 md:py-2.5 border border-border hover:bg-bg text-text-secondary rounded-xl text-base md:text-sm font-semibold transition-colors cursor-pointer"
                 >
                   Voltar
                 </button>
@@ -2531,9 +2535,9 @@ export default function Agendamentos() {
 
             {/* Header rose */}
             <div className="bg-gradient-to-br from-rose-600 to-rose-500 px-6 pt-3.5 pb-3.5 flex items-start justify-between flex-shrink-0">
-              <h3 className="font-title font-bold text-lg text-white">Recusar agendamento</h3>
+              <h3 className="font-title font-bold text-xl md:text-lg text-white">Recusar agendamento</h3>
               <button onClick={() => setRejectModalAppt(null)} className="text-rose-200 hover:text-white cursor-pointer mt-0.5">
-                <X className="w-5 h-5" />
+                <X className="w-6 h-6 md:w-5 md:h-5" />
               </button>
             </div>
 
@@ -2541,8 +2545,8 @@ export default function Agendamentos() {
             <div className="p-6 space-y-4 overflow-y-auto">
               <div className="bg-rose-50 border border-rose-100 rounded-xl px-4 py-4 space-y-3">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-rose-400">Cliente</p>
-                  <p className="font-semibold text-sm text-rose-900 mt-0.5">
+                  <p className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-rose-400">Cliente</p>
+                  <p className="font-semibold text-base md:text-sm text-rose-900 mt-0.5">
                     {rejectModalAppt.cliente?.nome} {rejectModalAppt.cliente?.sobrenome} —{' '}
                     {new Date(rejectModalAppt.data_hora).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })} às{' '}
                     {new Date(rejectModalAppt.data_hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
@@ -2551,7 +2555,7 @@ export default function Agendamentos() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
+                <label className="text-sm md:text-xs font-semibold text-text-secondary uppercase tracking-wider">
                   Motivo <span className="font-normal normal-case text-text-muted">(opcional)</span>
                 </label>
                 <textarea
@@ -2559,9 +2563,9 @@ export default function Agendamentos() {
                   onChange={e => setRejectMotivo(e.target.value)}
                   placeholder="Ex: Desculpe, não vou conseguir atender nesse horário :("
                   rows={3}
-                  className="w-full border border-border rounded-xl px-3 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-rose-300 resize-none"
+                  className="w-full border border-border rounded-xl px-3.5 py-3 md:px-3 md:py-2.5 text-base md:text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-rose-300 resize-none"
                 />
-                <p className="text-[11px] text-text-muted">
+                <p className="text-xs md:text-[11px] text-text-muted">
                   Se preenchido, o motivo será incluído na mensagem enviada pelo WhatsApp.
                 </p>
               </div>
@@ -2570,23 +2574,23 @@ export default function Agendamentos() {
                 <button
                   onClick={() => handleRejectConfirm(true)}
                   disabled={rejectSaving}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-red-500 hover:bg-red-600 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+                  className="flex items-center justify-center gap-2 w-full py-3 md:py-2.5 bg-red-500 hover:bg-red-600 disabled:opacity-60 text-white rounded-xl text-base md:text-sm font-semibold transition-colors cursor-pointer"
                 >
-                  <XCircle className="w-4 h-4" />
+                  <XCircle className="w-5 h-5 md:w-4 md:h-4" />
                   {rejectSaving ? 'Recusando...' : 'Recusar e notificar pelo WhatsApp'}
                 </button>
                 <button
                   onClick={() => handleRejectConfirm(false)}
                   disabled={rejectSaving}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-rose-600 hover:bg-rose-800 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+                  className="flex items-center justify-center gap-2 w-full py-3 md:py-2.5 bg-rose-600 hover:bg-rose-800 disabled:opacity-60 text-white rounded-xl text-base md:text-sm font-semibold transition-colors cursor-pointer"
                 >
-                  <XCircle className="w-4 h-4" />
+                  <XCircle className="w-5 h-5 md:w-4 md:h-4" />
                   {rejectSaving ? 'Recusando...' : 'Recusar sem notificar'}
                 </button>
                 <button
                   onClick={() => setRejectModalAppt(null)}
                   disabled={rejectSaving}
-                  className="w-full py-2.5 border border-border hover:bg-bg text-text-secondary rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+                  className="w-full py-3 md:py-2.5 border border-border hover:bg-bg text-text-secondary rounded-xl text-base md:text-sm font-semibold transition-colors cursor-pointer"
                 >
                   Voltar
                 </button>
