@@ -66,48 +66,54 @@ export default function InstallAppCard() {
   if (!visible || !device) return null;
 
   return (
-    <div className="bg-white border border-border rounded-[14px] p-6 shadow-sm">
-      <h3 className="font-title font-bold text-lg text-text-primary flex items-center gap-2 border-b border-border pb-3 mb-4">
-        <Smartphone className="w-5 h-5 text-rose-600" />
-        Usar como App
-      </h3>
+    <div className="bg-white border border-border rounded-[14px] shadow-sm overflow-hidden">
+      <div
+        className="px-6 py-4 md:py-3.5 flex items-center gap-2"
+        style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
+      >
+        <Smartphone className="w-6 h-6 md:w-5 md:h-5 text-white" />
+        <h3 className="font-title font-bold text-xl md:text-lg text-white">
+          Usar como App
+        </h3>
+      </div>
 
+      <div className="p-6">
       {installState === 'installed' ? (
         <div className="flex items-center gap-3 p-3.5 bg-green-50 border border-green-200 rounded-xl">
-          <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+          <CheckCircle className="w-6 h-6 md:w-5 md:h-5 text-green-600 flex-shrink-0" />
           <div>
-            <p className="text-sm font-semibold text-green-700">App instalado com sucesso!</p>
-            <p className="text-xs text-green-600 mt-0.5">Agora você pode abrir o Lash Agenda direto pela tela inicial do seu celular.</p>
+            <p className="text-base md:text-sm font-semibold text-green-700">App instalado com sucesso!</p>
+            <p className="text-sm md:text-xs text-green-600 mt-0.5">Agora você pode abrir o Lash Agenda direto pela tela inicial do seu celular.</p>
           </div>
         </div>
       ) : installState === 'installing' ? (
         <div className="flex items-center gap-3 p-3.5 bg-rose-50 border border-rose-100 rounded-xl">
-          <Loader2 className="w-5 h-5 text-rose-600 flex-shrink-0 animate-spin" />
+          <Loader2 className="w-6 h-6 md:w-5 md:h-5 text-rose-600 flex-shrink-0 animate-spin" />
           <div>
-            <p className="text-sm font-semibold text-text-primary">Instalando...</p>
-            <p className="text-xs text-text-secondary mt-0.5">Pode levar alguns segundos. Em breve aparecerá na sua tela inicial 📲</p>
+            <p className="text-base md:text-sm font-semibold text-text-primary">Instalando...</p>
+            <p className="text-sm md:text-xs text-text-secondary mt-0.5">Pode levar alguns segundos. Em breve aparecerá na sua tela inicial 📲</p>
           </div>
         </div>
       ) : (
         <>
-          <p className="text-sm text-text-secondary mb-4 leading-relaxed">
+          <p className="text-base md:text-sm text-text-secondary mb-4 leading-relaxed">
             Instale o Lash Agenda na tela inicial do seu celular para acessar com um toque, sem precisar abrir o navegador.
           </p>
 
           {device === 'android-chrome' && deferredPrompt ? (
             <button
               onClick={handleInstall}
-              className="flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-800 text-white text-sm font-semibold rounded-xl transition-all cursor-pointer"
+              className="flex items-center gap-2 px-4 py-3.5 md:py-2.5 bg-rose-600 hover:bg-rose-800 text-white text-base md:text-sm font-bold md:font-semibold rounded-full md:rounded-xl transition-all cursor-pointer"
             >
-              <Download className="w-4 h-4" />
+              <Download className="w-5 h-5 md:w-4 md:h-4" />
               Instalar agora
             </button>
           ) : device === 'ios-safari' ? (
             <div className="space-y-3">
-              <div className="bg-rose-50/50 border border-rose-100 rounded-xl p-3.5 text-xs text-text-secondary leading-relaxed">
+              <div className="bg-rose-50/50 border border-rose-100 rounded-xl p-3.5 text-sm md:text-xs text-text-secondary leading-relaxed">
                 Toque em{' '}
                 <span className="inline-flex items-center gap-0.5 font-semibold text-text-primary">
-                  <svg className="w-3.5 h-3.5 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg className="w-4 h-4 md:w-3.5 md:h-3.5 inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
                     <polyline points="16 6 12 2 8 6"/>
                     <line x1="12" y1="2" x2="12" y2="15"/>
@@ -117,25 +123,26 @@ export default function InstallAppCard() {
                 {' '}na barra do Safari e depois em{' '}
                 <span className="font-semibold text-text-primary">"Adicionar à Tela de Início"</span>.
               </div>
-              <button onClick={handleAlreadyInstalled} className="text-xs text-text-muted hover:text-text-primary underline transition-colors cursor-pointer">
+              <button onClick={handleAlreadyInstalled} className="text-sm md:text-xs text-text-muted hover:text-text-primary underline transition-colors cursor-pointer">
                 Já instalei — não mostrar mais
               </button>
             </div>
           ) : (
             <div className="space-y-3">
-              <div className="bg-rose-50/50 border border-rose-100 rounded-xl p-3.5 text-xs text-text-secondary leading-relaxed">
+              <div className="bg-rose-50/50 border border-rose-100 rounded-xl p-3.5 text-sm md:text-xs text-text-secondary leading-relaxed">
                 Toque no menu{' '}
                 <span className="font-semibold text-text-primary">⋮</span>
                 {' '}do Chrome e depois em{' '}
                 <span className="font-semibold text-text-primary">"Adicionar à tela inicial"</span>.
               </div>
-              <button onClick={handleAlreadyInstalled} className="text-xs text-text-muted hover:text-text-primary underline transition-colors cursor-pointer">
+              <button onClick={handleAlreadyInstalled} className="text-sm md:text-xs text-text-muted hover:text-text-primary underline transition-colors cursor-pointer">
                 Já instalei — não mostrar mais
               </button>
             </div>
           )}
         </>
       )}
+      </div>
     </div>
   );
 }
