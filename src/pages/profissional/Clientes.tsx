@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useOnboarding } from '../../hooks/useOnboarding';
 import { supabase } from '../../lib/supabase';
+import ConfirmModal from '../../components/common/ConfirmModal';
 import {
   Plus,
   Search,
@@ -103,6 +104,16 @@ export default function Clientes() {
     setEndereco('');
   };
 
+  const [successModal, setSuccessModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+  }>({
+    isOpen: false,
+    title: '',
+    description: '',
+  });
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -148,8 +159,14 @@ export default function Clientes() {
       if (!newClient) throw new Error('Erro ao salvar cliente.');
 
       await registrarLog('criou', 'cliente', newClient.id, `Cadastrou o cliente "${nome}"`);
+      const nomeCadastrado = nome;
       resetForm();
       fetchData();
+      setSuccessModal({
+        isOpen: true,
+        title: 'Cliente cadastrada!',
+        description: `${nomeCadastrado} foi cadastrada com sucesso.`,
+      });
     } catch (err) {
       console.error(err);
       showTemporaryError('Falha ao salvar o cliente.');
@@ -230,14 +247,14 @@ export default function Clientes() {
 
       {/* Nova Cliente — formulário inline */}
       <div id="ob-clientes-add-btn" className="bg-white border border-border rounded-[14px] p-6 shadow-sm">
-        <h2 className="font-title font-semibold text-xl text-text-primary mb-5 flex items-center gap-2">
-          <UserPlus className="w-5 h-5 text-rose-600" />
+        <h2 className="font-title font-semibold text-2xl md:text-xl text-text-primary mb-5 flex items-center gap-2">
+          <UserPlus className="w-6 h-6 md:w-5 md:h-5 text-rose-600" />
           Nova Cliente
         </h2>
 
         <form onSubmit={handleSave} className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+            <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
               Nome <span className="text-red-500">*</span>
             </label>
             <input
@@ -246,12 +263,12 @@ export default function Clientes() {
               placeholder="Ex: Amanda Oliveira"
               value={nome}
               onChange={(e) => setNome(e.target.value)}
-              className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+              className="w-full px-3.5 py-3.5 md:px-3 md:py-2.5 border border-border rounded-xl bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+            <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
               WhatsApp <span className="text-red-500">*</span>
             </label>
             <input
@@ -261,16 +278,16 @@ export default function Clientes() {
               placeholder="Ex: (11) 99999-9999"
               value={whatsapp}
               onChange={(e) => setWhatsapp(applyPhoneMask(e.target.value))}
-              className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+              className="w-full px-3.5 py-3.5 md:px-3 md:py-2.5 border border-border rounded-xl bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
             />
           </div>
 
           <button
             type="button"
             onClick={() => setShowOptionalFields(prev => !prev)}
-            className="flex items-center gap-1.5 text-xs font-semibold text-rose-600 hover:text-rose-800 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 text-sm md:text-xs font-semibold text-rose-600 hover:text-rose-800 transition-colors cursor-pointer"
           >
-            <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showOptionalFields ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 md:w-3.5 md:h-3.5 transition-transform ${showOptionalFields ? 'rotate-180' : ''}`} />
             {showOptionalFields ? 'Ocultar dados opcionais' : 'Adicionar mais detalhes (opcional)'}
           </button>
 
@@ -278,7 +295,7 @@ export default function Clientes() {
             <div className="space-y-4 pt-1 animate-fade-in">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                  <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
                     Email
                   </label>
                   <input
@@ -286,25 +303,25 @@ export default function Clientes() {
                     placeholder="maria@exemplo.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                    className="w-full px-3.5 py-3.5 md:px-3 md:py-2.5 border border-border rounded-xl bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                  <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
                     Data de Nascimento
                   </label>
                   <input
                     type="date"
                     value={dataNascimento}
                     onChange={(e) => setDataNascimento(e.target.value)}
-                    className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                    className="w-full px-3.5 py-3.5 md:px-3 md:py-2.5 border border-border rounded-xl bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
                   CPF
                 </label>
                 <input
@@ -313,12 +330,12 @@ export default function Clientes() {
                   placeholder="000.000.000-00"
                   value={cpf}
                   onChange={(e) => setCpf(applyCpfMask(e.target.value))}
-                  className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                  className="w-full px-3.5 py-3.5 md:px-3 md:py-2.5 border border-border rounded-xl bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
                   Endereço Completo
                 </label>
                 <input
@@ -326,7 +343,7 @@ export default function Clientes() {
                   placeholder="Rua, Número, Bairro, Cidade..."
                   value={endereco}
                   onChange={(e) => setEndereco(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                  className="w-full px-3.5 py-3.5 md:px-3 md:py-2.5 border border-border rounded-xl bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                 />
               </div>
             </div>
@@ -334,45 +351,48 @@ export default function Clientes() {
 
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-1.5 py-3 bg-rose-600 hover:bg-rose-800 text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+            className="w-full flex items-center justify-center gap-1.5 py-4 md:py-3 bg-rose-600 hover:bg-rose-800 text-white rounded-full md:rounded-xl text-base md:text-sm font-bold md:font-semibold transition-colors cursor-pointer"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-5 h-5 md:w-4 md:h-4" />
             Cadastrar Cliente
           </button>
         </form>
       </div>
 
-      {/* Cadastro Automático */}
-      <div className="bg-rose-50 border border-rose-200 rounded-[14px] p-5 flex items-start gap-3">
-        <div className="w-9 h-9 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 flex-shrink-0">
-          <Sparkles className="w-4 h-4" />
+      {/* Cadastro Automático — some quando ela já tem clientes suficientes
+          (de qualquer origem) pra ter entendido como funciona. */}
+      {clientes.length < 3 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-[14px] p-5 flex items-start gap-3">
+          <div className="w-11 h-11 md:w-9 md:h-9 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600 flex-shrink-0">
+            <Sparkles className="w-5 h-5 md:w-4 md:h-4" />
+          </div>
+          <div>
+            <p className="font-semibold text-base md:text-sm text-amber-900">Cadastro Automático</p>
+            <p className="text-sm md:text-xs text-amber-800 mt-1.5 md:mt-1 leading-relaxed">
+              Não se preocupe em cadastrar todas as suas clientes manualmente! Conforme elas forem agendando pelo seu{' '}
+              <span className="font-semibold text-amber-900">link de agendamento</span>, o sistema criará o cadastro de cada uma automaticamente.
+            </p>
+          </div>
         </div>
-        <div>
-          <p className="font-semibold text-sm text-text-primary">Cadastro Automático</p>
-          <p className="text-xs text-text-secondary mt-1 leading-relaxed">
-            Não se preocupe em cadastrar todas as suas clientes manualmente! Conforme elas forem agendando pelo seu{' '}
-            <span className="font-semibold text-rose-600">link de agendamento</span>, o sistema criará o cadastro de cada uma automaticamente.
-          </p>
-        </div>
-      </div>
+      )}
 
       {/* Sua Lista */}
       <div id="ob-clientes-lista" className="bg-white border border-border rounded-[14px] overflow-hidden shadow-sm">
         <div className="p-5 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <h2 className="font-title font-semibold text-xl text-text-primary">Sua Lista</h2>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-rose-50 text-rose-600">
+            <h2 className="font-title font-semibold text-2xl md:text-xl text-text-primary">Sua Lista</h2>
+            <span className="text-sm md:text-xs font-semibold px-3 py-1.5 md:px-2.5 md:py-1 rounded-full bg-rose-50 text-rose-600">
               {filteredClientes.length} cadastrados
             </span>
           </div>
           <div id="ob-clientes-search" className="relative w-full md:max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-text-muted" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 md:w-4 md:h-4 text-text-muted" />
             <input
               type="text"
               placeholder="Buscar por nome ou WhatsApp..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
+              className="w-full pl-10 pr-4 py-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
             />
           </div>
         </div>
@@ -380,13 +400,13 @@ export default function Clientes() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 text-text-secondary">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-600 mb-2"></div>
-            <p className="text-sm">Carregando clientes...</p>
+            <p className="text-base md:text-sm">Carregando clientes...</p>
           </div>
         ) : filteredClientes.length === 0 ? (
           <div className="p-12 text-center text-text-secondary">
             <UserPlus className="w-12 h-12 text-rose-200 mx-auto mb-3" />
-            <p className="font-title font-medium text-lg text-text-primary">Nenhum cliente ainda</p>
-            <p className="text-sm text-text-muted mt-1">
+            <p className="font-title font-medium text-xl md:text-lg text-text-primary">Nenhum cliente ainda</p>
+            <p className="text-base md:text-sm text-text-muted mt-1">
               Os clientes aparecerão aqui quando você cadastrar ou quando eles agendarem pelo link público.
             </p>
           </div>
@@ -402,30 +422,30 @@ export default function Clientes() {
                     onClick={() => navigate(`/clientes/${client.id}`)}
                     className="flex items-center gap-3 px-5 py-4 hover:bg-bg/25 transition-colors cursor-pointer group"
                   >
-                    <div className="w-10 h-10 flex-shrink-0 rounded-full bg-rose-100 border border-rose-200 text-rose-800 flex items-center justify-center font-title font-semibold text-sm">
+                    <div className="w-12 h-12 md:w-10 md:h-10 flex-shrink-0 rounded-full bg-rose-100 border border-rose-200 text-rose-800 flex items-center justify-center font-title font-semibold text-base md:text-sm">
                       {initials}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-text-primary group-hover:text-rose-600 transition-colors truncate">
+                      <p className="text-base md:text-sm font-semibold text-text-primary group-hover:text-rose-600 transition-colors truncate">
                         {client.nome} {client.sobrenome}
                       </p>
-                      <p className="text-xs text-text-muted truncate">{client.whatsapp}</p>
+                      <p className="text-sm md:text-xs text-text-muted truncate">{client.whatsapp}</p>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() => client.whatsapp && handleOpenWhatsApp(client.whatsapp)}
                         disabled={!client.whatsapp}
-                        className="w-8 h-8 rounded-full bg-green-50 text-green-600 hover:bg-green-100 flex items-center justify-center transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="w-10 h-10 md:w-8 md:h-8 rounded-full bg-green-50 text-green-600 hover:bg-green-100 flex items-center justify-center transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                         title="Abrir WhatsApp"
                       >
-                        <MessageCircle className="w-4 h-4" />
+                        <MessageCircle className="w-5 h-5 md:w-4 md:h-4" />
                       </button>
                       <button
                         onClick={() => setClientToDelete({ id: client.id, name: `${client.nome} ${client.sobrenome || ''}` })}
-                        className="w-8 h-8 rounded-full bg-bg text-text-secondary hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors cursor-pointer"
+                        className="w-10 h-10 md:w-8 md:h-8 rounded-full bg-bg text-text-secondary hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-colors cursor-pointer"
                         title="Excluir Cliente"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-5 h-5 md:w-4 md:h-4" />
                       </button>
                     </div>
                   </div>
@@ -435,23 +455,23 @@ export default function Clientes() {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-border flex items-center justify-between text-xs text-text-secondary bg-rose-50/5">
+              <div className="px-6 py-4 border-t border-border flex items-center justify-between text-sm md:text-xs text-text-secondary bg-rose-50/5">
                 <span>Página {currentPage} de {totalPages} ({filteredClientes.length} total)</span>
 
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
-                    className="p-1.5 border border-border rounded-lg bg-white hover:bg-bg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    className="p-2 md:p-1.5 border border-border rounded-lg bg-white hover:bg-bg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
-                    <ChevronLeft className="w-4 h-4" />
+                    <ChevronLeft className="w-5 h-5 md:w-4 md:h-4" />
                   </button>
                   <button
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
-                    className="p-1.5 border border-border rounded-lg bg-white hover:bg-bg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    className="p-2 md:p-1.5 border border-border rounded-lg bg-white hover:bg-bg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
-                    <ChevronRight className="w-4 h-4" />
+                    <ChevronRight className="w-5 h-5 md:w-4 md:h-4" />
                   </button>
                 </div>
               </div>
@@ -468,10 +488,10 @@ export default function Clientes() {
                 <AlertCircle className="w-5 h-5 animate-pulse" />
               </div>
               <div className="space-y-1.5 flex-1">
-                <h4 className="font-title font-semibold text-lg text-text-primary">
+                <h4 className="font-title font-semibold text-xl md:text-lg text-text-primary">
                   Confirmar Exclusão
                 </h4>
-                <p className="text-xs text-text-secondary leading-relaxed">
+                <p className="text-sm md:text-xs text-text-secondary leading-relaxed">
                   Tem certeza que deseja excluir permanentemente a cliente <span className="font-semibold text-text-primary">{clientToDelete.name}</span>?
                   Esta ação irá apagar definitivamente o cadastro e todo o seu histórico de atendimentos e agendamentos, e não poderá ser desfeita.
                 </p>
@@ -483,7 +503,7 @@ export default function Clientes() {
                 type="button"
                 onClick={() => setClientToDelete(null)}
                 disabled={isDeleting}
-                className="px-4 py-2 border border-border rounded-lg text-xs font-medium text-text-secondary hover:bg-bg transition-colors cursor-pointer disabled:opacity-50"
+                className="px-4 py-2.5 md:py-2 border border-border rounded-lg text-sm md:text-xs font-medium text-text-secondary hover:bg-bg transition-colors cursor-pointer disabled:opacity-50"
               >
                 Cancelar
               </button>
@@ -491,13 +511,24 @@ export default function Clientes() {
                 type="button"
                 onClick={handleDeleteClient}
                 disabled={isDeleting}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5"
+                className="px-4 py-2.5 md:py-2 bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white rounded-lg text-sm md:text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5"
               >
                 {isDeleting ? 'Excluindo...' : 'Confirmar Exclusão'}
               </button>
             </div>
           </div>
         </div>, document.body)}
+
+      <ConfirmModal
+        isOpen={successModal.isOpen}
+        onClose={() => setSuccessModal({ ...successModal, isOpen: false })}
+        onConfirm={() => setSuccessModal({ ...successModal, isOpen: false })}
+        title={successModal.title}
+        description={successModal.description}
+        type="success"
+        confirmText="OK"
+        singleAction
+      />
     </div>
   );
 }
