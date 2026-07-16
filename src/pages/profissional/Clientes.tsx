@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import type { Cliente } from '../../types';
 import { registrarLog } from '../../utils/log';
+import { getInitials } from '../../utils/initials';
 
 function applyPhoneMask(value: string): string {
   const digits = value.replace(/\D/g, '');
@@ -422,7 +423,7 @@ export default function Clientes() {
           <>
             <div className="divide-y divide-border">
               {paginatedClientes.map(client => {
-                const initials = `${client.nome[0] || ''}${(client.sobrenome || '')[0] || ''}`.toUpperCase();
+                const initials = getInitials(client.nome, client.sobrenome);
 
                 return (
                   <div

@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import type { Cliente, Servico, VariacaoServico } from '../../types';
 import { registrarLog } from '../../utils/log';
+import { getInitials } from '../../utils/initials';
 
 interface AtendimentoWithRelations {
   id: string;
@@ -415,7 +416,7 @@ export default function PerfilCliente() {
     );
   }
 
-  const initials = `${cliente.nome[0] || ''}${(cliente.sobrenome || '')[0] || ''}`.toUpperCase();
+  const initials = getInitials(cliente.nome, cliente.sobrenome);
   const selectedService = servicos.find(s => s.id === atendimentoServicoId);
 
   return (

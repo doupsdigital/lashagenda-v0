@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import type { Cliente } from '../../types';
 import { registrarLog } from '../../utils/log';
+import { getInitials } from '../../utils/initials';
 
 export default function FichaAnamneseDetalhe() {
   const { id } = useParams<{ id: string }>();
@@ -224,7 +225,7 @@ export default function FichaAnamneseDetalhe() {
     );
   }
 
-  const initials = `${cliente.nome[0] || ''}${(cliente.sobrenome || '')[0] || ''}`.toUpperCase();
+  const initials = getInitials(cliente.nome, cliente.sobrenome);
 
   const selectClass = "w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 cursor-pointer";
   const inputClass = "w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted";

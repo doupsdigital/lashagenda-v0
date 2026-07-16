@@ -6,6 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { registrarLog } from '../../utils/log';
 import { useSwipeToClose } from '../../hooks/useSwipeToClose';
 import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
+import { getInitials } from '../../utils/initials';
 import type {
   Cliente,
   Servico,
@@ -482,7 +483,7 @@ export default function AgendamentoFormSheet({
                 <div className="flex items-center justify-between bg-rose-50 border border-rose-200 rounded-lg p-2.5">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 md:w-7 md:h-7 rounded-full bg-rose-200 text-rose-800 flex items-center justify-center font-bold text-sm md:text-xs">
-                      {selectedCliente.nome[0]}{(selectedCliente.sobrenome || '')[0]}
+                      {getInitials(selectedCliente.nome, selectedCliente.sobrenome)}
                     </div>
                     <div>
                       <p className="text-sm md:text-xs font-bold text-text-primary">{selectedCliente.nome} {selectedCliente.sobrenome}</p>
