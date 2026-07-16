@@ -139,6 +139,25 @@ export interface AgendamentoServico {
   variacao?: VariacaoServico;
 }
 
+export interface AgendamentoServicoInput {
+  servico_id: string;
+  variacao_id: string;
+  nome: string;
+  duracao: number;
+  valor: number;
+}
+
+export interface AgendamentoWithRelations extends Omit<Agendamento, 'cliente'> {
+  cliente?: { id: string; nome: string; sobrenome: string; whatsapp: string };
+  agendamento_servicos?: {
+    servico_id: string;
+    variacao_id: string | null;
+    valor_cobrado: number;
+    servico?: { nome: string };
+    variacao?: { nome: string };
+  }[];
+}
+
 export interface Atendimento {
   id: string;
   cliente_id: string;

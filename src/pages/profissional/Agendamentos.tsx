@@ -9,7 +9,6 @@ import {
   ChevronRight,
   ChevronDown,
   CalendarDays,
-  Search,
   AlertCircle,
   X,
   Clock,
@@ -23,35 +22,17 @@ import {
   Lock
 } from 'lucide-react';
 import type {
-  Agendamento,
   Cliente,
   Servico,
   VariacaoServico,
   BloqueioAgenda,
+  AgendamentoWithRelations,
 } from '../../types';
 import { registrarLog } from '../../utils/log';
 import ConfirmModal from '../../components/common/ConfirmModal';
 import TrancarHorarioSheet from '../../components/common/TrancarHorarioSheet';
+import AgendamentoFormSheet from '../../components/common/AgendamentoFormSheet';
 import { useAuth } from '../../contexts/AuthContext';
-
-interface AgendamentoServicoInput {
-  servico_id: string;
-  variacao_id: string;
-  nome: string;
-  duracao: number;
-  valor: number;
-}
-
-interface AgendamentoWithRelations extends Omit<Agendamento, 'cliente'> {
-  cliente?: { id: string; nome: string; sobrenome: string; whatsapp: string };
-  agendamento_servicos?: {
-    servico_id: string;
-    variacao_id: string | null;
-    valor_cobrado: number;
-    servico?: { nome: string };
-    variacao?: { nome: string };
-  }[];
-}
 
 const DIAS_SEMANA = [
   { valor: 0, nome: 'Domingo', sigla: 'Dom' },
@@ -106,7 +87,9 @@ export default function Agendamentos() {
   // Form / Modal States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [formOpenDate, setFormOpenDate] = useState<Date | undefined>(undefined);
+  const [formOpenHour, setFormOpenHour] = useState<string | undefined>(undefined);
+  const [preSelectedCliente, setPreSelectedCliente] = useState<Cliente | null>(null);
 
   // Conclude Modal States
   const [concludeAppt, setConcludeAppt] = useState<AgendamentoWithRelations | null>(null);
@@ -135,19 +118,6 @@ export default function Agendamentos() {
   const [selectedAppt, setSelectedAppt] = useState<AgendamentoWithRelations | null>(null);
   const [editingAppt, setEditingAppt] = useState<AgendamentoWithRelations | null>(null);
 
-  // Autocomplete search states
-  const [clientSearchQuery, setClientSearchQuery] = useState('');
-  const [foundClientes, setFoundClientes] = useState<Cliente[]>([]);
-  const [selectedCliente, setSelectedCliente] = useState<Cliente | null>(null);
-  const [showClientDropdown, setShowClientDropdown] = useState(false);
-  const clientInputRef = useRef<HTMLInputElement>(null);
-
-  // Form Fields
-  const [formData, setFormData] = useState('');
-  const [formHora, setFormHora] = useState('09:00');
-  const [formDuracao, setFormDuracao] = useState(30);
-  const [formObs, setFormObs] = useState('');
-
   const [pendingOpen, setPendingOpen] = useState(() => !!(location.state as { openPending?: boolean })?.openPending);
 
   // View mode dropdown (toolbar)
@@ -171,9 +141,11 @@ export default function Agendamentos() {
   useEffect(() => {
     const state = location.state as { novoAgendamento?: boolean; clientePreSelecionado?: Cliente } | null;
     if (state?.novoAgendamento && state.clientePreSelecionado) {
-      handleOpenForm();
-      setSelectedCliente(state.clientePreSelecionado);
-      setClientSearchQuery(`${state.clientePreSelecionado.nome} ${state.clientePreSelecionado.sobrenome || ''}`.trim());
+      setEditingAppt(null);
+      setFormOpenDate(undefined);
+      setFormOpenHour(undefined);
+      setPreSelectedCliente(state.clientePreSelecionado);
+      setIsModalOpen(true);
       window.history.replaceState({}, '');
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -186,9 +158,6 @@ export default function Agendamentos() {
   const [approveModalAppt, setApproveModalAppt] = useState<AgendamentoWithRelations | null>(null);
   const [approveSaving, setApproveSaving] = useState(false);
   const approveSavingRef = useRef(false);
-  
-  // Selected services in the form
-  const [selectedServices, setSelectedServices] = useState<Record<string, AgendamentoServicoInput>>({});
 
   const showTemporaryError = (msg: string) => {
     setErrorMessage(msg);
@@ -294,39 +263,6 @@ export default function Agendamentos() {
     }
   }, [estabelecimentoId]);
 
-  // CLIENT AUTOCOMPLETE SEARCH
-  useEffect(() => {
-    const searchClients = async () => {
-      if (clientSearchQuery.trim().length < 2) {
-        setFoundClientes([]);
-        return;
-      }
-      if (!estabelecimentoId) return;
-
-      try {
-        const { data, error } = await supabase
-          .from('clientes')
-          .select('*')
-          .eq('estabelecimento_id', estabelecimentoId)
-          .or(`nome.ilike.%${clientSearchQuery}%,sobrenome.ilike.%${clientSearchQuery}%,whatsapp.like.%${clientSearchQuery}%`)
-          .limit(5);
-
-        if (error) throw error;
-        setFoundClientes(data || []);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    const delayDebounce = setTimeout(() => {
-      searchClients();
-    }, 300);
-
-    return () => clearTimeout(delayDebounce);
-  }, [clientSearchQuery, estabelecimentoId]);
-
-
-
   // Date helper functions
   const getStartOfWeek = (d: Date) => {
     const date = new Date(d);
@@ -386,84 +322,16 @@ export default function Agendamentos() {
   // OPEN MODAL FOR NEW APPOINTMENT (FROM SLOT OR BUTTON)
   const handleOpenForm = (date?: Date, hourStr?: string) => {
     setEditingAppt(null);
-    setSelectedCliente(null);
-    setClientSearchQuery('');
-    setFormObs('');
-    setSelectedServices({});
-    setFormDuracao(0);
-    
-    const targetDate = date ? date.toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
-    setFormData(targetDate);
-
-    if (hourStr) {
-      setFormHora(hourStr);
-    } else {
-      const selectedDay = date || new Date();
-      const dayOfWeek = selectedDay.getDay();
-      const sched = workHoursConfig.find(h => h.dia_semana === dayOfWeek);
-      if (sched) {
-        setFormHora(sched.hora_inicio.substring(0, 5));
-      } else {
-        setFormHora('09:00');
-      }
-    }
+    setPreSelectedCliente(null);
+    setFormOpenDate(date);
+    setFormOpenHour(hourStr);
     setIsModalOpen(true);
-  };
-
-  const handleDateChange = (newDateStr: string) => {
-    setFormData(newDateStr);
-    const dateObj = new Date(`${newDateStr}T12:00:00`);
-    const dayOfWeek = dateObj.getDay();
-    const sched = workHoursConfig.find(h => h.dia_semana === dayOfWeek);
-    if (sched) {
-      setFormHora(sched.hora_inicio.substring(0, 5));
-    } else {
-      setFormHora('09:00');
-    }
   };
 
   // OPEN EDIT FORM
   const handleOpenEditForm = (appt: AgendamentoWithRelations) => {
     setIsDetailOpen(false);
     setEditingAppt(appt);
-
-    // Populate Client
-    if (appt.cliente) {
-      setSelectedCliente({
-        id: appt.cliente.id,
-        nome: appt.cliente.nome,
-        sobrenome: appt.cliente.sobrenome,
-        whatsapp: appt.cliente.whatsapp,
-        ativo: true,
-        gestante: false
-      } as Cliente);
-    }
-
-    setFormObs(appt.observacoes || '');
-    setFormDuracao(appt.duracao_minutos);
-
-    const dateObj = new Date(appt.data_hora);
-    setFormData(dateObj.toISOString().split('T')[0]);
-    
-    const h = dateObj.getHours().toString().padStart(2, '0');
-    const m = dateObj.getMinutes().toString().padStart(2, '0');
-    setFormHora(`${h}:${m}`);
-
-    // Populate Services record map
-    const servicesMap: Record<string, AgendamentoServicoInput> = {};
-    if (appt.agendamento_servicos) {
-      appt.agendamento_servicos.forEach(as => {
-        const fullSrv = servicos.find(s => s.id === as.servico_id);
-        servicesMap[as.servico_id] = {
-          servico_id: as.servico_id,
-          variacao_id: as.variacao_id || '',
-          nome: as.servico?.nome || fullSrv?.nome || '',
-          duracao: fullSrv?.duracao_minutos || 30,
-          valor: Number(as.valor_cobrado)
-        };
-      });
-    }
-    setSelectedServices(servicesMap);
     setIsModalOpen(true);
   };
 
@@ -473,265 +341,7 @@ export default function Agendamentos() {
     setIsDetailOpen(true);
   };
 
-  // FORM SERVICE CHECKBOX LOGIC
-  const handleToggleServiceCheckbox = (serv: Servico & { variacoes_servico?: VariacaoServico[] }, checked: boolean) => {
-    const updated = { ...selectedServices };
-
-    if (checked) {
-      const hasVars = serv.variacoes_servico && serv.variacoes_servico.length > 0;
-      const firstVar = hasVars ? serv.variacoes_servico![0] : null;
-
-      updated[serv.id] = {
-        servico_id: serv.id,
-        variacao_id: firstVar ? firstVar.id : '',
-        nome: serv.nome,
-        duracao: serv.duracao_minutos,
-        valor: firstVar ? Number(firstVar.valor) : Number(serv.valor)
-      };
-    } else {
-      delete updated[serv.id];
-    }
-
-    setSelectedServices(updated);
-    recalculateDurationAndValues(updated);
-  };
-
-  const handleFormVariationChange = (servId: string, variationId: string) => {
-    const service = servicos.find(s => s.id === servId);
-    if (!service || !service.variacoes_servico) return;
-
-    const variation = service.variacoes_servico.find(v => v.id === variationId);
-    if (!variation) return;
-
-    const updated = {
-      ...selectedServices,
-      [servId]: {
-        ...selectedServices[servId],
-        variacao_id: variationId,
-        valor: Number(variation.valor)
-      }
-    };
-    setSelectedServices(updated);
-  };
-
-  const handleServicePriceChange = (servId: string, val: number) => {
-    const updated = {
-      ...selectedServices,
-      [servId]: {
-        ...selectedServices[servId],
-        valor: val
-      }
-    };
-    setSelectedServices(updated);
-  };
-
-  const recalculateDurationAndValues = (servicesMap: Record<string, AgendamentoServicoInput>) => {
-    const totalD = Object.values(servicesMap).reduce((sum, s) => sum + s.duracao, 0);
-    setFormDuracao(totalD);
-  };
-
-  // SAVE APPOINTMENT (CREATE OR EDIT)
-  const handleSaveAppointment = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!selectedCliente) {
-      showTemporaryError('Você deve selecionar um cliente cadastrado.');
-      return;
-    }
-
-    const servicesList = Object.values(selectedServices);
-    if (servicesList.length === 0) {
-      showTemporaryError('Selecione pelo menos 1 serviço.');
-      return;
-    }
-
-    if (formDuracao <= 0) {
-      showTemporaryError('A duração total deve ser maior que 0 minutos.');
-      return;
-    }
-
-    setSaving(true);
-    try {
-      // 1. Calculate time coordinates
-      const startDateTime = new Date(`${formData}T${formHora}:00`);
-      const endDateTime = new Date(startDateTime.getTime() + formDuracao * 60000);
-
-      const dayOfWeek = startDateTime.getDay();
-      const startHourStr = startDateTime.toLocaleTimeString('pt-BR', { hour12: false });
-      const endHourStr = endDateTime.toLocaleTimeString('pt-BR', { hour12: false });
-
-      // Check if the date falls in a blocked period (full day or overlapping time slot)
-      const isBlocked = bloqueios.some(b => {
-        if (formData >= b.data_inicio && formData <= b.data_fim) {
-          if (b.dia_inteiro !== false) {
-            return true; // full day block
-          }
-          if (b.hora_inicio && b.hora_fim) {
-            return startHourStr < b.hora_fim && endHourStr > b.hora_inicio; // hourly overlap
-          }
-        }
-        return false;
-      });
-
-      if (isBlocked) {
-        showTemporaryError('O horário ou dia selecionado está bloqueado.');
-        setSaving(false);
-        return;
-      }
-
-      // 2. Expediente check: consult global horarios_atendimento (skip if not configured)
-      if (workHoursConfig.length > 0) {
-        const daySched = workHoursConfig.find(h => h.dia_semana === dayOfWeek);
-        if (!daySched) {
-          showTemporaryError('Não há atendimento configurado para o dia selecionado.');
-          setSaving(false);
-          return;
-        }
-        if (startHourStr < daySched.hora_inicio || endHourStr > daySched.hora_fim) {
-          showTemporaryError(`Horário fora do expediente (${daySched.hora_inicio.substring(0, 5)} - ${daySched.hora_fim.substring(0, 5)}).`);
-          setSaving(false);
-          return;
-        }
-      }
-
-      // 3. Overlap check against global agenda (excluding itself if editing)
-      // Usa boundaries derivadas do horário local para evitar desalinhamento de fuso
-      const dayStart = new Date(startDateTime);
-      dayStart.setHours(0, 0, 0, 0);
-      const dayEnd = new Date(startDateTime);
-      dayEnd.setHours(23, 59, 59, 999);
-
-      let agendaQuery = supabase
-        .from('agendamentos')
-        .select('*')
-        .eq('estabelecimento_id', estabelecimentoId)
-        .neq('status', 'cancelado')
-        .neq('status', 'falta')
-        .gte('data_hora', dayStart.toISOString())
-        .lte('data_hora', dayEnd.toISOString());
-
-      if (editingAppt) {
-        agendaQuery = agendaQuery.neq('id', editingAppt.id);
-      }
-
-      const { data: agendaAppts, error: agendaErr } = await agendaQuery;
-      if (agendaErr) throw agendaErr;
-
-      const agendaConflict = (agendaAppts || []).some(appt => {
-        const apptStart = new Date(appt.data_hora);
-        const apptEnd = new Date(apptStart.getTime() + appt.duracao_minutos * 60000);
-        return startDateTime < apptEnd && endDateTime > apptStart;
-      });
-
-      if (agendaConflict) {
-        showTemporaryError('Já existe outro agendamento neste mesmo horário.');
-        setSaving(false);
-        return;
-      }
-
-      let apptId = '';
-      const clientName = `${selectedCliente.nome} ${selectedCliente.sobrenome || ''}`.trim();
-      let createdNew = false;
-      let existingRelationsIds: string[] = [];
-
-      if (editingAppt) {
-        // Busca IDs das relações existentes para rollback posterior
-        const { data: existingRels } = await supabase
-          .from('agendamento_servicos')
-          .select('id')
-          .eq('agendamento_id', editingAppt.id);
-        existingRelationsIds = existingRels?.map(r => r.id) || [];
-
-        const { error } = await supabase
-          .from('agendamentos')
-          .update({
-            cliente_id: selectedCliente.id,
-            data_hora: startDateTime.toISOString(),
-            duracao_minutos: formDuracao,
-            observacoes: formObs.trim() || null
-          })
-          .eq('id', editingAppt.id)
-          .eq('estabelecimento_id', estabelecimentoId);
-
-        if (error) throw error;
-        apptId = editingAppt.id;
-      } else {
-        const { data: apptResult, error: apptError } = await supabase
-          .from('agendamentos')
-          .insert({
-            estabelecimento_id: estabelecimentoId,
-            cliente_id: selectedCliente.id,
-            data_hora: startDateTime.toISOString(),
-            duracao_minutos: formDuracao,
-            status: 'confirmado',
-            origem: 'admin',
-            observacoes: formObs.trim() || null
-          })
-          .select()
-          .single();
-
-        if (apptError) throw apptError;
-        if (!apptResult) throw new Error('Falha ao criar agendamento.');
-        apptId = apptResult.id;
-        createdNew = true;
-      }
-
-      // 5. Inserir Agendamento Serviços
-      const relPayloads = servicesList.map(s => ({
-        agendamento_id: apptId,
-        servico_id: s.servico_id,
-        variacao_id: s.variacao_id || null,
-        valor_cobrado: s.valor
-      }));
-
-      const { error: relError } = await supabase
-        .from('agendamento_servicos')
-        .insert(relPayloads);
-
-      if (relError) {
-        // Rollback se for novo agendamento para evitar órfão
-        if (createdNew && apptId) {
-          await supabase.from('agendamentos').delete().eq('id', apptId);
-        }
-        throw relError;
-      }
-
-      // Se for edição, remove os antigos apenas APÓS os novos serem inseridos com sucesso
-      if (editingAppt && existingRelationsIds.length > 0) {
-        await supabase
-          .from('agendamento_servicos')
-          .delete()
-          .in('id', existingRelationsIds);
-      }
-
-      // Registra logs após sucesso total
-      if (editingAppt) {
-        await registrarLog('editou', 'agendamento', apptId, `Editou agendamento de "${clientName}"`);
-      } else {
-        await registrarLog('criou', 'agendamento', apptId, `Criou agendamento para "${clientName}"`);
-      }
-
-      setIsModalOpen(false);
-      if (editingAppt) {
-        showTemporarySuccess('Agendamento atualizado com sucesso!');
-      } else {
-        const client = selectedCliente;
-        const apptDataForFeedback = {
-          data_hora: startDateTime.toISOString(),
-          cliente: client ? { nome: client.nome, sobrenome: client.sobrenome, whatsapp: client.whatsapp } : undefined,
-          agendamento_servicos: servicesList.map(s => ({ servico: { nome: s.nome } }))
-        };
-        showSuccessFeedback(apptDataForFeedback, true);
-      }
-      fetchAppointments();
-    } catch (err) {
-      console.error(err);
-      showTemporaryError('Falha ao salvar agendamento.');
-    } finally {
-      setSaving(false);
-    }
-  };
-
+  // SAVE APPOINTMENT (CREATE OR EDIT) — mantido só pra referência de qual bloco remover a seguir
   const openWhatsApp = (appt: AgendamentoWithRelations, tipo: 'aprovado' | 'recusado', motivo?: string) => {
     const whatsapp = appt.cliente?.whatsapp;
     if (!whatsapp) return;
@@ -1859,249 +1469,15 @@ export default function Agendamentos() {
       })()}
 
       {/* FORM MODAL (CREATE OR EDIT) */}
-      {isModalOpen && createPortal(
-        <div className="fixed inset-0 bg-black/45 backdrop-blur-sm z-[200] flex items-center justify-center p-4 overflow-y-auto animate-fade-in">
-          <div className="bg-white rounded-[14px] border border-border shadow-xl w-full max-w-lg flex flex-col max-h-[calc(100vh-2rem)] overflow-hidden my-8 animate-slide-up">
-            
-            {/* Header */}
-            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-rose-50/10 flex-shrink-0">
-              <h4 className="font-title font-semibold text-xl md:text-lg text-text-primary flex items-center gap-2">
-                <CalendarDays className="w-6 h-6 md:w-5 md:h-5 text-rose-600" />
-                {editingAppt ? 'Editar Agendamento' : 'Agendar Novo Procedimento'}
-              </h4>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="text-text-secondary hover:text-rose-600 cursor-pointer"
-              >
-                <X className="w-6 h-6 md:w-5 md:h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveAppointment} className="p-6 space-y-5 overflow-y-auto flex-1">
-
-              {/* Cliente Autocomplete Search */}
-              <div className="space-y-1.5 relative">
-                <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary flex justify-between">
-                  <span>Buscar Cliente *</span>
-                  {selectedCliente && <span className="text-green-600">✓ Selecionada</span>}
-                </label>
-
-                {selectedCliente ? (
-                  <div className="flex items-center justify-between bg-rose-50 border border-rose-200 rounded-lg p-2.5">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 md:w-7 md:h-7 rounded-full bg-rose-200 text-rose-800 flex items-center justify-center font-bold text-sm md:text-xs">
-                        {selectedCliente.nome[0]}{(selectedCliente.sobrenome || '')[0]}
-                      </div>
-                      <div>
-                        <p className="text-sm md:text-xs font-bold text-text-primary">{selectedCliente.nome} {selectedCliente.sobrenome}</p>
-                        <p className="text-xs md:text-[10px] text-text-secondary">Whats: {selectedCliente.whatsapp}</p>
-                      </div>
-                    </div>
-                    {/* Only allow changing client when creating new appointment */}
-                    {!editingAppt && (
-                      <button
-                        type="button"
-                        onClick={() => setSelectedCliente(null)}
-                        className="p-1 hover:bg-rose-100 rounded text-rose-600 cursor-pointer"
-                      >
-                        <X className="w-5 h-5 md:w-4 md:h-4" />
-                      </button>
-                    )}
-                  </div>
-                ) : (
-                  <>
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 md:w-4 md:h-4 text-text-muted" />
-                      <input
-                        ref={clientInputRef}
-                        type="text"
-                        required
-                        placeholder="Nome ou WhatsApp do cliente..."
-                        value={clientSearchQuery}
-                        onChange={(e) => {
-                          setClientSearchQuery(e.target.value);
-                          setShowClientDropdown(true);
-                        }}
-                        onFocus={() => setShowClientDropdown(true)}
-                        className="w-full pl-10 pr-4 py-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
-                      />
-                    </div>
-
-                    {showClientDropdown && clientSearchQuery.trim().length >= 2 && (
-                      <div className="absolute top-full left-0 right-0 bg-white border border-border shadow-lg rounded-lg z-50 overflow-hidden mt-1 text-sm md:text-xs">
-                        {foundClientes.length === 0 ? (
-                          <div className="p-3 text-center text-text-muted italic">Nenhuma cliente ativa encontrada.</div>
-                        ) : (
-                          foundClientes.map(client => (
-                            <div
-                              key={client.id}
-                              onClick={() => {
-                                setSelectedCliente(client);
-                                setShowClientDropdown(false);
-                              }}
-                              className="px-4 py-3 md:py-2.5 hover:bg-rose-50/50 cursor-pointer border-b border-border/40 last:border-0 flex items-center justify-between"
-                            >
-                              <div>
-                                <p className="font-bold text-text-primary">{client.nome} {client.sobrenome}</p>
-                                <p className="text-xs md:text-[10px] text-text-secondary">WhatsApp: {client.whatsapp}</p>
-                              </div>
-                              <span className="text-xs md:text-[10px] text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded">Selecionar</span>
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-
-              {/* Data & Horário Início */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
-                    Data *
-                  </label>
-                  <input 
-                    type="date" 
-                    required
-                    value={formData}
-                    onChange={(e) => handleDateChange(e.target.value)}
-                    className="w-full px-3.5 py-3 md:px-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
-                    Hora de Início *
-                  </label>
-                  <input 
-                    type="time" 
-                    required
-                    value={formHora}
-                    onChange={(e) => setFormHora(e.target.value)}
-                    className="w-full px-3.5 py-3 md:px-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
-                  />
-                </div>
-              </div>
-
-              {/* Serviços Selection */}
-              <div className="space-y-2">
-                <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block border-b border-border pb-1">
-                  Selecione os Serviços *
-                </label>
-                <div className="space-y-2.5 max-h-[160px] overflow-y-auto pr-1">
-                  {servicos.map(srv => {
-                    const isChecked = !!selectedServices[srv.id];
-                    return (
-                      <div key={srv.id} className={`p-2.5 rounded-lg border transition-all ${isChecked ? 'bg-rose-50/15 border-rose-300' : 'bg-white border-border/60 hover:bg-bg/20'}`}>
-                        <div className="flex items-center justify-between gap-3">
-                          <label className="flex items-center gap-3 cursor-pointer flex-1 min-w-0">
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={(e) => handleToggleServiceCheckbox(srv, e.target.checked)}
-                              className="w-5 h-5 md:w-4 md:h-4 accent-rose-600 cursor-pointer shrink-0"
-                            />
-                            <div className="text-sm md:text-xs min-w-0">
-                              <p className="font-bold text-text-primary truncate">{srv.nome}</p>
-                              <p className="text-xs md:text-[10px] text-text-secondary mt-0.5">{srv.duracao_minutos} min • R$ {Number(srv.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
-                            </div>
-                          </label>
-
-                          {/* Price Input */}
-                          {isChecked && (
-                            <div className="flex items-center gap-1 shrink-0">
-                              <span className="text-xs md:text-[10px] text-text-muted">R$</span>
-                              <input
-                                type="number"
-                                step="0.01"
-                                value={selectedServices[srv.id].valor}
-                                onChange={(e) => handleServicePriceChange(srv.id, parseFloat(e.target.value) || 0)}
-                                className="w-16 px-1.5 py-1 md:py-0.5 border border-border rounded text-xs md:text-[10px] text-right focus:outline-none focus:ring-1 focus:ring-rose-400"
-                              />
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Variation dropdown — linha separada para não comprimir o preço */}
-                        {isChecked && srv.variacoes_servico && srv.variacoes_servico.length > 0 && (
-                          <div className="mt-2 ml-7">
-                            <select
-                              value={selectedServices[srv.id].variacao_id}
-                              onChange={(e) => handleFormVariationChange(srv.id, e.target.value)}
-                              className="w-full px-2 py-1.5 md:py-1 border border-border rounded text-xs md:text-[10px] bg-white text-text-primary cursor-pointer focus:outline-none"
-                            >
-                              {srv.variacoes_servico.map(v => (
-                                <option key={v.id} value={v.id}>{v.nome}</option>
-                              ))}
-                            </select>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Recalculated outputs */}
-              <div className="grid grid-cols-2 gap-4 bg-rose-50/25 border border-rose-100 p-3 rounded-lg text-sm md:text-xs font-semibold text-text-primary">
-                <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5 md:w-4 md:h-4 text-rose-600" />
-                  <span>Duração:</span>
-                  <input
-                    type="number"
-                    min="1"
-                    value={formDuracao}
-                    onChange={(e) => setFormDuracao(parseInt(e.target.value) || 0)}
-                    className="w-16 px-1.5 py-1 md:py-0.5 border border-border rounded bg-white font-bold text-center focus:outline-none focus:ring-1 focus:ring-rose-400"
-                  />
-                  <span>min</span>
-                </div>
-
-                <div className="flex items-center gap-2 justify-end">
-                  <Coins className="w-5 h-5 md:w-4 md:h-4 text-rose-600" />
-                  <span>Total sugerido:</span>
-                  <span className="font-title font-semibold text-base md:text-sm text-rose-800">
-                    R$ {Object.values(selectedServices).reduce((sum, s) => sum + s.valor, 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                  </span>
-                </div>
-              </div>
-
-              {/* Observações */}
-              <div className="space-y-1.5">
-                <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
-                  Observações
-                </label>
-                <textarea 
-                  rows={2}
-                  placeholder="Instruções especiais ou anotações..."
-                  value={formObs}
-                  onChange={(e) => setFormObs(e.target.value)}
-                  className="w-full px-3.5 py-3 md:px-3 md:py-2 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
-                />
-              </div>
-
-              {/* Form Actions */}
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  disabled={saving}
-                  className="px-4 py-2.5 md:py-2 border border-border rounded-lg text-sm md:text-xs font-medium text-text-secondary hover:bg-bg transition-colors cursor-pointer"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="px-4 py-2.5 md:py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-sm md:text-xs font-semibold transition-colors cursor-pointer"
-                >
-                  {saving ? 'Salvando...' : (editingAppt ? 'Salvar Alterações' : 'Criar Agendamento')}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>, document.body)}
+      <AgendamentoFormSheet
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSaved={fetchAppointments}
+        editingAppt={editingAppt}
+        initialDate={formOpenDate}
+        initialHour={formOpenHour}
+        preSelectedCliente={preSelectedCliente}
+      />
 
       {/* SUCCESS CONFIRMATION MODAL */}
       {successModal && successModal.isOpen && createPortal(

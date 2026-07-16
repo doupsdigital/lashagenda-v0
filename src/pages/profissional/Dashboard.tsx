@@ -9,6 +9,7 @@ import { useGuidedTour } from '../../hooks/useGuidedTour';
 import PushPermissionBanner from '../../components/common/PushPermissionBanner';
 import InstallBanner from '../../components/common/InstallBanner';
 import TrancarHorarioSheet from '../../components/common/TrancarHorarioSheet';
+import AgendamentoFormSheet from '../../components/common/AgendamentoFormSheet';
 import {
   CalendarDays,
   CalendarCheck,
@@ -79,6 +80,7 @@ export default function Dashboard() {
   const [linkCopied, setLinkCopied] = useState(false);
   const [isStatusInfoOpen, setIsStatusInfoOpen] = useState(false);
   const [isTrancarOpen, setIsTrancarOpen] = useState(false);
+  const [isNovoAgendamentoOpen, setIsNovoAgendamentoOpen] = useState(false);
 
   const firstName = profile?.nome?.split(' ')[0] || '';
 
@@ -199,7 +201,7 @@ export default function Dashboard() {
   };
 
   const quickActions = [
-    { label: 'Novo Agendamento', id: 'onboarding-btn-novo-agendamento', Icon: CalendarCheck, onClick: () => navigate('/agendamentos', { state: {} }) },
+    { label: 'Novo Agendamento', id: 'onboarding-btn-novo-agendamento', Icon: CalendarCheck, onClick: () => setIsNovoAgendamentoOpen(true) },
     { label: 'Bloquear Horário', id: 'onboarding-btn-bloquear', Icon: CalendarX, onClick: () => setIsTrancarOpen(true) },
     { label: 'Novo Serviço', id: 'onboarding-btn-novo-servico', Icon: Tag, onClick: () => navigate('/servicos', { state: {} }) },
     { label: 'Ver Agenda do Dia', id: 'onboarding-btn-agenda-dia', Icon: CalendarDays, onClick: () => navigate('/agendamentos', { state: { filterToday: true } }) },
@@ -565,6 +567,12 @@ export default function Dashboard() {
       )}
 
       <TrancarHorarioSheet isOpen={isTrancarOpen} onClose={() => setIsTrancarOpen(false)} />
+
+      <AgendamentoFormSheet
+        isOpen={isNovoAgendamentoOpen}
+        onClose={() => setIsNovoAgendamentoOpen(false)}
+        onSaved={fetchData}
+      />
 
     </div>
   );
