@@ -18,7 +18,7 @@ export default function CadastroProfissional() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Solidifica a URL "real" da página em /configuracoes quando a profissional
+  // Solidifica a URL "real" da página em /meu-estudio quando a profissional
   // instala o app direto desta tela (o InstallBanner logo abaixo convida pra
   // isso), sem esperar ela clicar no botão "Começar a configurar". Sem isso, o
   // app instalado reabriria sempre na landing page (última navegação real antes
@@ -26,9 +26,12 @@ export default function CadastroProfissional() {
   // Router, que o Safari ignora na hora de "Adicionar à Tela de Início"). Só
   // dispara quando o navegador confirma a instalação — o clique manual no botão
   // já cobre o caminho normal, sem forçar navegação em quem só está lendo a tela.
+  // Vai pro Dashboard (não direto pra /configuracoes) pra dar tempo do
+  // tutorial guiado mostrar a introdução completa da Etapa 1 antes da
+  // profissional seguir pra tela de configurações.
   useEffect(() => {
     if (!success) return;
-    const onInstalled = () => window.location.replace('/configuracoes');
+    const onInstalled = () => window.location.replace('/meu-estudio');
     window.addEventListener('appinstalled', onInstalled);
     return () => window.removeEventListener('appinstalled', onInstalled);
   }, [success]);
@@ -446,7 +449,7 @@ export default function CadastroProfissional() {
             </div>
 
             <button
-              onClick={() => window.location.replace('/configuracoes')}
+              onClick={() => window.location.replace('/meu-estudio')}
               className="w-full py-3.5 bg-rose-600 hover:bg-rose-800 text-white rounded-xl text-sm font-semibold transition-all shadow-md cursor-pointer"
             >
               Começar a configurar
