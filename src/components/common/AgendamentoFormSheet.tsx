@@ -434,23 +434,28 @@ export default function AgendamentoFormSheet({
           className="bg-white w-full sm:max-w-lg rounded-t-[20px] sm:rounded-[16px] border-0 sm:border sm:border-border shadow-xl flex flex-col max-h-[92vh] sm:max-h-[calc(100vh-2rem)] overflow-hidden animate-slide-up"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Drag handle (mobile) */}
-          <div className="sm:hidden flex justify-center pt-3 pb-1 flex-shrink-0">
-            <div className="w-10 h-1.5 bg-border rounded-full" />
-          </div>
-
           {/* Header */}
-          <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-rose-50/10 flex-shrink-0">
-            <h4 className="font-title font-bold text-2xl md:text-xl text-text-primary flex items-center gap-2">
-              <CalendarDays className="w-6 h-6 md:w-5 md:h-5 text-rose-600" />
-              {editingAppt ? 'Editar Agendamento' : 'Agendar Novo Procedimento'}
-            </h4>
-            <button
-              onClick={onClose}
-              className="text-text-secondary hover:text-rose-600 transition-colors p-1 rounded-full hover:bg-bg cursor-pointer flex-shrink-0"
-            >
-              <X className="w-6 h-6 md:w-5 md:h-5" />
-            </button>
+          <div
+            className="flex-shrink-0"
+            style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
+          >
+            {/* Drag handle (mobile) */}
+            <div className="sm:hidden flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1.5 bg-white/40 rounded-full" />
+            </div>
+
+            <div className="px-6 py-4 md:py-3.5 flex items-center justify-between gap-2">
+              <h4 className="font-title font-semibold text-2xl md:text-xl text-white flex items-center gap-2">
+                <CalendarDays className="w-6 h-6 md:w-5 md:h-5 text-white" />
+                {editingAppt ? 'Editar Agendamento' : 'Agendar Novo Procedimento'}
+              </h4>
+              <button
+                onClick={onClose}
+                className="text-rose-100 hover:text-white transition-colors p-1 rounded-full hover:bg-white/15 cursor-pointer flex-shrink-0"
+              >
+                <X className="w-6 h-6 md:w-5 md:h-5" />
+              </button>
+            </div>
           </div>
 
           <form onSubmit={handleSaveAppointment} className="flex flex-col flex-1 min-h-0">

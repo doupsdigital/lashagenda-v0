@@ -179,31 +179,34 @@ export default function TrancarHorarioSheet({ isOpen, onClose, onSuccess, initia
             className="bg-white w-full sm:max-w-md rounded-t-[20px] sm:rounded-[16px] shadow-xl overflow-hidden animate-slide-up max-h-[92vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Drag handle (mobile) */}
-            <div className="sm:hidden flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1.5 bg-border rounded-full" />
-            </div>
+            {/* Header */}
+            <div style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}>
+              {/* Drag handle (mobile) */}
+              <div className="sm:hidden flex justify-center pt-3 pb-1">
+                <div className="w-10 h-1.5 bg-white/40 rounded-full" />
+              </div>
 
-            <div className="p-6">
-              <div className="flex items-start justify-between gap-3">
+              <div className="px-6 py-4 md:py-3.5 flex items-start justify-between gap-3">
                 <div>
-                  <h3 className="font-title font-bold text-2xl md:text-xl text-text-primary flex items-center gap-2">
-                    <Lock className="w-6 h-6 md:w-5 md:h-5 text-rose-600" />
+                  <h3 className="font-title font-semibold text-2xl md:text-xl text-white flex items-center gap-2">
+                    <Lock className="w-6 h-6 md:w-5 md:h-5 text-white" />
                     Trancar Horário
                   </h3>
-                  <p className="text-xs md:text-[11px] font-semibold text-text-secondary uppercase tracking-wider mt-0.5">
+                  <p className="text-xs md:text-[11px] font-semibold text-rose-100 uppercase tracking-wider mt-0.5">
                     Folga, feriado ou pausa
                   </p>
                 </div>
                 <button
                   onClick={onClose}
-                  className="text-text-secondary hover:text-rose-600 transition-colors p-1 rounded-full hover:bg-bg cursor-pointer flex-shrink-0"
+                  className="text-rose-100 hover:text-white transition-colors p-1 rounded-full hover:bg-white/15 cursor-pointer flex-shrink-0"
                 >
                   <X className="w-6 h-6 md:w-5 md:h-5" />
                 </button>
               </div>
+            </div>
 
-              <form onSubmit={handleSubmitTrancar} className="space-y-4 mt-5">
+            <div className="p-6">
+              <form onSubmit={handleSubmitTrancar} className="space-y-4">
                 {/* Data */}
                 <div className="space-y-1.5">
                   <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary block">
