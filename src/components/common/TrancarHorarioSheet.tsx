@@ -159,27 +159,31 @@ export default function TrancarHorarioSheet({ isOpen, onClose, onSuccess, initia
 
   return createPortal(
     <>
-      <div
-        className="fixed inset-0 bg-black/45 backdrop-blur-sm z-[300] flex items-end sm:items-center justify-center animate-fade-in"
-        onClick={() => !trancarSaving && onClose()}
-      >
-        <div
-          className="bg-white w-full sm:max-w-md rounded-t-[20px] sm:rounded-[16px] shadow-xl overflow-hidden animate-slide-up max-h-[92vh] overflow-y-auto"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Drag handle (mobile) */}
-          <div className="sm:hidden flex justify-center pt-3 pb-1">
-            <div className="w-10 h-1.5 bg-border rounded-full" />
-          </div>
-
-          {trancarSuccess ? (
-            <div className="p-8 flex flex-col items-center text-center gap-3">
-              <div className="w-14 h-14 rounded-full bg-green-50 border border-green-200 flex items-center justify-center text-green-600 animate-pulse">
-                <CheckCircle className="w-8 h-8" />
-              </div>
-              <p className="font-title font-bold text-xl text-text-primary">Horário trancado com sucesso!</p>
+      {trancarSuccess ? (
+        // Confirmação de sucesso: modal centralizado, igual ao padrão usado nos
+        // outros fluxos de sucesso do sistema (não o bottom sheet do formulário).
+        <div className="fixed inset-0 bg-black/45 backdrop-blur-sm z-[300] flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white rounded-[20px] border border-border shadow-xl w-full max-w-sm p-7 md:p-6 text-center animate-slide-up space-y-3">
+            <div className="mx-auto w-14 h-14 rounded-full bg-green-50 border border-green-200 flex items-center justify-center text-green-600 animate-pulse">
+              <CheckCircle className="w-8 h-8" />
             </div>
-          ) : (
+            <p className="font-title font-bold text-xl text-text-primary">Horário trancado com sucesso!</p>
+          </div>
+        </div>
+      ) : (
+        <div
+          className="fixed inset-0 bg-black/45 backdrop-blur-sm z-[300] flex items-end sm:items-center justify-center animate-fade-in"
+          onClick={() => !trancarSaving && onClose()}
+        >
+          <div
+            className="bg-white w-full sm:max-w-md rounded-t-[20px] sm:rounded-[16px] shadow-xl overflow-hidden animate-slide-up max-h-[92vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Drag handle (mobile) */}
+            <div className="sm:hidden flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1.5 bg-border rounded-full" />
+            </div>
+
             <div className="p-6">
               <div className="flex items-start justify-between gap-3">
                 <div>
@@ -318,9 +322,9 @@ export default function TrancarHorarioSheet({ isOpen, onClose, onSuccess, initia
                 </button>
               </form>
             </div>
-          )}
+          </div>
         </div>
-      </div>
+      )}
 
       <ConfirmModal
         isOpen={confirmModalOpen}
