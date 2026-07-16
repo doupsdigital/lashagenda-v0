@@ -61,13 +61,13 @@ export default function BillingGuard() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-bg px-4 py-12 relative overflow-hidden font-sans">
+    <div className="flex items-center justify-center px-4 py-6 md:py-12 relative overflow-hidden font-sans">
       {/* Decorações em degradê de fundo */}
       <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-rose-100/30 blur-3xl pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-rose-100/30 blur-3xl pointer-events-none" />
 
-      <div className="w-full max-w-[500px] bg-white border border-border rounded-[24px] shadow-2xl p-8 md:p-10 relative z-10 text-center animate-fade-in">
-        
+      <div className="w-full max-w-[500px] max-h-[80vh] overflow-y-auto bg-white border border-border rounded-[24px] shadow-2xl p-7 md:p-10 relative z-10 text-center animate-fade-in">
+
         {/* Ícone de Alerta */}
         <div className="flex justify-center mb-6">
           <div className={`p-4 rounded-2xl ${iconColor} shadow-inner transition-transform duration-300 hover:scale-105`}>
@@ -80,34 +80,34 @@ export default function BillingGuard() {
         </div>
 
         {/* Badge do Status */}
-        <span className="inline-block text-[10px] font-bold tracking-widest text-rose-600 uppercase px-3 py-1 bg-rose-50 border border-rose-100 rounded-full mb-4">
+        <span className="inline-block text-xs md:text-[10px] font-bold tracking-widest text-rose-600 uppercase px-3 py-1 bg-rose-50 border border-rose-100 rounded-full mb-4">
           {badgeText}
         </span>
 
         {/* Título Principal */}
-        <h2 className="font-title font-bold text-2xl text-text-primary mb-3 leading-snug">
+        <h2 className="font-title font-bold text-2xl md:text-xl text-text-primary mb-3 leading-snug">
           {title}
         </h2>
 
         {/* Descrição Amigável */}
-        <p className="text-sm text-text-secondary mb-8 leading-relaxed">
+        <p className="text-sm md:text-xs text-text-secondary mb-8 leading-relaxed">
           {message}
         </p>
 
         {/* Caixa de Benefícios em Destaque */}
         <div className="bg-rose-50/30 border border-rose-100/50 rounded-xl p-4 mb-8 text-left">
-          <p className="text-xs font-semibold text-text-primary mb-2.5">Assinando, você recupera acesso à sua agenda, clientes e serviços. O plano Premium ainda inclui:</p>
-          <ul className="space-y-2 text-xs text-text-secondary">
+          <p className="text-sm md:text-xs font-semibold text-text-primary mb-2.5">Assinando, você recupera acesso à sua agenda, clientes e serviços. O plano Premium ainda inclui:</p>
+          <ul className="space-y-2 text-sm md:text-xs text-text-secondary">
             <li className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 flex-shrink-0" />
               Fichas de anamnese completas para Lash Designers
             </li>
             <li className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 flex-shrink-0" />
               Relatórios e análises completas do seu negócio
             </li>
             <li className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 flex-shrink-0" />
               Histórico completo de atendimentos
             </li>
           </ul>
@@ -117,18 +117,18 @@ export default function BillingGuard() {
         <div className="flex flex-col gap-3">
           <Link
             to="/assinatura"
-            className="w-full py-3 px-4 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white rounded-xl text-sm font-semibold transition-all duration-200 shadow-md shadow-rose-100 hover:shadow-lg flex items-center justify-center gap-2 group cursor-pointer"
+            className="w-full py-3.5 md:py-3 px-5 md:px-4 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white rounded-full md:rounded-xl text-base md:text-sm font-bold md:font-semibold transition-all duration-200 shadow-md shadow-rose-100 hover:shadow-lg flex items-center justify-center gap-2 group cursor-pointer"
           >
-            <CreditCard className="w-4 h-4" />
+            <CreditCard className="w-5 h-5 md:w-4 md:h-4" />
             <span>Regularizar Financeiro</span>
-            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            <ArrowRight className="w-5 h-5 md:w-4 md:h-4 transition-transform group-hover:translate-x-1" />
           </Link>
 
           <button
             onClick={handleSignOut}
-            className="w-full py-3 px-4 border border-border hover:bg-bg rounded-xl text-xs font-semibold text-text-secondary hover:text-rose-600 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-3.5 md:py-3 px-5 md:px-4 border border-border hover:bg-bg rounded-full md:rounded-xl text-sm md:text-xs font-bold md:font-semibold text-text-secondary hover:text-rose-600 transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-5 h-5 md:w-4 md:h-4" />
             <span>Sair da Minha Conta</span>
           </button>
         </div>
