@@ -125,7 +125,7 @@ function SelectField({
     <div className={`space-y-1.5 ${className}`}>
       <FieldLabel label={label} editing={editing} onToggle={() => onToggleEdit(fieldKey)} />
       {editing ? (
-        <select value={value || ''} onChange={(e) => onChange(e.target.value)} className={selectClass} autoFocus>
+        <select value={value || ''} onChange={(e) => onChange(e.target.value)} className={selectClass} autoFocus={editingFields.size === 1}>
           <option value="">Selecione...</option>
           {options.map((o) => (
             <option key={o.value} value={o.value}>{o.label}</option>
@@ -162,9 +162,9 @@ function TextField({
       <FieldLabel label={label} editing={editing} onToggle={() => onToggleEdit(fieldKey)} />
       {editing ? (
         textarea ? (
-          <textarea rows={rows} placeholder={placeholder} value={value || ''} onChange={(e) => onChange(e.target.value)} className={inputClass} autoFocus />
+          <textarea rows={rows} placeholder={placeholder} value={value || ''} onChange={(e) => onChange(e.target.value)} className={inputClass} autoFocus={editingFields.size === 1} />
         ) : (
-          <input type={type} min={type === 'number' ? 0 : undefined} placeholder={placeholder} value={value || ''} onChange={(e) => onChange(e.target.value)} className={inputClass} autoFocus />
+          <input type={type} min={type === 'number' ? 0 : undefined} placeholder={placeholder} value={value || ''} onChange={(e) => onChange(e.target.value)} className={inputClass} autoFocus={editingFields.size === 1} />
         )
       ) : value ? (
         <p className={filledValueClass}>{value}{suffix}</p>
@@ -193,12 +193,12 @@ function CheckField({
       <div className="flex items-center gap-2">
         {nested ? (
           <label className="flex items-center gap-3 p-3 md:p-2.5 bg-rose-50/20 rounded-lg border border-rose-100/40 cursor-pointer select-none flex-1 transition-colors hover:bg-rose-50/35 pl-6">
-            <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className={checkboxClass} autoFocus />
+            <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className={checkboxClass} autoFocus={editingFields.size === 1} />
             <span className="text-sm md:text-xs font-semibold text-rose-800">{label}</span>
           </label>
         ) : (
           <label className={checkboxLabelClass}>
-            <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className={checkboxClass} autoFocus />
+            <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className={checkboxClass} autoFocus={editingFields.size === 1} />
             <span className={checkboxTextClass}>{label}</span>
           </label>
         )}
