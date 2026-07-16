@@ -649,6 +649,9 @@ export default function Agendamentos() {
     hour: startHour + Math.floor(i / 2),
     minute: (i % 2) * 30,
   }));
+  // Altura de cada slot de 30min na visualização diária (ajuste incremental
+  // pedido pra deixar as linhas mais "respiradas", como no app de referência).
+  const DAY_SLOT_HEIGHT = 40;
 
   const formatDateStr = (date: Date) => {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
@@ -989,7 +992,7 @@ export default function Agendamentos() {
             {/* Hours Labels */}
             <div className="border-r border-border bg-white text-right pr-2 text-[10px] font-bold text-text-secondary select-none">
               {halfHourSlots.map(({ hour, minute }) => (
-                <div key={`${hour}-${minute}`} className={`h-[30px] border-b border-border/50 flex items-center justify-end pr-1 ${minute === 0 ? 'font-bold' : 'font-normal text-[8px] text-text-muted/60'}`}>
+                <div key={`${hour}-${minute}`} style={{ height: DAY_SLOT_HEIGHT }} className={`border-b border-border/50 flex items-center justify-end pr-1 ${minute === 0 ? 'font-bold' : 'font-normal text-[8px] text-text-muted/60'}`}>
                   <span>{hour.toString().padStart(2, '0')}:{minute.toString().padStart(2, '0')}</span>
                 </div>
               ))}
@@ -1002,12 +1005,15 @@ export default function Agendamentos() {
                 return (
                   <div
                     key={`${hour}-${minute}`}
+                    style={{ height: DAY_SLOT_HEIGHT }}
                     onClick={() => isAvailable && handleOpenForm(currentDate, `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`)}
-                    className={`h-[30px] transition-colors cursor-pointer flex items-center justify-center
+                    className={`relative transition-colors cursor-pointer flex items-center justify-center
                       ${minute === 30 ? 'border-b border-border/50' : ''}
                       ${isAvailable ? 'hover:bg-rose-50/30' : 'bg-gray-100/55 cursor-not-allowed text-text-muted/40'}`}
                   >
-                    {!isAvailable && minute === 0 && '🔒'}
+                    {!isAvailable && minute === 0 && (
+                      <span className="absolute left-1/2 top-full -translate-x-1/2 -translate-y-1/2 pointer-events-none">🔒</span>
+                    )}
                   </div>
                 );
               })}
@@ -1018,8 +1024,8 @@ export default function Agendamentos() {
                 .map(appt => {
                   const apptDate = new Date(appt.data_hora);
                   const startHourVal = apptDate.getHours() + apptDate.getMinutes() / 60;
-                  const top = (startHourVal - startHour) * 60;
-                  const height = (appt.duracao_minutos / 60) * 60;
+                  const top = (startHourVal - startHour) * DAY_SLOT_HEIGHT * 2;
+                  const height = (appt.duracao_minutos / 60) * DAY_SLOT_HEIGHT * 2;
                   const colors = getStatusColorStyles(appt.status);
 
                   // Accent left border por status (inspirado no layout de referência)
@@ -1039,7 +1045,7 @@ export default function Agendamentos() {
                     >
                       {/* Linha 1: Nome + Horário — destacados, são o que mais importa escanear rápido */}
                       <div className="flex items-center justify-between gap-2">
-                        <p className={`font-bold truncate flex-1 leading-none ${height < 40 ? 'text-xs' : height < 70 ? 'text-sm leading-tight' : 'text-base leading-tight'}`}>
+                        <p className="font-bold truncate flex-1 leading-tight text-base">
                           {appt.cliente?.nome} {appt.cliente?.sobrenome}
                         </p>
                         <span className={`font-bold opacity-90 whitespace-nowrap flex-shrink-0 leading-none ${height < 40 ? 'text-[10px]' : height < 70 ? 'text-xs' : 'text-sm'}`}>
