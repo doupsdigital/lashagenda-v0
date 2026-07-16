@@ -38,22 +38,18 @@ export default function BillingGuard() {
   let title = 'Acesso Administrativo Bloqueado';
   let message = 'Assinatura inativa. Entre em contato ou ative seu plano para acessar o sistema.';
   let iconColor = 'text-rose-500 bg-rose-50';
-  let badgeText = 'Faturamento';
 
   if (status === 'trial') {
-    badgeText = 'Trial Expirado';
-    title = 'Seu período de testes grátis expirou';
-    message = 'Seu período experimental de 14 dias chegou ao fim. Para continuar usando todos os recursos de agenda, prontuários de clientes e relatórios financeiros, escolha um plano premium.';
+    title = 'Seu período de testes expirou';
+    message = 'Seus 14 dias grátis acabaram. Escolha um plano pra continuar usando a agenda.';
     iconColor = 'text-amber-500 bg-amber-50';
   } else if (status === 'suspenso') {
-    badgeText = 'Assinatura Suspensa';
-    title = 'Assinatura suspensa por falta de pagamento';
-    message = 'Não conseguimos processar o pagamento de renovação da sua mensalidade no Asaas. Atualize suas informações de faturamento para liberar seu acesso imediatamente.';
+    title = 'Assinatura suspensa';
+    message = 'Não conseguimos processar o pagamento no Asaas. Atualize seus dados para liberar o acesso.';
     iconColor = 'text-red-500 bg-red-50';
   } else if (status === 'cancelado') {
-    badgeText = 'Assinatura Cancelada';
     title = 'Sua assinatura foi cancelada';
-    message = 'Sua conta administrativa foi desativada temporariamente. Reative sua assinatura premium para reestabelecer o funcionamento da sua agenda e dados dos clientes.';
+    message = 'Sua conta foi desativada temporariamente. Reative o plano para voltar a usar a agenda.';
     iconColor = 'text-gray-500 bg-gray-50';
   }
 
@@ -77,45 +73,40 @@ export default function BillingGuard() {
       <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-rose-100/30 blur-3xl pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-rose-100/30 blur-3xl pointer-events-none" />
 
-      <div className="w-full max-w-[500px] max-h-full overflow-y-auto overscroll-contain bg-white border border-border rounded-[24px] shadow-2xl p-7 md:p-10 relative z-10 text-center animate-fade-in">
+      <div className="w-full max-w-[500px] max-h-full overflow-y-auto overscroll-contain bg-white border border-border rounded-[24px] shadow-2xl p-6 md:p-10 relative z-10 text-center animate-fade-in">
 
         {/* Ícone de Alerta */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-4">
           <div className={`p-4 rounded-2xl ${iconColor} shadow-inner transition-transform duration-300 hover:scale-105`}>
             {status === 'trial' ? (
-              <Sparkles className="w-10 h-10" />
+              <Sparkles className="w-9 h-9" />
             ) : (
-              <ShieldAlert className="w-10 h-10" />
+              <ShieldAlert className="w-9 h-9" />
             )}
           </div>
         </div>
 
-        {/* Badge do Status */}
-        <span className="inline-block text-xs md:text-[10px] font-bold tracking-widest text-rose-600 uppercase px-3 py-1 bg-rose-50 border border-rose-100 rounded-full mb-4">
-          {badgeText}
-        </span>
-
         {/* Título Principal */}
-        <h2 className="font-title font-bold text-2xl md:text-xl text-text-primary mb-3 leading-snug">
+        <h2 className="font-title font-bold text-3xl md:text-2xl text-text-primary mb-2 leading-snug">
           {title}
         </h2>
 
         {/* Descrição Amigável */}
-        <p className="text-sm md:text-xs text-text-secondary mb-8 leading-relaxed">
+        <p className="text-sm md:text-xs text-text-secondary mb-5 leading-relaxed">
           {message}
         </p>
 
         {/* Caixa de Benefícios em Destaque */}
-        <div className="bg-rose-50/30 border border-rose-100/50 rounded-xl p-4 mb-8 text-left">
-          <p className="text-sm md:text-xs font-semibold text-text-primary mb-2.5">Assinando, você recupera acesso à sua agenda, clientes e serviços. O plano Premium ainda inclui:</p>
-          <ul className="space-y-2 text-sm md:text-xs text-text-secondary">
+        <div className="bg-rose-50/30 border border-rose-100/50 rounded-xl p-3.5 mb-5 text-left">
+          <p className="text-sm md:text-xs font-semibold text-text-primary mb-2">Ao assinar, você recupera acesso a:</p>
+          <ul className="space-y-1.5 text-sm md:text-xs text-text-secondary">
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-rose-500 flex-shrink-0" />
-              Fichas de anamnese completas para Lash Designers
+              Fichas de anamnese completas
             </li>
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-rose-500 flex-shrink-0" />
-              Relatórios e análises completas do seu negócio
+              Relatórios e análises do negócio
             </li>
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-rose-500 flex-shrink-0" />
