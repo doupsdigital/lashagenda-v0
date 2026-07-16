@@ -10,6 +10,7 @@ import {
   AlertCircle,
   TrendingUp,
   Briefcase,
+  BarChart3,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -288,7 +289,7 @@ export default function Relatorios() {
   const empty = (msg = 'Nenhum dado encontrado para o período.') => (
     <div className="flex flex-col items-center justify-center py-20 text-center text-text-muted bg-rose-50/5 border border-dashed border-border/60 rounded-xl h-[300px]">
       <Sparkles className="w-8 h-8 text-rose-200 mb-2.5 animate-pulse" />
-      <p className="text-xs font-semibold">{msg}</p>
+      <p className="text-sm md:text-xs font-semibold">{msg}</p>
     </div>
   );
 
@@ -298,52 +299,61 @@ export default function Relatorios() {
       {errorMsg && (
         <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-3">
           <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-600" />
-          <p className="text-sm font-medium">{errorMsg}</p>
+          <p className="text-base md:text-sm font-medium">{errorMsg}</p>
         </div>
       )}
 
+      {/* Cabeçalho */}
+      <div
+        className="rounded-[14px] p-5 shadow-sm text-white relative overflow-hidden"
+        style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
+      >
+        <BarChart3
+          className="absolute -top-3 -right-3 w-24 h-24 text-white/15 rotate-12 pointer-events-none select-none"
+          strokeWidth={1.25}
+        />
+        <div className="relative z-10">
+          <h2 className="font-title font-semibold text-3xl md:text-2xl">Relatórios</h2>
+          <p className="text-sm md:text-xs text-white/80 mt-1 md:mt-0.5">Selecione o período para filtrar as análises.</p>
+        </div>
+      </div>
+
       {/* Filtro de período */}
       <div className="bg-white border border-border rounded-[14px] p-5 shadow-sm space-y-4">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div>
-            <h2 className="font-title font-semibold text-2xl text-text-primary">Relatórios</h2>
-            <p className="text-xs text-text-secondary mt-0.5">Selecione o período para filtrar as análises.</p>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {([
-              { id: 'hoje', label: 'Hoje' },
-              { id: 'ontem', label: 'Ontem' },
-              { id: '7dias', label: 'Últimos 7 dias' },
-              { id: 'esteMes', label: 'Este mês' },
-              { id: 'mesPassado', label: 'Mês passado' },
-              { id: 'esteAno', label: 'Este ano' },
-              { id: 'personalizado', label: 'Personalizado' },
-            ] as { id: PeriodType; label: string }[]).map(item => (
-              <button
-                key={item.id}
-                onClick={() => setPeriod(item.id)}
-                className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer ${
-                  period === item.id
-                    ? 'bg-rose-600 text-white shadow-sm'
-                    : 'bg-bg text-text-secondary hover:text-rose-600 border border-border/30'
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {([
+            { id: 'hoje', label: 'Hoje' },
+            { id: 'ontem', label: 'Ontem' },
+            { id: '7dias', label: 'Últimos 7 dias' },
+            { id: 'esteMes', label: 'Este mês' },
+            { id: 'mesPassado', label: 'Mês passado' },
+            { id: 'esteAno', label: 'Este ano' },
+            { id: 'personalizado', label: 'Personalizado' },
+          ] as { id: PeriodType; label: string }[]).map(item => (
+            <button
+              key={item.id}
+              onClick={() => setPeriod(item.id)}
+              className={`px-3.5 py-2 md:px-3 md:py-1.5 rounded-md text-sm md:text-xs font-semibold transition-all cursor-pointer ${
+                period === item.id
+                  ? 'bg-rose-600 text-white shadow-sm'
+                  : 'bg-bg text-text-secondary hover:text-rose-600 border border-border/30'
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
 
         {period === 'personalizado' && (
           <div className="flex items-center gap-3 bg-bg/30 p-3 rounded-lg border border-border/40 w-fit animate-fade-in">
             <div className="flex items-center gap-2">
-              <label className="text-[10px] font-bold text-text-secondary uppercase">Início:</label>
-              <input type="date" value={customStartDate} onChange={e => setCustomStartDate(e.target.value)} className="px-2.5 py-1 border border-border rounded bg-white text-text-primary text-xs focus:outline-none focus:ring-1 focus:ring-rose-400" />
+              <label className="text-xs md:text-[10px] font-bold text-text-secondary uppercase">Início:</label>
+              <input type="date" value={customStartDate} onChange={e => setCustomStartDate(e.target.value)} className="px-3 py-1.5 md:px-2.5 md:py-1 border border-border rounded bg-white text-text-primary text-sm md:text-xs focus:outline-none focus:ring-1 focus:ring-rose-400" />
             </div>
-            <span className="text-xs text-text-muted">—</span>
+            <span className="text-sm md:text-xs text-text-muted">—</span>
             <div className="flex items-center gap-2">
-              <label className="text-[10px] font-bold text-text-secondary uppercase">Fim:</label>
-              <input type="date" value={customEndDate} onChange={e => setCustomEndDate(e.target.value)} className="px-2.5 py-1 border border-border rounded bg-white text-text-primary text-xs focus:outline-none focus:ring-1 focus:ring-rose-400" />
+              <label className="text-xs md:text-[10px] font-bold text-text-secondary uppercase">Fim:</label>
+              <input type="date" value={customEndDate} onChange={e => setCustomEndDate(e.target.value)} className="px-3 py-1.5 md:px-2.5 md:py-1 border border-border rounded bg-white text-text-primary text-sm md:text-xs focus:outline-none focus:ring-1 focus:ring-rose-400" />
             </div>
           </div>
         )}
@@ -352,56 +362,48 @@ export default function Relatorios() {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-40 text-text-secondary bg-surface border rounded-[14px]">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-600 mb-2" />
-          <p className="text-sm">Carregando relatórios...</p>
+          <p className="text-base md:text-sm">Carregando relatórios...</p>
         </div>
       ) : (
         <>
           {/* KPI Cards */}
           <div id="ob-relatorios-kpis" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
-            <div className="bg-white border border-border rounded-[14px] p-5 flex items-center justify-between shadow-sm">
-              <div className="space-y-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">Valor Total Ganho</span>
-                <p className="text-3xl font-title font-semibold text-rose-800">
+            <div className="relative overflow-hidden bg-white border border-border rounded-[14px] p-5 shadow-sm">
+              <Coins className="absolute -top-4 -right-4 w-20 h-20 text-rose-200 rotate-12 pointer-events-none select-none" strokeWidth={1.25} />
+              <div className="relative z-10 space-y-1">
+                <span className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-text-secondary">Valor Total Ganho</span>
+                <p className="text-3xl md:text-2xl font-title font-semibold text-rose-800">
                   R$ {totalEarned.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
-                <p className="text-[10px] text-text-muted">Atendimentos finalizados</p>
-              </div>
-              <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600">
-                <Coins className="w-5 h-5" />
+                <p className="text-xs md:text-[10px] text-text-muted">Atendimentos finalizados</p>
               </div>
             </div>
 
-            <div className="bg-white border border-border rounded-[14px] p-5 flex items-center justify-between shadow-sm">
-              <div className="space-y-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">Total de Agendamentos</span>
-                <p className="text-3xl font-title font-semibold text-text-primary">{totalAppointments}</p>
-                <p className="text-[10px] text-text-muted">Agendados no período</p>
-              </div>
-              <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600">
-                <CalendarDays className="w-5 h-5" />
+            <div className="relative overflow-hidden bg-white border border-border rounded-[14px] p-5 shadow-sm">
+              <CalendarDays className="absolute -top-4 -right-4 w-20 h-20 text-rose-200 rotate-12 pointer-events-none select-none" strokeWidth={1.25} />
+              <div className="relative z-10 space-y-1">
+                <span className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-text-secondary">Total de Agendamentos</span>
+                <p className="text-3xl md:text-2xl font-title font-semibold text-text-primary">{totalAppointments}</p>
+                <p className="text-xs md:text-[10px] text-text-muted">Agendados no período</p>
               </div>
             </div>
 
-            <div className="bg-white border border-amber-200 rounded-[14px] p-5 flex items-center justify-between shadow-sm">
-              <div className="space-y-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600">Aguardando Confirmação</span>
-                <p className="text-3xl font-title font-semibold text-amber-700">{pendingAppointments}</p>
-                <p className="text-[10px] text-amber-500">Agendamentos pendentes</p>
-              </div>
-              <div className="w-12 h-12 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
-                <Briefcase className="w-5 h-5" />
+            <div className="relative overflow-hidden bg-white border border-amber-200 rounded-[14px] p-5 shadow-sm">
+              <Briefcase className="absolute -top-4 -right-4 w-20 h-20 text-amber-200 rotate-12 pointer-events-none select-none" strokeWidth={1.25} />
+              <div className="relative z-10 space-y-1">
+                <span className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-amber-600">Aguardando Confirmação</span>
+                <p className="text-3xl md:text-2xl font-title font-semibold text-amber-700">{pendingAppointments}</p>
+                <p className="text-xs md:text-[10px] text-amber-500">Agendamentos pendentes</p>
               </div>
             </div>
 
-            <div className="bg-white border border-border rounded-[14px] p-5 flex items-center justify-between shadow-sm">
-              <div className="space-y-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">Novas Clientes</span>
-                <p className="text-3xl font-title font-semibold text-text-primary">{totalClients}</p>
-                <p className="text-[10px] text-text-muted">Cadastradas no período</p>
-              </div>
-              <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600">
-                <Users className="w-5 h-5" />
+            <div className="relative overflow-hidden bg-white border border-border rounded-[14px] p-5 shadow-sm">
+              <Users className="absolute -top-4 -right-4 w-20 h-20 text-rose-200 rotate-12 pointer-events-none select-none" strokeWidth={1.25} />
+              <div className="relative z-10 space-y-1">
+                <span className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-text-secondary">Novas Clientes</span>
+                <p className="text-3xl md:text-2xl font-title font-semibold text-text-primary">{totalClients}</p>
+                <p className="text-xs md:text-[10px] text-text-muted">Cadastradas no período</p>
               </div>
             </div>
 
@@ -409,16 +411,16 @@ export default function Relatorios() {
 
           {/* Receita ao longo do tempo */}
           <div id="ob-relatorios-graficos" className="bg-white border border-border rounded-[14px] p-5 shadow-sm">
-            <h3 className="font-title font-semibold text-lg text-text-primary flex items-center gap-2 mb-4">
-              <TrendingUp className="w-5 h-5 text-rose-600" />
+            <h3 className="font-title font-semibold text-xl md:text-lg text-text-primary flex items-center gap-2 mb-4">
+              <TrendingUp className="w-6 h-6 md:w-5 md:h-5 text-rose-600" />
               Receita ao longo do tempo
             </h3>
             {revenueTimeData.length === 0 || revenueTimeData.every(d => d.Valor === 0) ? empty('Sem receita registrada no período selecionado.') : (
-              <div className="h-[300px] w-full font-sans text-xs">
+              <div className="h-[300px] w-full font-sans text-sm">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={revenueTimeData} margin={{ top: 10, right: 10, left: 10, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(180,150,130,0.12)" />
-                    <XAxis dataKey="name" tickLine={false} axisLine={false} stroke="var(--text-secondary)" interval={Math.max(0, Math.ceil(revenueTimeData.length / 6) - 1)} tick={{ fontSize: 10 }} />
+                    <XAxis dataKey="name" tickLine={false} axisLine={false} stroke="var(--text-secondary)" interval={Math.max(0, Math.ceil(revenueTimeData.length / 6) - 1)} tick={{ fontSize: 12 }} />
                     <YAxis tickLine={false} axisLine={false} stroke="var(--text-secondary)" tickFormatter={v => `R$ ${v}`} />
                     <Tooltip formatter={(v: any) => [`R$ ${Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 'Receita']} contentStyle={{ backgroundColor: 'white', borderRadius: '8px', border: '1px solid rgba(180,150,130,0.2)' }} />
                     <Line type="monotone" dataKey="Valor" stroke="#A85560" strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: '#A85560' }} />
@@ -432,12 +434,12 @@ export default function Relatorios() {
 
             {/* Agendamentos por dia da semana */}
             <div className="bg-white border border-border rounded-[14px] p-5 shadow-sm">
-              <h3 className="font-title font-semibold text-lg text-text-primary flex items-center gap-2 mb-4">
-                <CalendarDays className="w-5 h-5 text-rose-600" />
+              <h3 className="font-title font-semibold text-xl md:text-lg text-text-primary flex items-center gap-2 mb-4">
+                <CalendarDays className="w-6 h-6 md:w-5 md:h-5 text-rose-600" />
                 Agendamentos por dia da semana
               </h3>
               {appointmentsWeekdayData.every(d => d.Quantidade === 0) ? empty('Sem agendamentos no período selecionado.') : (
-                <div className="h-[300px] w-full font-sans text-xs">
+                <div className="h-[300px] w-full font-sans text-sm">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={appointmentsWeekdayData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(180,150,130,0.12)" />
@@ -453,12 +455,12 @@ export default function Relatorios() {
 
             {/* Clientes novas vs fiéis */}
             <div className="bg-white border border-border rounded-[14px] p-5 shadow-sm">
-              <h3 className="font-title font-semibold text-lg text-text-primary flex items-center gap-2 mb-4">
-                <Users className="w-5 h-5 text-rose-600" />
+              <h3 className="font-title font-semibold text-xl md:text-lg text-text-primary flex items-center gap-2 mb-4">
+                <Users className="w-6 h-6 md:w-5 md:h-5 text-rose-600" />
                 Clientes Novas vs Fiéis
               </h3>
               {clientsNewRecurrentData.every(d => d.Novos === 0 && d.Recorrentes === 0) ? empty('Sem atendimentos de clientes no período.') : (
-                <div className="h-[300px] w-full font-sans text-xs">
+                <div className="h-[300px] w-full font-sans text-sm">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={clientsNewRecurrentData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(180,150,130,0.12)" />
@@ -480,17 +482,17 @@ export default function Relatorios() {
 
             {/* Serviços mais realizados */}
             <div className="bg-white border border-border rounded-[14px] p-5 shadow-sm">
-              <h3 className="font-title font-semibold text-lg text-text-primary flex items-center gap-2 mb-4">
-                <Briefcase className="w-5 h-5 text-rose-600" />
+              <h3 className="font-title font-semibold text-xl md:text-lg text-text-primary flex items-center gap-2 mb-4">
+                <Briefcase className="w-6 h-6 md:w-5 md:h-5 text-rose-600" />
                 Serviços mais realizados
               </h3>
               {topServicesData.length === 0 ? empty('Sem atendimentos registrados no período.') : (
-                <div className="h-[300px] w-full font-sans text-xs">
+                <div className="h-[300px] w-full font-sans text-sm">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart layout="vertical" data={topServicesData} margin={{ top: 10, right: 15, left: 25, bottom: 5 }}>
                       <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="rgba(180,150,130,0.12)" />
                       <XAxis type="number" tickLine={false} axisLine={false} stroke="var(--text-secondary)" allowDecimals={false} />
-                      <YAxis type="category" dataKey="name" tickLine={false} axisLine={false} stroke="var(--text-secondary)" width={100} tick={{ fontSize: 10 }} />
+                      <YAxis type="category" dataKey="name" tickLine={false} axisLine={false} stroke="var(--text-secondary)" width={100} tick={{ fontSize: 12 }} />
                       <Tooltip formatter={v => [v, 'Realizado']} contentStyle={{ backgroundColor: 'white', borderRadius: '8px', border: '1px solid rgba(180,150,130,0.2)' }} />
                       <Bar dataKey="Quantidade" fill="#7A2E38" radius={[0, 4, 4, 0]} />
                     </BarChart>
@@ -501,22 +503,22 @@ export default function Relatorios() {
 
             {/* Faltas e cancelamentos */}
             <div className="bg-white border border-border rounded-[14px] p-5 shadow-sm">
-              <h3 className="font-title font-semibold text-lg text-text-primary flex items-center gap-2 mb-2">
-                <AlertCircle className="w-5 h-5 text-rose-600" />
+              <h3 className="font-title font-semibold text-xl md:text-lg text-text-primary flex items-center gap-2 mb-2">
+                <AlertCircle className="w-6 h-6 md:w-5 md:h-5 text-rose-600" />
                 Faltas e Cancelamentos
               </h3>
-              <p className="text-xs text-text-secondary mb-6">Agendamentos perdidos no período selecionado.</p>
+              <p className="text-sm md:text-xs text-text-secondary mb-6">Agendamentos perdidos no período selecionado.</p>
               {faltasCancelamentosData.totalFaltas === 0 && faltasCancelamentosData.totalCancelamentos === 0 ? empty('Nenhuma falta ou cancelamento no período.') : (
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col items-center justify-center bg-red-50 border border-red-100 rounded-xl p-6 gap-1">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-red-500">Faltas (No-show)</p>
-                    <p className="font-title font-bold text-4xl text-red-600">{faltasCancelamentosData.totalFaltas}</p>
-                    <p className="text-[10px] text-text-muted">cliente não apareceu</p>
+                    <p className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-red-500">Faltas (No-show)</p>
+                    <p className="font-title font-bold text-4xl md:text-3xl text-red-600">{faltasCancelamentosData.totalFaltas}</p>
+                    <p className="text-xs md:text-[10px] text-text-muted">cliente não apareceu</p>
                   </div>
                   <div className="flex flex-col items-center justify-center bg-gray-50 border border-gray-100 rounded-xl p-6 gap-1">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Cancelamentos</p>
-                    <p className="font-title font-bold text-4xl text-gray-600">{faltasCancelamentosData.totalCancelamentos}</p>
-                    <p className="text-[10px] text-text-muted">agendamentos cancelados</p>
+                    <p className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-gray-500">Cancelamentos</p>
+                    <p className="font-title font-bold text-4xl md:text-3xl text-gray-600">{faltasCancelamentosData.totalCancelamentos}</p>
+                    <p className="text-xs md:text-[10px] text-text-muted">agendamentos cancelados</p>
                   </div>
                 </div>
               )}
