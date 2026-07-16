@@ -632,13 +632,13 @@ export default function Agendamentos() {
       case 'cancelado':
         return { border: 'border-gray-200', bg: 'bg-gray-100 hover:bg-gray-200 text-gray-400 line-through opacity-50', badge: 'bg-gray-200 text-gray-600', text: 'text-gray-500' };
       case 'concluido':
-        return { border: 'border-emerald-300', bg: 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800', badge: 'bg-emerald-200 text-emerald-950', text: 'text-emerald-900' };
+        return { border: 'border-blue-300', bg: 'bg-blue-50 hover:bg-blue-100 text-blue-800', badge: 'bg-blue-200 text-blue-950', text: 'text-blue-900' };
       case 'pendente':
         return { border: 'border-amber-300', bg: 'bg-amber-50 hover:bg-amber-100 text-amber-800', badge: 'bg-amber-200 text-amber-900', text: 'text-amber-900' };
       case 'falta':
         return { border: 'border-red-400', bg: 'bg-red-50 hover:bg-red-100 text-red-800 opacity-70', badge: 'bg-red-200 text-red-900', text: 'text-red-900' };
       default: // confirmado
-        return { border: 'border-rose-300', bg: 'bg-rose-50 hover:bg-rose-100 text-rose-800', badge: 'bg-rose-200 text-rose-900', text: 'text-rose-900' };
+        return { border: 'border-green-300', bg: 'bg-green-50 hover:bg-green-100 text-green-800', badge: 'bg-green-200 text-green-900', text: 'text-green-900' };
     }
   };
 
@@ -943,10 +943,10 @@ export default function Agendamentos() {
                       const colors = getStatusColorStyles(appt.status);
                       const weekAccentBorder =
                         appt.status === 'cancelado' ? 'border-l-gray-400' :
-                        appt.status === 'concluido' ? 'border-l-emerald-500' :
+                        appt.status === 'concluido' ? 'border-l-blue-500' :
                         appt.status === 'pendente' ? 'border-l-amber-500' :
                         appt.status === 'falta' ? 'border-l-red-500' :
-                        'border-l-rose-500';
+                        'border-l-green-500';
                       return (
                         <div
                           key={appt.id}
@@ -1031,10 +1031,10 @@ export default function Agendamentos() {
                   // Accent left border por status (inspirado no layout de referência)
                   const accentBorder =
                     appt.status === 'cancelado' ? 'border-l-gray-400' :
-                    appt.status === 'concluido' ? 'border-l-emerald-500' :
+                    appt.status === 'concluido' ? 'border-l-blue-500' :
                     appt.status === 'pendente' ? 'border-l-amber-500' :
                     appt.status === 'falta' ? 'border-l-red-500' :
-                    'border-l-rose-500';
+                    'border-l-green-500';
 
                   return (
                     <div
@@ -1074,10 +1074,10 @@ export default function Agendamentos() {
                           )}
                           <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-semibold border leading-none ${
                             appt.status === 'cancelado' ? 'bg-gray-100 text-gray-500 border-gray-200' :
-                            appt.status === 'concluido' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' :
+                            appt.status === 'concluido' ? 'bg-blue-100 text-blue-800 border-blue-200' :
                             appt.status === 'pendente' ? 'bg-amber-100 text-amber-800 border-amber-200' :
                             appt.status === 'falta' ? 'bg-red-100 text-red-800 border-red-200' :
-                            'bg-rose-100 text-rose-800 border-rose-200'
+                            'bg-green-100 text-green-800 border-green-200'
                           }`}>
                             {appt.status === 'confirmado' ? 'Confirmado' :
                              appt.status === 'pendente' ? 'Pendente' :
@@ -1204,9 +1204,9 @@ export default function Agendamentos() {
 
                 {/* Status Badge */}
                 <span className={`text-xs md:text-[10px] font-bold px-3 py-1 md:px-2.5 md:py-0.5 rounded-full uppercase tracking-wider
-                  ${selectedAppt.status === 'confirmado' ? 'bg-rose-100 text-rose-800 border border-rose-200' : ''}
+                  ${selectedAppt.status === 'confirmado' ? 'bg-green-100 text-green-800 border border-green-200' : ''}
                   ${selectedAppt.status === 'pendente' ? 'bg-amber-100 text-amber-700 border border-amber-200' : ''}
-                  ${selectedAppt.status === 'concluido' ? 'bg-green-100 text-green-800 border border-green-200' : ''}
+                  ${selectedAppt.status === 'concluido' ? 'bg-blue-100 text-blue-800 border border-blue-200' : ''}
                   ${selectedAppt.status === 'cancelado' ? 'bg-gray-100 text-gray-500 border border-gray-200' : ''}
                   ${selectedAppt.status === 'falta' ? 'bg-red-100 text-red-800 border border-red-200' : ''}
                 `}>
