@@ -992,7 +992,7 @@ export default function Agendamentos() {
             {/* Hours Labels */}
             <div className="border-r border-border bg-white text-right pr-2 text-[10px] font-bold text-text-secondary select-none">
               {halfHourSlots.map(({ hour, minute }) => (
-                <div key={`${hour}-${minute}`} style={{ height: DAY_SLOT_HEIGHT }} className={`border-b border-border/50 flex items-center justify-end pr-1 ${minute === 0 ? 'font-bold' : 'font-normal text-[8px] text-text-muted/60'}`}>
+                <div key={`${hour}-${minute}`} style={{ height: DAY_SLOT_HEIGHT }} className={`border-b border-border/50 flex items-center justify-end pr-1 ${minute === 0 ? 'font-bold text-xs' : 'font-normal text-[8px] text-text-muted/60'}`}>
                   <span>{hour.toString().padStart(2, '0')}:{minute.toString().padStart(2, '0')}</span>
                 </div>
               ))}
