@@ -1,7 +1,8 @@
 import { Outlet, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useSubscription } from '../../hooks/useSubscription';
-import { ShieldAlert, CreditCard, LogOut, ArrowRight, Sparkles } from 'lucide-react';
+import { ShieldAlert, CreditCard, LogOut, ArrowRight, Sparkles, Settings } from 'lucide-react';
+import Modal from './Modal';
 
 export default function BillingGuard() {
   const { isProfissional, signOut, loading: authLoading } = useAuth();
@@ -61,12 +62,13 @@ export default function BillingGuard() {
   };
 
   return (
-    <div className="flex items-center justify-center px-4 py-6 md:py-12 relative overflow-hidden font-sans">
+    <Modal>
+    <div className="fixed inset-0 z-[300] bg-bg overflow-hidden flex items-center justify-center px-4 py-6 font-sans">
       {/* Decorações em degradê de fundo */}
       <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-rose-100/30 blur-3xl pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-rose-100/30 blur-3xl pointer-events-none" />
 
-      <div className="w-full max-w-[500px] max-h-[80vh] overflow-y-auto bg-white border border-border rounded-[24px] shadow-2xl p-7 md:p-10 relative z-10 text-center animate-fade-in">
+      <div className="w-full max-w-[500px] max-h-[calc(100dvh-3rem)] overflow-y-auto overscroll-contain bg-white border border-border rounded-[24px] shadow-2xl p-7 md:p-10 relative z-10 text-center animate-fade-in">
 
         {/* Ícone de Alerta */}
         <div className="flex justify-center mb-6">
@@ -131,9 +133,18 @@ export default function BillingGuard() {
             <LogOut className="w-5 h-5 md:w-4 md:h-4" />
             <span>Sair da Minha Conta</span>
           </button>
+
+          <Link
+            to="/configuracoes"
+            className="w-full py-1 text-sm md:text-xs font-semibold text-text-muted hover:text-rose-600 transition-colors flex items-center justify-center gap-1.5"
+          >
+            <Settings className="w-4 h-4 md:w-3.5 md:h-3.5" />
+            <span>Ir para Configurações</span>
+          </Link>
         </div>
 
       </div>
     </div>
+    </Modal>
   );
 }
