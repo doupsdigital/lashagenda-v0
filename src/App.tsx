@@ -7,6 +7,7 @@ import ProfissionalRoute from './components/common/ProfissionalRoute';
 import ClienteRoute from './components/common/ClienteRoute';
 import Layout from './components/layout/Layout';
 import PortalLayout from './components/layout/PortalLayout';
+import ScrollToTop from './components/common/ScrollToTop';
 import Login from './pages/profissional/Login';
 import Dashboard from './pages/profissional/Dashboard';
 import Clientes from './pages/profissional/Clientes';
@@ -90,6 +91,7 @@ export default function App() {
     <InstallPromptProvider>
       <AuthProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             {/* Públicas */}
             <Route path="/v5" element={<LandingPage_v5 />} />
