@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
-import { useSubscription } from '../../hooks/useSubscription';
 import {
   ArrowLeft,
   User,
@@ -15,7 +14,6 @@ import {
   Clock,
   Sparkles,
   Calendar,
-  ClipboardPen,
   CheckCircle,
   UserX
 } from 'lucide-react';
@@ -59,8 +57,6 @@ function applyCpfMask(value: string): string {
 export default function PerfilCliente() {
   const { id } = useParams<{ id: string }>();
   const { estabelecimentoId } = useAuth();
-  const { hasFeature } = useSubscription();
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'dados' | 'historico'>('dados');
   
   // Data States
@@ -394,7 +390,7 @@ export default function PerfilCliente() {
     return (
       <div className="flex flex-col items-center justify-center py-40 text-text-secondary bg-surface border rounded-[14px]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-600 mb-2"></div>
-        <p className="text-sm">Carregando prontuário da cliente...</p>
+        <p className="text-base md:text-sm">Carregando prontuário da cliente...</p>
       </div>
     );
   }
@@ -403,11 +399,11 @@ export default function PerfilCliente() {
     return (
       <div className="bg-white border border-border rounded-[14px] p-12 text-center text-text-secondary">
         <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-3" />
-        <p className="font-title font-medium text-lg text-text-primary">Cliente não encontrada</p>
-        <p className="text-sm text-text-muted mt-1">O link acessado é inválido ou o registro foi removido.</p>
-        <Link 
-          to="/clientes" 
-          className="mt-4 inline-flex items-center gap-1 px-4 py-2 bg-rose-600 text-white rounded-lg text-xs font-medium hover:bg-rose-800"
+        <p className="font-title font-medium text-xl md:text-lg text-text-primary">Cliente não encontrada</p>
+        <p className="text-base md:text-sm text-text-muted mt-1">O link acessado é inválido ou o registro foi removido.</p>
+        <Link
+          to="/clientes"
+          className="mt-4 inline-flex items-center gap-1 px-4 py-2.5 md:py-2 bg-rose-600 text-white rounded-lg text-sm md:text-xs font-medium hover:bg-rose-800"
         >
           <ArrowLeft className="w-4 h-4" />
           Voltar para Lista
@@ -427,8 +423,8 @@ export default function PerfilCliente() {
           <div className="bg-red-50 border border-red-200 text-red-800 px-6 py-4 rounded-xl flex items-center gap-3 shadow-2xl animate-scale-in max-w-md">
             <AlertCircle className="w-6 h-6 flex-shrink-0 text-red-600" />
             <div>
-              <p className="text-sm font-semibold">Erro</p>
-              <p className="text-xs mt-0.5 leading-relaxed">{errorMessage}</p>
+              <p className="text-base md:text-sm font-semibold">Erro</p>
+              <p className="text-sm md:text-xs mt-0.5 leading-relaxed">{errorMessage}</p>
             </div>
             <button onClick={() => setErrorMessage(null)} className="ml-auto text-red-600 hover:text-red-800 cursor-pointer">
               <X className="w-4 h-4" />
@@ -446,10 +442,10 @@ export default function PerfilCliente() {
             </div>
 
             <div className="space-y-1">
-              <h3 className="font-title font-bold text-xl text-text-primary">
+              <h3 className="font-title font-bold text-2xl md:text-xl text-text-primary">
                 Salvo com Sucesso!
               </h3>
-              <p className="text-xs text-text-secondary leading-relaxed">
+              <p className="text-sm md:text-xs text-text-secondary leading-relaxed">
                 {successMessage}
               </p>
             </div>
@@ -459,7 +455,7 @@ export default function PerfilCliente() {
               <button
                 type="button"
                 onClick={() => setSuccessMessage(null)}
-                className="w-full py-2.5 bg-rose-600 hover:bg-rose-800 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                className="w-full py-3 md:py-2.5 bg-rose-600 hover:bg-rose-800 text-white rounded-lg text-sm md:text-xs font-semibold transition-colors cursor-pointer"
               >
                 Concluir
               </button>
@@ -469,61 +465,27 @@ export default function PerfilCliente() {
         </div>
       )}
 
-      {/* Header Profile Section */}
-      <div className="bg-white border border-border rounded-[14px] p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-rose-100 border-2 border-rose-200 text-rose-800 flex items-center justify-center font-title font-bold text-xl flex-shrink-0">
-            {initials}
-          </div>
-          <div>
-            <div className="flex flex-wrap items-center gap-2.5">
-              <h2 className="font-title font-semibold text-2xl text-text-primary">
-                {cliente.nome} {cliente.sobrenome}
-              </h2>
+      {/* Header */}
+      <div
+        className="rounded-[14px] p-5 md:p-6 shadow-sm text-white"
+        style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
+      >
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4 min-w-0">
+            <div className="w-14 h-14 md:w-12 md:h-12 rounded-full bg-rose-100 border-2 border-white/40 text-rose-800 flex items-center justify-center font-title font-bold text-lg md:text-base flex-shrink-0">
+              {initials}
             </div>
-            
-            <div className="flex items-center gap-2 mt-1">
-              <Link 
-                to="/clientes" 
-                className="text-xs text-text-secondary hover:text-rose-600 font-medium flex items-center gap-1 transition-colors"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                Voltar para Clientes
-              </Link>
-            </div>
+            <h2 className="font-title font-semibold text-2xl md:text-xl leading-snug">
+              {cliente.nome} {cliente.sobrenome}
+            </h2>
           </div>
-        </div>
-
-        {/* Action Controls */}
-        <div className="flex flex-wrap items-center gap-3">
-
-          <button
-            onClick={() => navigate('/agendamentos', {
-              state: {
-                novoAgendamento: true,
-                clientePreSelecionado: {
-                  id: cliente.id,
-                  nome: cliente.nome,
-                  sobrenome: cliente.sobrenome,
-                  whatsapp: cliente.whatsapp,
-                  email: cliente.email,
-                }
-              }
-            })}
-            className="px-4 py-2 bg-rose-600 hover:bg-rose-800 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+          <Link
+            to="/clientes"
+            className="flex-shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 md:px-3 md:py-1.5 rounded-full bg-white/15 hover:bg-white/25 border border-white/20 text-sm md:text-xs font-semibold text-white transition-colors"
           >
-            Novo Agendamento
-          </button>
-
-          {hasFeature('crm') && (
-            <button
-              onClick={() => navigate(`/fichas-anamnese/${cliente.id}`)}
-              className="flex items-center gap-1.5 px-4 py-2 border border-border hover:bg-bg text-text-primary rounded-lg text-xs font-semibold transition-colors cursor-pointer"
-            >
-              <ClipboardPen className="w-3.5 h-3.5" />
-              Ficha de Anamnese
-            </button>
-          )}
+            <ArrowLeft className="w-4 h-4 md:w-3.5 md:h-3.5" />
+            Voltar
+          </Link>
         </div>
       </div>
 
@@ -531,50 +493,41 @@ export default function PerfilCliente() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Left Side: Client Summary Card */}
         <div className="lg:col-span-1 bg-white border border-border rounded-[14px] p-5 shadow-sm space-y-4 h-fit">
-          <p className="text-xs font-bold text-text-muted uppercase tracking-wider border-b border-border pb-1">Resumo Rápido</p>
-          
-          <div className="space-y-3">
+          <p className="text-sm md:text-xs font-bold text-text-muted uppercase tracking-wider border-b border-border pb-2">Resumo Rápido</p>
+
+          <div className="space-y-3.5">
             <div>
-              <p className="text-[10px] text-text-secondary uppercase font-semibold">WhatsApp</p>
-              <p className="text-sm font-semibold text-text-primary mt-0.5">{cliente.whatsapp}</p>
-            </div>
-            
-            <div>
-              <p className="text-[10px] text-text-secondary uppercase font-semibold">E-mail</p>
-              <p className="text-xs text-text-primary mt-0.5 break-all">{cliente.email || <span className="text-text-muted italic">Não informado</span>}</p>
+              <p className="text-xs md:text-[10px] text-text-secondary uppercase font-semibold">WhatsApp</p>
+              <p className="text-base md:text-sm font-semibold text-text-primary mt-0.5">{cliente.whatsapp}</p>
             </div>
 
             <div>
-              <p className="text-[10px] text-text-secondary uppercase font-semibold">Idade / Nasc.</p>
-              <p className="text-xs text-text-primary mt-0.5">
-                {cliente.data_nascimento 
-                  ? `${new Date(cliente.data_nascimento).toLocaleDateString('pt-BR')} (${new Date().getFullYear() - new Date(cliente.data_nascimento).getFullYear()} anos)` 
+              <p className="text-xs md:text-[10px] text-text-secondary uppercase font-semibold">E-mail</p>
+              <p className="text-sm md:text-xs text-text-primary mt-0.5 break-all">{cliente.email || <span className="text-text-muted italic">Não informado</span>}</p>
+            </div>
+
+            <div>
+              <p className="text-xs md:text-[10px] text-text-secondary uppercase font-semibold">Idade / Nasc.</p>
+              <p className="text-sm md:text-xs text-text-primary mt-0.5">
+                {cliente.data_nascimento
+                  ? `${new Date(cliente.data_nascimento).toLocaleDateString('pt-BR')} (${new Date().getFullYear() - new Date(cliente.data_nascimento).getFullYear()} anos)`
                   : <span className="text-text-muted italic">Não informada</span>}
               </p>
             </div>
 
-            <div>
-              <p className="text-[10px] text-text-secondary uppercase font-semibold">Canal de Origem</p>
-              <p className="text-xs text-text-primary mt-0.5">
-                {cliente.como_conheceu 
-                  ? <span className="bg-rose-50 border border-rose-100 text-rose-800 px-2 py-0.5 rounded-full font-medium text-[10px]">{cliente.como_conheceu}</span>
-                  : <span className="text-text-muted italic">Não informado</span>}
-              </p>
-            </div>
-
             {totalFaltas > 0 && (
-              <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-                <UserX className="w-4 h-4 text-red-600 flex-shrink-0" />
+              <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2.5">
+                <UserX className="w-5 h-5 md:w-4 md:h-4 text-red-600 flex-shrink-0" />
                 <div>
-                  <p className="text-[10px] text-red-700 uppercase font-bold">Faltas registradas</p>
-                  <p className="text-sm font-bold text-red-800">{totalFaltas} {totalFaltas === 1 ? 'falta' : 'faltas'}</p>
+                  <p className="text-xs md:text-[10px] text-red-700 uppercase font-bold">Faltas registradas</p>
+                  <p className="text-base md:text-sm font-bold text-red-800">{totalFaltas} {totalFaltas === 1 ? 'falta' : 'faltas'}</p>
                 </div>
               </div>
             )}
 
             <div className="pt-2 border-t border-border/60">
-              <p className="text-[10px] text-text-secondary uppercase font-semibold">Cadastro</p>
-              <p className="text-[10px] text-text-muted mt-0.5">
+              <p className="text-xs md:text-[10px] text-text-secondary uppercase font-semibold">Cadastro</p>
+              <p className="text-xs md:text-[10px] text-text-muted mt-0.5">
                 {new Date(cliente.created_at || '').toLocaleDateString('pt-BR')} às {new Date(cliente.created_at || '').toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
               </p>
             </div>
@@ -584,108 +537,109 @@ export default function PerfilCliente() {
         {/* Right Side: Navigation Tabs & Tab Content */}
         <div className="lg:col-span-3 space-y-6">
           {/* Tab Navigation header */}
-          <div className="flex border-b border-border bg-white rounded-t-[14px] px-4 pt-2 border-x border-t">
+          <div className="flex items-center gap-2 bg-white border border-border rounded-[14px] p-2 shadow-sm">
             {[
-              { id: 'dados', label: 'Dados Pessoais', icon: User },
-              { id: 'historico', label: 'Histórico de Atendimentos', icon: History }
+              { id: 'dados', label: 'Dados Pessoais', shortLabel: 'Dados', icon: User },
+              { id: 'historico', label: 'Histórico de Atendimentos', shortLabel: 'Histórico', icon: History }
             ].map(tab => {
               const TabIcon = tab.icon;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold border-b-2 transition-all cursor-pointer ${activeTab === tab.id
-                    ? 'border-rose-600 text-rose-600'
-                    : 'border-transparent text-text-secondary hover:text-rose-600'}`}
+                  className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-base md:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${activeTab === tab.id
+                    ? 'bg-rose-600 text-white shadow-sm'
+                    : 'text-text-secondary hover:text-rose-600'}`}
                 >
-                  <TabIcon className="w-4 h-4" />
-                  {tab.label}
+                  <TabIcon className="w-5 h-5 md:w-4 md:h-4 flex-shrink-0" />
+                  <span className="md:hidden">{tab.shortLabel}</span>
+                  <span className="hidden md:inline">{tab.label}</span>
                 </button>
               );
             })}
           </div>
 
           {/* Tab Content Box */}
-          <div className="bg-white border-x border-b border-border rounded-b-[14px] p-6 shadow-sm min-h-[400px]">
-            
+          <div className="bg-white border border-border rounded-[14px] p-6 shadow-sm min-h-[400px]">
+
             {/* TAB: DADOS PESSOAIS */}
             {activeTab === 'dados' && (
               <form onSubmit={handleSavePersonalData} className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">Nome *</label>
+                    <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">Nome *</label>
                     <input 
                       type="text" 
                       required
                       value={nome}
                       onChange={(e) => setNome(e.target.value)}
-                      className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                      className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">Sobrenome *</label>
+                    <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">Sobrenome *</label>
                     <input 
                       type="text" 
                       required
                       value={sobrenome}
                       onChange={(e) => setSobrenome(e.target.value)}
-                      className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                      className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">WhatsApp *</label>
+                    <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">WhatsApp *</label>
                     <input 
                       type="text" 
                       required
                       value={whatsapp}
                       onChange={(e) => setWhatsapp(applyPhoneMask(e.target.value))}
-                      className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                      className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">E-mail</label>
+                    <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">E-mail</label>
                     <input 
                       type="email" 
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                      className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">Data de Nascimento</label>
+                    <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">Data de Nascimento</label>
                     <input 
                       type="date" 
                       value={dataNascimento}
                       onChange={(e) => setDataNascimento(e.target.value)}
-                      className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                      className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">CPF</label>
+                    <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">CPF</label>
                     <input 
                       type="text" 
                       placeholder="000.000.000-00"
                       value={cpf}
                       onChange={(e) => setCpf(applyCpfMask(e.target.value))}
-                      className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                      className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">Origem / Como conheceu</label>
+                    <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">Origem / Como conheceu</label>
                     <select
                       value={comoConheceu}
                       onChange={(e) => setComoConheceu(e.target.value)}
-                      className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 cursor-pointer"
+                      className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 cursor-pointer"
                     >
                       <option value="">Selecione...</option>
                       <option value="Instagram">Instagram</option>
@@ -698,12 +652,12 @@ export default function PerfilCliente() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">Endereço Completo</label>
+                  <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">Endereço Completo</label>
                   <input 
                     type="text" 
                     value={endereco}
                     onChange={(e) => setEndereco(e.target.value)}
-                    className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                    className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                   />
                 </div>
 
@@ -711,9 +665,9 @@ export default function PerfilCliente() {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="flex items-center justify-center gap-1.5 px-5 py-2.5 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                    className="flex items-center justify-center gap-1.5 px-5 py-3 md:py-2.5 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-sm md:text-xs font-semibold transition-colors cursor-pointer"
                   >
-                    <Save className="w-4 h-4" />
+                    <Save className="w-5 h-5 md:w-4 md:h-4" />
                     {saving ? 'Salvando...' : 'Salvar Dados Pessoais'}
                   </button>
                 </div>
@@ -725,14 +679,14 @@ export default function PerfilCliente() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between border-b border-border pb-3">
                   <div>
-                    <h3 className="font-title font-semibold text-lg text-text-primary">Registros de Atendimento</h3>
-                    <p className="text-xs text-text-secondary">Todos os procedimentos realizados e cobrados.</p>
+                    <h3 className="font-title font-semibold text-xl md:text-lg text-text-primary">Registros de Atendimento</h3>
+                    <p className="text-sm md:text-xs text-text-secondary">Todos os procedimentos realizados e cobrados.</p>
                   </div>
                   <button
                     onClick={handleOpenAtendimentoModal}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-rose-600 hover:bg-rose-800 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 px-4 py-2.5 md:py-2 bg-rose-600 hover:bg-rose-800 text-white rounded-lg text-sm md:text-xs font-semibold transition-colors cursor-pointer"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-4 h-4 md:w-4 md:h-4" />
                     Registrar Atendimento
                   </button>
                 </div>
@@ -740,8 +694,8 @@ export default function PerfilCliente() {
                 {atendimentos.length === 0 ? (
                   <div className="py-12 text-center text-text-secondary">
                     <Sparkles className="w-10 h-10 text-rose-200 mx-auto mb-2" />
-                    <p className="font-title font-medium text-text-primary">Nenhum atendimento registrado</p>
-                    <p className="text-xs text-text-muted mt-0.5">Registre o primeiro atendimento clicando no botão acima.</p>
+                    <p className="font-title font-medium text-base md:text-sm text-text-primary">Nenhum atendimento registrado</p>
+                    <p className="text-sm md:text-xs text-text-muted mt-0.5">Registre o primeiro atendimento clicando no botão acima.</p>
                   </div>
                 ) : (
                   /* Timeline List */
@@ -764,42 +718,42 @@ export default function PerfilCliente() {
                               : 'bg-bg/15 hover:bg-bg/40 border-border'}`}
                           >
                             <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
-                              <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider flex items-center gap-1">
-                                <Clock className={`w-3 h-3 ${isFalta ? 'text-red-400' : 'text-rose-400'}`} />
+                              <span className="text-xs md:text-[10px] font-bold text-text-secondary uppercase tracking-wider flex items-center gap-1">
+                                <Clock className={`w-3.5 h-3.5 md:w-3 md:h-3 ${isFalta ? 'text-red-400' : 'text-rose-400'}`} />
                                 {formattedDate}
                                 {isFalta ? (
-                                  <span className="ml-2 bg-red-100 border border-red-200 text-red-700 text-[8px] px-1.5 py-0.5 rounded-full font-bold uppercase flex items-center gap-0.5">
+                                  <span className="ml-2 bg-red-100 border border-red-200 text-red-700 text-[9px] md:text-[8px] px-1.5 py-0.5 rounded-full font-bold uppercase flex items-center gap-0.5">
                                     <UserX className="w-2.5 h-2.5" />
                                     Falta
                                   </span>
                                 ) : atend.tipo === 'agendamento' ? (
-                                  <span className="ml-2 bg-rose-50 border border-rose-100 text-rose-700 text-[8px] px-1.5 py-0.5 rounded-full font-bold uppercase">Agendado</span>
+                                  <span className="ml-2 bg-rose-50 border border-rose-100 text-rose-700 text-[9px] md:text-[8px] px-1.5 py-0.5 rounded-full font-bold uppercase">Agendado</span>
                                 ) : (
-                                  <span className="ml-2 bg-gray-50 border border-gray-150 text-gray-500 text-[8px] px-1.5 py-0.5 rounded-full font-bold uppercase">Manual</span>
+                                  <span className="ml-2 bg-gray-50 border border-gray-150 text-gray-500 text-[9px] md:text-[8px] px-1.5 py-0.5 rounded-full font-bold uppercase">Manual</span>
                                 )}
                               </span>
                               {!isFalta && (
-                                <span className="text-sm font-bold text-rose-800 bg-rose-50 border border-rose-100 px-2.5 py-0.5 rounded-full">
+                                <span className="text-base md:text-sm font-bold text-rose-800 bg-rose-50 border border-rose-100 px-2.5 py-1 md:py-0.5 rounded-full">
                                   R$ {Number(atend.valor_cobrado).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                                 </span>
                               )}
                             </div>
 
-                            <h4 className={`text-sm font-bold flex items-center gap-1.5 ${isFalta ? 'text-red-800 line-through opacity-70' : 'text-text-primary'}`}>
+                            <h4 className={`text-base md:text-sm font-bold flex items-center gap-1.5 ${isFalta ? 'text-red-800 line-through opacity-70' : 'text-text-primary'}`}>
                               {atend.servico_name}
                               {atend.variacao_name && (
-                                <span className="text-[10px] bg-gold-light/40 text-gold border border-gold-light/60 px-1.5 py-0.5 rounded font-normal font-sans">
+                                <span className="text-xs md:text-[10px] bg-gold-light/40 text-gold border border-gold-light/60 px-1.5 py-0.5 rounded font-normal font-sans">
                                   {atend.variacao_name}
                                 </span>
                               )}
                             </h4>
 
                             {isFalta && (
-                              <p className="text-[11px] text-red-600 mt-1">Cliente não compareceu ao agendamento.</p>
+                              <p className="text-sm md:text-[11px] text-red-600 mt-1">Cliente não compareceu ao agendamento.</p>
                             )}
 
                             {atend.observacoes && (
-                              <div className="mt-3 text-xs text-text-secondary bg-white border border-border/40 p-2.5 rounded-lg leading-relaxed italic">
+                              <div className="mt-3 text-sm md:text-xs text-text-secondary bg-white border border-border/40 p-2.5 rounded-lg leading-relaxed italic">
                                 "{atend.observacoes}"
                               </div>
                             )}
@@ -819,15 +773,15 @@ export default function PerfilCliente() {
       {isAtendimentoModalOpen && createPortal(<div className="fixed inset-0 bg-black/45 backdrop-blur-sm z-[200] flex items-center justify-center p-4 overflow-y-auto animate-fade-in">
           <div className="bg-white rounded-[14px] border border-border shadow-xl w-full max-w-lg flex flex-col max-h-[calc(100vh-2rem)] overflow-hidden my-8 animate-slide-up">
             <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-rose-50/10 flex-shrink-0">
-              <h4 className="font-title font-semibold text-lg text-text-primary flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-rose-600" />
+              <h4 className="font-title font-semibold text-xl md:text-lg text-text-primary flex items-center gap-2">
+                <Calendar className="w-6 h-6 md:w-5 md:h-5 text-rose-600" />
                 Registrar Atendimento Realizado
               </h4>
-              <button 
+              <button
                 onClick={() => setIsAtendimentoModalOpen(false)}
                 className="text-text-secondary hover:text-rose-600 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-6 h-6 md:w-5 md:h-5" />
               </button>
             </div>
             
@@ -835,7 +789,7 @@ export default function PerfilCliente() {
               
               {/* Data */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
                   Data do Atendimento *
                 </label>
                 <input 
@@ -843,20 +797,20 @@ export default function PerfilCliente() {
                   required
                   value={atendimentoData}
                   onChange={(e) => setAtendimentoData(e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                  className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                 />
               </div>
 
               {/* Servico Selection */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
                   Serviço *
                 </label>
                 <select
                   required
                   value={atendimentoServicoId}
                   onChange={(e) => handleServiceChange(e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 cursor-pointer"
+                  className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 cursor-pointer"
                 >
                   <option value="" disabled>Selecione um serviço ativo</option>
                   {servicos.map(s => (
@@ -868,14 +822,14 @@ export default function PerfilCliente() {
               {/* Variação Selection (Dynamically appears if service has variations) */}
               {selectedService && selectedService.variacoes_servico && selectedService.variacoes_servico.length > 0 && (
                 <div className="space-y-1.5 animate-fade-in">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                  <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
                     Variação do Serviço *
                   </label>
                   <select
                     required
                     value={atendimentoVariacaoId}
                     onChange={(e) => handleVariationChange(e.target.value)}
-                    className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 cursor-pointer"
+                    className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 cursor-pointer"
                   >
                     {selectedService.variacoes_servico.map(v => (
                       <option key={v.id} value={v.id}>{v.nome}</option>
@@ -886,7 +840,7 @@ export default function PerfilCliente() {
 
               {/* Valor Cobrado */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
                   Valor Cobrado (R$) *
                 </label>
                 <input 
@@ -896,13 +850,13 @@ export default function PerfilCliente() {
                   min="0"
                   value={atendimentoValor}
                   onChange={(e) => setAtendimentoValor(parseFloat(e.target.value) || 0)}
-                  className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
+                  className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400"
                 />
               </div>
 
               {/* Observações */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
                   Observações do Atendimento
                 </label>
                 <textarea 
@@ -910,7 +864,7 @@ export default function PerfilCliente() {
                   placeholder="Ex: Cliente relatou leve pinçamento. Reaplicado filtro solar ao final."
                   value={atendimentoObs}
                   onChange={(e) => setAtendimentoObs(e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
+                  className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted"
                 />
               </div>
 
@@ -920,14 +874,14 @@ export default function PerfilCliente() {
                   type="button"
                   onClick={() => setIsAtendimentoModalOpen(false)}
                   disabled={saving}
-                  className="px-4 py-2 border border-border rounded-lg text-xs font-medium text-text-secondary hover:bg-bg transition-colors cursor-pointer"
+                  className="px-4 py-2.5 md:py-2 border border-border rounded-lg text-sm md:text-xs font-medium text-text-secondary hover:bg-bg transition-colors cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-4 py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                  className="px-4 py-2.5 md:py-2 bg-rose-600 hover:bg-rose-800 disabled:bg-rose-400 text-white rounded-lg text-sm md:text-xs font-semibold transition-colors cursor-pointer"
                 >
                   {saving ? 'Registrando...' : 'Confirmar Registro'}
                 </button>
