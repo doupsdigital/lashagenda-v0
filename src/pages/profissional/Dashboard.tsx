@@ -14,7 +14,7 @@ import {
   CalendarDays,
   CalendarCheck,
   CalendarX,
-  Coins,
+  CircleDollarSign,
   Sparkles,
   AlertCircle,
   TrendingUp,
@@ -351,59 +351,51 @@ export default function Dashboard() {
       {isPremium ? (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
 
-          <div id="onboarding-card-faturamento" className="bg-white border border-border rounded-2xl p-4 flex items-start justify-between shadow-sm">
-            <div className="min-w-0">
+          <div id="onboarding-card-faturamento" className="relative overflow-hidden bg-white border border-border rounded-2xl p-4 shadow-sm">
+            <CircleDollarSign className="absolute -top-3 -right-3 w-16 h-16 text-rose-200 rotate-12 pointer-events-none select-none" strokeWidth={1.25} />
+            <div className="relative z-10 min-w-0">
               <p className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-text-muted leading-tight">Faturamento do Mês</p>
-              <p className="font-title font-semibold text-3xl md:text-2xl text-rose-600 mt-1.5">
+              <p className="font-title font-semibold text-2xl md:text-xl text-rose-600 mt-1.5">
                 {heroLoading ? '—' : `R$ ${heroRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
               </p>
-            </div>
-            <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
-              <Coins className="w-4 h-4" />
             </div>
           </div>
 
           <div
             id="onboarding-card-hoje"
             onClick={() => navigate('/agendamentos', { state: { filterToday: true } })}
-            className="bg-white border border-border rounded-2xl p-4 flex items-start justify-between shadow-sm cursor-pointer hover:border-rose-200 hover:shadow-md transition-all"
+            className="relative overflow-hidden bg-white border border-border rounded-2xl p-4 shadow-sm cursor-pointer hover:border-rose-200 hover:shadow-md transition-all"
           >
-            <div className="min-w-0">
+            <CalendarDays className="absolute -top-3 -right-3 w-16 h-16 text-rose-200 rotate-12 pointer-events-none select-none" strokeWidth={1.25} />
+            <div className="relative z-10 min-w-0">
               <p className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-text-muted leading-tight">Agendamentos Hoje</p>
-              <p className="font-title font-semibold text-3xl md:text-2xl text-text-primary mt-1.5">
+              <p className="font-title font-semibold text-2xl md:text-xl text-text-primary mt-1.5">
                 {loading ? '—' : todayAppointments.length}
               </p>
-            </div>
-            <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
-              <CalendarDays className="w-4 h-4" />
             </div>
           </div>
 
           <div
             id="onboarding-card-pendentes"
             onClick={() => pendingAppointments > 0 && navigate('/agendamentos', { state: { openPending: true } })}
-            className={`bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start justify-between shadow-sm ${pendingAppointments > 0 ? 'cursor-pointer hover:bg-amber-100/60 transition-colors' : ''}`}
+            className={`relative overflow-hidden bg-white border border-amber-200 rounded-2xl p-4 shadow-sm ${pendingAppointments > 0 ? 'cursor-pointer hover:bg-amber-50/60 transition-colors' : ''}`}
           >
-            <div className="min-w-0">
+            <Clock className="absolute -top-3 -right-3 w-16 h-16 text-amber-200 rotate-12 pointer-events-none select-none" strokeWidth={1.25} />
+            <div className="relative z-10 min-w-0">
               <p className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-amber-600 leading-tight">Aguardando Confirmação</p>
-              <p className="font-title font-semibold text-3xl md:text-2xl text-amber-700 mt-1.5">
+              <p className="font-title font-semibold text-2xl md:text-xl text-amber-700 mt-1.5">
                 {loading ? '—' : pendingAppointments}
               </p>
             </div>
-            <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center text-amber-500 flex-shrink-0 ml-2">
-              <Clock className="w-4 h-4" />
-            </div>
           </div>
 
-          <div id="onboarding-card-clientes" className="bg-white border border-border rounded-2xl p-4 flex items-start justify-between shadow-sm">
-            <div className="min-w-0">
+          <div id="onboarding-card-clientes" className="relative overflow-hidden bg-white border border-border rounded-2xl p-4 shadow-sm">
+            <UserPlus className="absolute -top-3 -right-3 w-16 h-16 text-rose-200 rotate-12 pointer-events-none select-none" strokeWidth={1.25} />
+            <div className="relative z-10 min-w-0">
               <p className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-text-muted leading-tight">Novas Clientes</p>
-              <p className="font-title font-semibold text-3xl md:text-2xl text-text-primary mt-1.5">
+              <p className="font-title font-semibold text-2xl md:text-xl text-text-primary mt-1.5">
                 {heroLoading ? '—' : heroNewClients}
               </p>
-            </div>
-            <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
-              <UserPlus className="w-4 h-4" />
             </div>
           </div>
 
@@ -414,28 +406,24 @@ export default function Dashboard() {
           <div
             id="onboarding-card-hoje"
             onClick={() => pendingAppointments > 0 && navigate('/agendamentos', { state: { openPending: true } })}
-            className={`bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start justify-between shadow-sm ${pendingAppointments > 0 ? 'cursor-pointer hover:bg-amber-100/60 transition-colors' : ''}`}
+            className={`relative overflow-hidden bg-white border border-amber-200 rounded-2xl p-4 shadow-sm ${pendingAppointments > 0 ? 'cursor-pointer hover:bg-amber-50/60 transition-colors' : ''}`}
           >
-            <div className="min-w-0">
+            <Clock className="absolute -top-3 -right-3 w-16 h-16 text-amber-200 rotate-12 pointer-events-none select-none" strokeWidth={1.25} />
+            <div className="relative z-10 min-w-0">
               <p className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-amber-600 leading-tight">Aguardando Confirmação</p>
-              <p className="font-title font-semibold text-3xl md:text-2xl text-amber-700 mt-1.5">
+              <p className="font-title font-semibold text-2xl md:text-xl text-amber-700 mt-1.5">
                 {loading ? '—' : pendingAppointments}
               </p>
             </div>
-            <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center text-amber-500 flex-shrink-0 ml-2">
-              <Clock className="w-4 h-4" />
-            </div>
           </div>
 
-          <div id="onboarding-card-faturamento" className="bg-white border border-border rounded-2xl p-4 flex items-start justify-between shadow-sm">
-            <div className="min-w-0">
+          <div id="onboarding-card-faturamento" className="relative overflow-hidden bg-white border border-border rounded-2xl p-4 shadow-sm">
+            <CircleDollarSign className="absolute -top-3 -right-3 w-16 h-16 text-rose-200 rotate-12 pointer-events-none select-none" strokeWidth={1.25} />
+            <div className="relative z-10 min-w-0">
               <p className="text-xs md:text-[10px] font-bold uppercase tracking-wider text-text-muted leading-tight">Faturado Hoje</p>
-              <p className="font-title font-semibold text-3xl md:text-2xl text-rose-600 mt-1.5">
+              <p className="font-title font-semibold text-2xl md:text-xl text-rose-600 mt-1.5">
                 {loading ? '—' : `R$ ${todayRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
               </p>
-            </div>
-            <div className="w-9 h-9 rounded-full bg-rose-50 flex items-center justify-center text-rose-400 flex-shrink-0 ml-2">
-              <Coins className="w-4 h-4" />
             </div>
           </div>
 
