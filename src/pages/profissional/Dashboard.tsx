@@ -8,6 +8,7 @@ import { useOnboarding } from '../../hooks/useOnboarding';
 import { useGuidedTour } from '../../hooks/useGuidedTour';
 import PushPermissionBanner from '../../components/common/PushPermissionBanner';
 import InstallBanner from '../../components/common/InstallBanner';
+import TrancarHorarioSheet from '../../components/common/TrancarHorarioSheet';
 import {
   CalendarDays,
   CalendarCheck,
@@ -77,6 +78,7 @@ export default function Dashboard() {
 
   const [linkCopied, setLinkCopied] = useState(false);
   const [isStatusInfoOpen, setIsStatusInfoOpen] = useState(false);
+  const [isTrancarOpen, setIsTrancarOpen] = useState(false);
 
   const firstName = profile?.nome?.split(' ')[0] || '';
 
@@ -197,10 +199,10 @@ export default function Dashboard() {
   };
 
   const quickActions = [
-    { label: 'Novo Agendamento', id: 'onboarding-btn-novo-agendamento', Icon: CalendarCheck, to: '/agendamentos', state: {} },
-    { label: 'Bloquear Horário', id: 'onboarding-btn-bloquear', Icon: CalendarX, to: '/meus-horarios', state: {} },
-    { label: 'Novo Serviço', id: 'onboarding-btn-novo-servico', Icon: Tag, to: '/servicos', state: {} },
-    { label: 'Ver Agenda do Dia', id: 'onboarding-btn-agenda-dia', Icon: CalendarDays, to: '/agendamentos', state: { filterToday: true } },
+    { label: 'Novo Agendamento', id: 'onboarding-btn-novo-agendamento', Icon: CalendarCheck, onClick: () => navigate('/agendamentos', { state: {} }) },
+    { label: 'Bloquear Horário', id: 'onboarding-btn-bloquear', Icon: CalendarX, onClick: () => setIsTrancarOpen(true) },
+    { label: 'Novo Serviço', id: 'onboarding-btn-novo-servico', Icon: Tag, onClick: () => navigate('/servicos', { state: {} }) },
+    { label: 'Ver Agenda do Dia', id: 'onboarding-btn-agenda-dia', Icon: CalendarDays, onClick: () => navigate('/agendamentos', { state: { filterToday: true } }) },
   ];
 
   const proximosClientesCard = (
@@ -452,11 +454,11 @@ export default function Dashboard() {
             <div>
               <h2 className="font-sans font-bold md:font-semibold text-lg md:text-base text-text-primary mb-3">Ações Rápidas</h2>
               <div className="grid grid-cols-2 gap-3">
-                {quickActions.map(({ label, id, Icon, to, state }) => (
+                {quickActions.map(({ label, id, Icon, onClick }) => (
                   <button
                     key={label}
                     id={id}
-                    onClick={() => navigate(to, { state })}
+                    onClick={onClick}
                     className="hover:brightness-95 active:brightness-90 text-white rounded-2xl p-5 flex flex-col items-start gap-4 transition-all cursor-pointer shadow-sm text-left"
                     style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
                   >
@@ -561,6 +563,8 @@ export default function Dashboard() {
         </div>,
         document.body
       )}
+
+      <TrancarHorarioSheet isOpen={isTrancarOpen} onClose={() => setIsTrancarOpen(false)} />
 
     </div>
   );
