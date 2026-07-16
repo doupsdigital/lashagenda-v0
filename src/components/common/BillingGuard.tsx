@@ -61,14 +61,23 @@ export default function BillingGuard() {
     await signOut();
   };
 
+  // A TrialBanner (faixa de aviso de trial) ocupa espaço extra logo abaixo do
+  // header nesse mesmo caso (status "trial"), então reservamos essa altura
+  // pra não ficar por baixo dela.
+  const hasTrialBanner = status === 'trial';
+
   return (
     <Modal>
-    <div className="fixed inset-0 z-30 bg-bg overflow-hidden flex items-center justify-center px-4 py-6 pb-[88px] md:pb-6 font-sans">
+    <div
+      className={`fixed inset-x-0 bottom-[88px] md:bottom-0 z-30 bg-bg overflow-hidden flex items-center justify-center px-4 py-4 font-sans ${
+        hasTrialBanner ? 'top-[100px]' : 'top-[60px]'
+      }`}
+    >
       {/* Decorações em degradê de fundo */}
       <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-rose-100/30 blur-3xl pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-rose-100/30 blur-3xl pointer-events-none" />
 
-      <div className="w-full max-w-[500px] max-h-[calc(100dvh-3rem)] overflow-y-auto overscroll-contain bg-white border border-border rounded-[24px] shadow-2xl p-7 md:p-10 relative z-10 text-center animate-fade-in">
+      <div className="w-full max-w-[500px] max-h-full overflow-y-auto overscroll-contain bg-white border border-border rounded-[24px] shadow-2xl p-7 md:p-10 relative z-10 text-center animate-fade-in">
 
         {/* Ícone de Alerta */}
         <div className="flex justify-center mb-6">
