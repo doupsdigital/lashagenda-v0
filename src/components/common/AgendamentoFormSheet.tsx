@@ -4,6 +4,8 @@ import { CalendarDays, X, Search, Clock, CheckCircle, AlertCircle } from 'lucide
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { registrarLog } from '../../utils/log';
+import { useSwipeToClose } from '../../hooks/useSwipeToClose';
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 import type {
   Cliente,
   Servico,
@@ -406,6 +408,9 @@ export default function AgendamentoFormSheet({
     }
   };
 
+  useBodyScrollLock(isOpen);
+  const { dragHandlers, sheetStyle } = useSwipeToClose(() => !saving && onClose());
+
   if (!isOpen) return null;
 
   return createPortal(
@@ -432,6 +437,7 @@ export default function AgendamentoFormSheet({
       ) : (
         <div
           className="bg-white w-full sm:max-w-lg rounded-t-[20px] sm:rounded-[16px] border-0 sm:border sm:border-border shadow-xl flex flex-col max-h-[92vh] sm:max-h-[calc(100vh-2rem)] overflow-hidden animate-slide-up"
+          style={sheetStyle}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -439,8 +445,12 @@ export default function AgendamentoFormSheet({
             className="flex-shrink-0"
             style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
           >
-            {/* Drag handle (mobile) */}
-            <div className="sm:hidden flex justify-center pt-3 pb-1">
+            {/* Drag handle (mobile) — arraste pra baixo pra fechar */}
+            <div
+              className="sm:hidden flex justify-center pt-3 pb-2 -mb-1"
+              style={{ touchAction: 'none' }}
+              {...dragHandlers}
+            >
               <div className="w-10 h-1.5 bg-white/40 rounded-full" />
             </div>
 

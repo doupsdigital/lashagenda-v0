@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { MessageCircle } from 'lucide-react';
 import Modal from './Modal';
+import { useSwipeToClose } from '../../hooks/useSwipeToClose';
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 
 interface SupportModalProps {
   onClose: () => void;
@@ -17,10 +19,14 @@ export default function SupportModal({ onClose }: SupportModalProps) {
     return () => cancelAnimationFrame(raf);
   }, []);
 
+  useBodyScrollLock(true);
+
   const handleClose = () => {
     setShow(false);
     setTimeout(onClose, 250);
   };
+
+  const { dragHandlers, sheetStyle } = useSwipeToClose(handleClose);
 
   const handleOpenWhatsApp = () => {
     const url = `https://wa.me/${SUPPORT_PHONE}?text=${encodeURIComponent(SUPPORT_MESSAGE)}`;
@@ -37,9 +43,19 @@ export default function SupportModal({ onClose }: SupportModalProps) {
         <div
           onClick={(e) => e.stopPropagation()}
           className={`relative w-full max-w-md bg-white rounded-t-3xl shadow-2xl px-6 pt-3 transition-transform duration-250 ease-out ${show ? 'translate-y-0' : 'translate-y-full'}`}
-          style={{ paddingBottom: 'calc(1.75rem + env(safe-area-inset-bottom, 0px))' }}
+          style={{
+            paddingBottom: 'calc(1.75rem + env(safe-area-inset-bottom, 0px))',
+            ...sheetStyle,
+          }}
         >
-          <div className="w-10 h-1.5 bg-border rounded-full mx-auto my-3" />
+          {/* Drag handle — arraste pra baixo pra fechar */}
+          <div
+            className="pb-1 -mt-1 -mx-6 px-6 flex justify-center"
+            style={{ touchAction: 'none' }}
+            {...dragHandlers}
+          >
+            <div className="w-10 h-1.5 bg-border rounded-full my-3" />
+          </div>
 
           <div className="flex flex-col items-center text-center gap-1 mb-5 pt-2">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-rose-600 to-rose-400 flex items-center justify-center mb-2 overflow-hidden">

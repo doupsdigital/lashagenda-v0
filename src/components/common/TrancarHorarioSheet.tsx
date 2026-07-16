@@ -4,6 +4,8 @@ import { Lock, X, AlertCircle, CheckCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import ConfirmModal from './ConfirmModal';
+import { useSwipeToClose } from '../../hooks/useSwipeToClose';
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
 
 interface TrancarHorarioSheetProps {
   isOpen: boolean;
@@ -155,6 +157,9 @@ export default function TrancarHorarioSheet({ isOpen, onClose, onSuccess, initia
     }
   };
 
+  useBodyScrollLock(isOpen);
+  const { dragHandlers, sheetStyle } = useSwipeToClose(() => !trancarSaving && onClose());
+
   if (!isOpen) return null;
 
   return createPortal(
@@ -177,12 +182,17 @@ export default function TrancarHorarioSheet({ isOpen, onClose, onSuccess, initia
         >
           <div
             className="bg-white w-full sm:max-w-md rounded-t-[20px] sm:rounded-[16px] shadow-xl overflow-hidden animate-slide-up max-h-[92vh] overflow-y-auto"
+            style={sheetStyle}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
             <div style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}>
-              {/* Drag handle (mobile) */}
-              <div className="sm:hidden flex justify-center pt-3 pb-1">
+              {/* Drag handle (mobile) — arraste pra baixo pra fechar */}
+              <div
+                className="sm:hidden flex justify-center pt-3 pb-2 -mb-1"
+                style={{ touchAction: 'none' }}
+                {...dragHandlers}
+              >
                 <div className="w-10 h-1.5 bg-white/40 rounded-full" />
               </div>
 
