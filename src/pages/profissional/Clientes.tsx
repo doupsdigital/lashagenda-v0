@@ -366,8 +366,10 @@ export default function Clientes() {
       </div>
 
       {/* Cadastro Automático — some quando ela já tem clientes suficientes
-          (de qualquer origem) pra ter entendido como funciona. */}
-      {clientes.length < 3 && (
+          (de qualquer origem) pra ter entendido como funciona. Só avalia
+          depois que os clientes carregarem, senão pisca na tela: `clientes`
+          começa vazio (length 0, "< 3") até a busca no banco terminar. */}
+      {!loading && clientes.length < 3 && (
         <div className="bg-amber-50 border border-amber-200 rounded-[14px] p-5 flex items-start gap-3">
           <div className="w-11 h-11 md:w-9 md:h-9 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600 flex-shrink-0">
             <Sparkles className="w-5 h-5 md:w-4 md:h-4" />
