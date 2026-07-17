@@ -217,29 +217,26 @@ function CompactBanner({ step, completeStep }: { step: GuidedTourStep; completeS
     <div
       className="fixed inset-x-0 z-[45] bottom-[84px] md:bottom-6 px-4 animate-slide-up"
     >
-      <div
-        className="mx-auto max-w-lg shadow-2xl rounded-[24px] px-6 py-5"
-        style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
-      >
+      <div className="mx-auto max-w-lg shadow-2xl rounded-[24px] px-6 py-5 bg-amber-50 border border-amber-200">
         <div className="flex items-start gap-3">
-          <div className="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
-            <meta.Icon className="w-6 h-6 text-white" />
+          <div className="w-11 h-11 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+            <meta.Icon className="w-6 h-6 text-amber-700" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold uppercase tracking-wider text-white/80">Tutorial guiado</p>
-            <p className="text-lg font-bold text-white mt-0.5 leading-snug">{meta.bannerPergunta}</p>
+            <p className="text-sm font-bold uppercase tracking-wider text-amber-700">Tutorial guiado</p>
+            <p className="text-lg font-bold text-amber-900 mt-0.5 leading-snug">{meta.bannerPergunta}</p>
           </div>
         </div>
         <div className="flex items-center justify-end gap-2 mt-4">
           <button
             onClick={() => setDismissed(true)}
-            className="px-4 py-2.5 bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/20 text-sm font-semibold text-white rounded-full transition-all cursor-pointer"
+            className="px-4 py-2.5 bg-white hover:bg-amber-100 border border-amber-200 text-sm font-semibold text-amber-800 rounded-full transition-all cursor-pointer"
           >
             Fechar
           </button>
           <button
             onClick={handleComplete}
-            className="px-5 py-2.5 bg-white text-rose-700 hover:bg-rose-50 rounded-full text-sm font-bold transition-all cursor-pointer"
+            className="px-5 py-2.5 bg-amber-600 text-white hover:bg-amber-700 rounded-full text-sm font-bold transition-all cursor-pointer"
           >
             {meta.bannerBotao}
           </button>
