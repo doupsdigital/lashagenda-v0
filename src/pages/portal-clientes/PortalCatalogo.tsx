@@ -38,10 +38,6 @@ const FAQ_ITEMS = [
     pergunta: 'Por que o botão de cancelar sumiu?',
     resposta: 'O cancelamento online só é permitido com uma antecedência mínima definida pela profissional (ex: 24h antes). Se o prazo já passou, entre em contato diretamente com ela.',
   },
-  {
-    pergunta: 'Não consigo agendar online, só aparece um botão de WhatsApp. Por quê?',
-    resposta: 'Isso significa que o estúdio utiliza o agendamento via WhatsApp. Entre em contato com a profissional pelo botão exibido no portal para solicitar seu horário.',
-  },
 ];
 
 function SkeletonCard() {
