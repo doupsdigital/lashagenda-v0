@@ -546,6 +546,7 @@ export default function PortalAgendar() {
           p_email: '',
           p_whatsapp_digits: whatsappDigits,
           p_estabelecimento_id: establishmentId,
+          p_nome: nome,
         });
 
       let targetClienteId = existingId as string | null;

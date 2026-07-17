@@ -411,10 +411,14 @@ CREATE POLICY "clientes_anon_insert"
 -- volta a agendar de um dispositivo/navegador novo (ex: sem sessão salva, caso
 -- comum do navegador interno do Instagram) ganhava um cadastro duplicado e
 -- perdia a visão do próprio histórico em "Meus Agendamentos".
+-- O fallback por WhatsApp também exige que o nome digitado bata com nome +
+-- sobrenome cadastrados — sem isso, bastaria saber o WhatsApp de qualquer
+-- cliente pra reconectar a sessão a ela e acessar histórico/perfil dela.
 CREATE OR REPLACE FUNCTION public.get_cliente_id_by_email_or_whatsapp(
   p_email              TEXT,
   p_whatsapp_digits    TEXT,
-  p_estabelecimento_id UUID
+  p_estabelecimento_id UUID,
+  p_nome               TEXT DEFAULT ''
 )
 RETURNS UUID
 LANGUAGE plpgsql
@@ -441,6 +445,7 @@ BEGIN
   WHERE REGEXP_REPLACE(c.whatsapp, '[^0-9]', '', 'g') = p_whatsapp_digits
     AND c.estabelecimento_id = p_estabelecimento_id
     AND (c.email IS NULL OR c.email = '')
+    AND LOWER(TRIM(CONCAT_WS(' ', c.nome, c.sobrenome))) = LOWER(TRIM(p_nome))
   LIMIT 1;
 
   RETURN v_id;
