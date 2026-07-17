@@ -10,7 +10,6 @@ interface PortalContextType {
   paletaCores: string | null;
   loading: boolean;
   slug: string | null;
-  plano: string | null;
   nomeProfissional: string | null;
   descricao: string | null;
   instagram: string | null;
@@ -27,7 +26,6 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
   const [nomeNegocio, setNomeNegocio] = useState<string | null>(null);
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [paletaCores, setPaletaCores] = useState<string | null>(null);
-  const [plano, setPlano] = useState<string | null>(null);
   const [nomeProfissional, setNomeProfissional] = useState<string | null>(null);
   const [descricao, setDescricao] = useState<string | null>(null);
   const [instagram, setInstagram] = useState<string | null>(null);
@@ -47,7 +45,7 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
         // 1. Buscar estabelecimento pelo slug
         const { data: est, error: estError } = await supabase
           .from('estabelecimentos')
-          .select('id, nome_negocio, plano')
+          .select('id, nome_negocio')
           .eq('slug', slug)
           .maybeSingle();
 
@@ -59,7 +57,6 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
 
         setEstablishmentId(est.id);
         setNomeNegocio(est.nome_negocio);
-        setPlano(est.plano || 'basico');
 
         // 2. Buscar configurações do estabelecimento
         const { data: config, error: configError } = await supabase
@@ -119,7 +116,6 @@ export function PortalProvider({ children }: { children: React.ReactNode }) {
         paletaCores,
         loading,
         slug: slug || null,
-        plano,
         nomeProfissional,
         descricao,
         instagram,
