@@ -522,7 +522,8 @@ export default function FichaAnamneseDetalhe() {
 
       if (error) throw error;
 
-      await registrarLog('editou', 'cliente', cliente.id, `Atualizou a ficha de anamnese de "${cliente.nome} ${cliente.sobrenome}"`);
+      const clientName = `${cliente.nome} ${cliente.sobrenome || ''}`.trim();
+      await registrarLog('editou', 'cliente', cliente.id, `Atualizou a ficha de anamnese de "${clientName}"`);
       await fetchCliente(false);
       setEditingFields(new Set());
       setSuccessMessage('Ficha de anamnese atualizada com sucesso!');

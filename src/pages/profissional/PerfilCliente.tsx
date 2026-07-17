@@ -334,11 +334,12 @@ export default function PerfilCliente() {
 
       if (error) throw error;
 
+      const clientName = `${cliente.nome} ${cliente.sobrenome || ''}`.trim();
       await registrarLog(
-        'criou', 
-        'atendimento', 
-        data.id, 
-        `Registrou atendimento de "${selectedService?.nome}" para a cliente "${cliente.nome} ${cliente.sobrenome}"`
+        'criou',
+        'atendimento',
+        data.id,
+        `Registrou atendimento de "${selectedService?.nome}" para a cliente "${clientName}"`
       );
 
       setIsAtendimentoModalOpen(false);
