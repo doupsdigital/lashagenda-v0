@@ -227,16 +227,16 @@ function CompactBanner({ step, completeStep }: { step: GuidedTourStep; completeS
             <p className="text-lg font-bold text-amber-900 mt-0.5 leading-snug">{meta.bannerPergunta}</p>
           </div>
         </div>
-        <div className="flex items-center justify-end gap-2 mt-4">
+        <div className="flex items-center justify-end gap-3 mt-4 flex-wrap">
           <button
             onClick={() => setDismissed(true)}
-            className="px-4 py-2.5 bg-white hover:bg-amber-100 border border-amber-200 text-sm font-semibold text-amber-800 rounded-full transition-all cursor-pointer"
+            className="text-sm font-semibold text-amber-800 hover:text-amber-900 hover:underline underline-offset-2 transition-all cursor-pointer"
           >
-            Fechar
+            Fazer depois
           </button>
           <button
             onClick={handleComplete}
-            className="px-5 py-2.5 bg-amber-600 text-white hover:bg-amber-700 rounded-full text-sm font-bold transition-all cursor-pointer"
+            className="px-5 py-2.5 bg-amber-600 text-white hover:bg-amber-700 rounded-full text-sm font-bold transition-all cursor-pointer whitespace-nowrap"
           >
             {meta.bannerBotao}
           </button>
