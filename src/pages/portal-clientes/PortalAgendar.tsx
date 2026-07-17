@@ -915,7 +915,7 @@ export default function PortalAgendar() {
             <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-800">
               <AlertCircle className="w-4 h-4 shrink-0" />
               {erroSalvar === 'perm'
-                ? 'Ocorreu um erro de permissão. Faça login novamente.'
+                ? 'Ocorreu um erro de permissão. Atualize a página e tente novamente.'
                 : 'Não foi possível realizar o agendamento. Tente novamente.'}
             </div>
           )}
