@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'react-router-dom';
 import { useOnboarding } from '../../hooks/useOnboarding';
@@ -642,8 +642,30 @@ export default function Agendamentos() {
   };
 
   // Calendar parameters
-  const startHour = 8;
-  const endHour = 20;
+  // Faixa de horas exibida na régua do calendário: em vez de fixa, é calculada
+  // a partir do expediente configurado em Meus Horários (menor hora_inicio e
+  // maior hora_fim entre os dias ativos), pra nunca cortar um agendamento que
+  // caia fora do intervalo 08:00-20:00 padrão. Sem expediente configurado,
+  // mantém o fallback de 08:00-20:00.
+  const { startHour, endHour } = useMemo(() => {
+    const DEFAULT_START = 8;
+    const DEFAULT_END = 20;
+    if (workHoursConfig.length === 0) return { startHour: DEFAULT_START, endHour: DEFAULT_END };
+
+    const toMinutos = (hhmm: string) => {
+      const [h, m] = hhmm.substring(0, 5).split(':').map(Number);
+      return h * 60 + m;
+    };
+
+    const minInicio = Math.min(...workHoursConfig.map(h => toMinutos(h.hora_inicio)));
+    const maxFim = Math.max(...workHoursConfig.map(h => toMinutos(h.hora_fim)));
+
+    return {
+      startHour: Math.floor(minInicio / 60),
+      endHour: Math.ceil(maxFim / 60),
+    };
+  }, [workHoursConfig]);
+
   const halfHourSlots = Array.from({ length: (endHour - startHour) * 2 }, (_, i) => ({
     hour: startHour + Math.floor(i / 2),
     minute: (i % 2) * 30,
