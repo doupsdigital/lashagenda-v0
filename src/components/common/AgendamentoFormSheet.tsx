@@ -48,7 +48,7 @@ export default function AgendamentoFormSheet({
       try {
         const [horariosRes, srvsRes, bloqRes] = await Promise.all([
           supabase.from('horarios_atendimento').select('dia_semana, hora_inicio, hora_fim').eq('estabelecimento_id', estabelecimentoId),
-          supabase.from('servicos').select('*, variacoes_servico(*)').eq('ativo', true).eq('estabelecimento_id', estabelecimentoId).order('nome'),
+          supabase.from('servicos').select('*, variacoes_servico(*)').eq('estabelecimento_id', estabelecimentoId).order('nome'),
           supabase.from('bloqueios_agenda').select('*').eq('estabelecimento_id', estabelecimentoId),
         ]);
         if (horariosRes.error) throw horariosRes.error;

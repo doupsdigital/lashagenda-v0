@@ -217,12 +217,11 @@ export default function PerfilCliente() {
 
       setAtendimentos(combined);
 
-      // 3. Fetch active services (with variations)
+      // 3. Fetch services (with variations)
       const { data: srvData, error: srvError } = await supabase
         .from('servicos')
         .select('*, variacoes_servico(*)')
         .eq('estabelecimento_id', estabelecimentoId)
-        .eq('ativo', true)
         .order('nome', { ascending: true });
 
       if (srvError) throw srvError;
@@ -812,7 +811,7 @@ export default function PerfilCliente() {
                   onChange={(e) => handleServiceChange(e.target.value)}
                   className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 cursor-pointer"
                 >
-                  <option value="" disabled>Selecione um serviço ativo</option>
+                  <option value="" disabled>Selecione um serviço</option>
                   {servicos.map(s => (
                     <option key={s.id} value={s.id}>{s.nome}</option>
                   ))}
