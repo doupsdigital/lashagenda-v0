@@ -28,6 +28,12 @@ export function useGuidedTourFieldTips(pageStep: GuidedTourStep, steps: DriveSte
     if (isPaginaVista(seenKey)) return;
     if (startedRef.current) return;
 
+    // Marca "ativo" já aqui, assim que sabemos que as dicas vão abrir nessa
+    // página — não só quando o driver.js de fato dispara lá na frente (depois
+    // do setTimeout + espera pelo elemento no DOM). Sem isso, o banner do
+    // checklist pisca na tela nessa janela inicial antes das dicas abrirem.
+    setFieldTipsActive(true);
+
     let cancelled = false;
     let attempts = 0;
     let driverStarted = false;
@@ -55,7 +61,6 @@ export function useGuidedTourFieldTips(pageStep: GuidedTourStep, steps: DriveSte
         },
         steps: stepsRef.current,
       } as Parameters<typeof driver>[0]);
-      setFieldTipsActive(true);
       driverObj.drive();
     };
 
@@ -83,9 +88,10 @@ export function useGuidedTourFieldTips(pageStep: GuidedTourStep, steps: DriveSte
       // no StrictMode do React em desenvolvimento, que monta/desmonta/monta
       // de novo cada efeito de propósito. Libera a trava pra tentativa real.
       if (!driverStarted) startedRef.current = false;
-      // Página desmontou (ex: navegou embora) com o tour ainda aberto —
-      // sem isso o banner do checklist ficaria escondido pra sempre.
-      if (driverStarted) setFieldTipsActive(false);
+      // Cobre tanto o cancelamento acima (StrictMode remonta e marca de novo
+      // logo em seguida) quanto navegar embora com o tour ainda aberto — sem
+      // isso o banner do checklist ficaria escondido pra sempre.
+      setFieldTipsActive(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
