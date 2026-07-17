@@ -4,7 +4,6 @@ import { Calendar, Clock, Tag, AlertCircle, Loader2, ClipboardList, Info, X, Ale
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePortal } from '../../contexts/PortalContext';
-import { useOnboarding } from '../../hooks/useOnboarding';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -89,8 +88,6 @@ export default function PortalMeusAgendamentos() {
   const navigate = useNavigate();
   const { clienteId } = useAuth();
   const { establishmentId, slug } = usePortal();
-  const { autoStart, loading: onboardingLoading } = useOnboarding('portal_agendamentos');
-  useEffect(() => { autoStart(); }, [onboardingLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [agendamentos, setAgendamentos] = useState<AgendamentoWithServices[]>([]);
   const [loading, setLoading] = useState(true);

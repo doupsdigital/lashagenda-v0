@@ -8,7 +8,6 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import type { Servico, VariacaoServico, HorarioAtendimento, BloqueioAgenda } from '../../types';
 import { usePortal } from '../../contexts/PortalContext';
-import { useOnboarding } from '../../hooks/useOnboarding';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -165,8 +164,6 @@ export default function PortalAgendar() {
   const [searchParams] = useSearchParams();
   const { user, clienteId, portalToken } = useAuth();
   const { establishmentId, slug } = usePortal();
-  const { autoStart, loading: onboardingLoading } = useOnboarding('portal_agendar');
-  useEffect(() => { autoStart(); }, [onboardingLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Capture the query param only once at mount
   const preSelectedId = useRef(searchParams.get('servico')).current;

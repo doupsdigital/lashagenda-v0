@@ -4,7 +4,6 @@ import { User, Phone, Mail, ShieldAlert, Loader2, CheckCircle2, AlertCircle, Cam
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import InstallAppCard from '../../components/common/InstallAppCard';
-import { useOnboarding } from '../../hooks/useOnboarding';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -20,8 +19,6 @@ function formatWhatsApp(value: string): string {
 
 export default function PortalPerfil() {
   const { user, profile, clienteId, refreshProfile } = useAuth();
-  const { autoStart, loading: onboardingLoading } = useOnboarding('portal_perfil');
-  useEffect(() => { autoStart(); }, [onboardingLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Modal de sucesso centralizado
   const [successModal, setSuccessModal] = useState<{ isOpen: boolean; title: string; message: string }>({

@@ -38,6 +38,14 @@ const MENU_PRINCIPAL_STEP: DriveStep = {
   },
 };
 
+// Mesmo caso do menu principal acima: no portal da cliente, o menu mobile
+// (barra inferior) e o desktop (nav horizontal) existem os dois sempre no
+// DOM, só um visível por vez via CSS responsivo.
+const portalNavElement = (): Element =>
+  (window.innerWidth < 768
+    ? document.querySelector('#ob-portal-nav')
+    : document.querySelector('#ob-portal-nav-desktop')) as Element;
+
 // "Meu Estúdio" (Dashboard) muda bastante de layout entre os planos — no
 // Agenda ela vê um resumo simples; no Premium, KPIs completos, ações rápidas
 // e gráfico de receita. Por isso são dois roteiros separados (ver useOnboarding).
@@ -437,7 +445,7 @@ const STEPS: Record<Exclude<OnboardingPageKey, 'meu_estudio'>, DriveStep[]> & { 
       },
     },
     {
-      element: '#ob-portal-nav',
+      element: portalNavElement,
       popover: {
         title: 'Navegação',
         description: 'Pelo menu você acessa o catálogo, agenda um horário, vê seus agendamentos e atualiza seu perfil.',
@@ -468,7 +476,7 @@ const STEPS: Record<Exclude<OnboardingPageKey, 'meu_estudio'>, DriveStep[]> & { 
       },
     },
     {
-      element: '#ob-portal-nav',
+      element: portalNavElement,
       popover: {
         title: 'Menu do portal',
         description: 'Por enquanto você vê o Catálogo e pode Agendar livremente. Assim que finalizar seu primeiro agendamento, as abas "Meus Agendamentos" e "Meu Perfil" aparecem aqui automaticamente — sem precisar criar conta.',

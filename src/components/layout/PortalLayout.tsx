@@ -116,7 +116,7 @@ export default function PortalLayout() {
       </header>
 
       {/* Horizontal nav (desktop) */}
-      <nav className="hidden md:flex bg-white border-b border-border px-6 gap-1">
+      <nav id="ob-portal-nav-desktop" className="hidden md:flex bg-white border-b border-border px-6 gap-1">
         {navItems.map((item) => (
           <NavLink
             key={item.path}

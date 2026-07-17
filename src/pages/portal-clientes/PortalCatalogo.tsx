@@ -1,7 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useOnboarding } from '../../hooks/useOnboarding';
-import { useAuth } from '../../contexts/AuthContext';
 import { Clock, Tag, Calendar, AlertCircle, Sparkles, RefreshCw, ChevronDown, HelpCircle, MapPin, AtSign } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import type { Servico, VariacaoServico } from '../../types';
@@ -125,18 +123,7 @@ function ServicoCard({ servico, onAgendar }: ServicoCardProps) {
 
 export default function PortalCatalogo() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { establishmentId, slug, nomeNegocio, logoUrl, descricao, instagram, endereco } = usePortal();
-  const catalogoKey = user ? 'portal_catalogo' : 'portal_catalogo_anonimo';
-  const { autoStart, loading: onboardingLoading } = useOnboarding(catalogoKey, { studioName: nomeNegocio });
-  const tourStartedRef = useRef(false);
-  useEffect(() => {
-    if (onboardingLoading) return;         // aguarda auth
-    if (!nomeNegocio) return;              // aguarda portal carregar o nome
-    if (tourStartedRef.current) return;    // garante disparo único
-    tourStartedRef.current = true;
-    autoStart();
-  }, [onboardingLoading, nomeNegocio]); // eslint-disable-line react-hooks/exhaustive-deps
   const [servicos, setServicos] = useState<ServicoComVariacoes[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
