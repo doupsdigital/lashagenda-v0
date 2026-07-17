@@ -403,9 +403,14 @@ CREATE POLICY "clientes_anon_insert"
   WITH CHECK (true);
 
 -- Função RPC usada no cadastro do portal para verificar se a profissional já
--- cadastrou a cliente manualmente (bypass de RLS — retorna apenas o UUID).
+-- cadastrou a cliente manualmente, ou se essa cliente já agendou antes como
+-- convidada em outro dispositivo/navegador (bypass de RLS — retorna só o UUID).
 -- Tenta match por email primeiro; fallback por WhatsApp (apenas dígitos) quando
--- o registro manual não possui email — e só se ainda não há conta de acesso.
+-- o registro não possui email. Sempre reaproveita o cadastro existente, mesmo
+-- que ele já tenha uma conta de acesso vinculada — sem isso, toda cliente que
+-- volta a agendar de um dispositivo/navegador novo (ex: sem sessão salva, caso
+-- comum do navegador interno do Instagram) ganhava um cadastro duplicado e
+-- perdia a visão do próprio histórico em "Meus Agendamentos".
 CREATE OR REPLACE FUNCTION public.get_cliente_id_by_email_or_whatsapp(
   p_email              TEXT,
   p_whatsapp_digits    TEXT,
@@ -431,15 +436,11 @@ BEGIN
   END IF;
 
   -- 2ª tentativa: fallback por WhatsApp (apenas dígitos) quando sem email
-  -- e somente se o registro ainda não tem conta de acesso (sem usuarios)
   SELECT c.id INTO v_id
   FROM public.clientes c
   WHERE REGEXP_REPLACE(c.whatsapp, '[^0-9]', '', 'g') = p_whatsapp_digits
     AND c.estabelecimento_id = p_estabelecimento_id
     AND (c.email IS NULL OR c.email = '')
-    AND NOT EXISTS (
-      SELECT 1 FROM public.usuarios u WHERE u.cliente_id = c.id
-    )
   LIMIT 1;
 
   RETURN v_id;
