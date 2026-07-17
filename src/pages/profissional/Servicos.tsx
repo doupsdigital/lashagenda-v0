@@ -20,13 +20,12 @@ import {
   ChevronDown,
   WandSparkles,
 } from 'lucide-react';
-import type { Servico, VariacaoServico } from '../../types';
+import type { Servico } from '../../types';
 import { registrarLog } from '../../utils/log';
 import ConfirmModal from '../../components/common/ConfirmModal';
 import { compressImage } from '../../utils/imageCompression';
 
 interface ServicoWithRelations extends Servico {
-  variacoes_servico?: VariacaoServico[];
   _count_atendimentos?: number;
   _count_agendamentos?: number;
 }
@@ -136,14 +135,14 @@ export default function Servicos() {
   // Aviso "esses são serviços de exemplo" (some no primeiro acesso)
   const [exampleBannerDismissed, setExampleBannerDismissed] = useState(false);
 
-  // Fetch all services (com variações legadas, se houver)
+  // Fetch all services
   const fetchData = async () => {
     if (!estabelecimentoId) return;
     setLoading(true);
     try {
       const { data, error } = await supabase
         .from('servicos')
-        .select('*, variacoes_servico(*)')
+        .select('*')
         .eq('estabelecimento_id', estabelecimentoId)
         .order('nome', { ascending: true });
 
@@ -735,25 +734,7 @@ export default function Servicos() {
                       <Coins className="w-4 h-4 md:w-3.5 md:h-3.5 text-text-muted" />
                       R$ {Number(serv.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                     </span>
-                    {serv.variacoes_servico && serv.variacoes_servico.length > 0 && (
-                      <span className="bg-gold-light/40 text-gold text-xs md:text-[10px] font-medium px-2 py-0.5 rounded border border-gold-light/60">
-                        {serv.variacoes_servico.length} variações
-                      </span>
-                    )}
                   </div>
-
-                  {/* Variações legadas (não é mais possível criar novas por aqui) */}
-                  {serv.variacoes_servico && serv.variacoes_servico.length > 0 && (
-                    <div className="text-xs md:text-[11px] text-text-muted flex flex-wrap gap-x-2 gap-y-1 mt-1.5">
-                      <span className="font-medium">Opções:</span>
-                      {serv.variacoes_servico.map((v, i) => (
-                        <span key={v.id}>
-                          {v.nome} (R$ {Number(v.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })})
-                          {i < (serv.variacoes_servico?.length || 0) - 1 ? ' • ' : ''}
-                        </span>
-                      ))}
-                    </div>
-                  )}
                 </div>
 
                 {/* Actions */}

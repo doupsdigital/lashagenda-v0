@@ -17,7 +17,7 @@ import {
   CheckCircle,
   UserX
 } from 'lucide-react';
-import type { Cliente, Servico, VariacaoServico } from '../../types';
+import type { Cliente, Servico } from '../../types';
 import { registrarLog } from '../../utils/log';
 import { getInitials } from '../../utils/initials';
 
@@ -29,10 +29,6 @@ interface AtendimentoWithRelations {
   servico_name: string;
   variacao_name?: string | null;
   tipo: 'manual' | 'agendamento' | 'falta';
-}
-
-interface ServicoWithVariations extends Servico {
-  variacoes_servico?: VariacaoServico[];
 }
 
 function applyPhoneMask(value: string): string {
@@ -63,7 +59,7 @@ export default function PerfilCliente() {
   const [cliente, setCliente] = useState<Cliente | null>(null);
   const [atendimentos, setAtendimentos] = useState<AtendimentoWithRelations[]>([]);
   const [totalFaltas, setTotalFaltas] = useState(0);
-  const [servicos, setServicos] = useState<ServicoWithVariations[]>([]);
+  const [servicos, setServicos] = useState<Servico[]>([]);
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -86,7 +82,6 @@ export default function PerfilCliente() {
   // Form States - Novo Atendimento
   const [atendimentoData, setAtendimentoData] = useState('');
   const [atendimentoServicoId, setAtendimentoServicoId] = useState('');
-  const [atendimentoVariacaoId, setAtendimentoVariacaoId] = useState('');
   const [atendimentoValor, setAtendimentoValor] = useState<number>(0);
   const [atendimentoObs, setAtendimentoObs] = useState('');
 
@@ -217,10 +212,10 @@ export default function PerfilCliente() {
 
       setAtendimentos(combined);
 
-      // 3. Fetch services (with variations)
+      // 3. Fetch services
       const { data: srvData, error: srvError } = await supabase
         .from('servicos')
-        .select('*, variacoes_servico(*)')
+        .select('*')
         .eq('estabelecimento_id', estabelecimentoId)
         .order('nome', { ascending: true });
 
@@ -288,7 +283,6 @@ export default function PerfilCliente() {
     const todayStr = new Date().toISOString().split('T')[0];
     setAtendimentoData(todayStr);
     setAtendimentoServicoId('');
-    setAtendimentoVariacaoId('');
     setAtendimentoValor(0);
     setAtendimentoObs('');
     setIsAtendimentoModalOpen(true);
@@ -297,35 +291,11 @@ export default function PerfilCliente() {
   // HANDLE SERVICE CHANGE IN MODAL
   const handleServiceChange = (serviceId: string) => {
     setAtendimentoServicoId(serviceId);
-    
-    // Find service and check variations
+
     const service = servicos.find(s => s.id === serviceId);
     if (!service) return;
 
-    if (service.variacoes_servico && service.variacoes_servico.length > 0) {
-      // Has variations: Select first variation and set its price
-      const firstVar = service.variacoes_servico[0];
-      setAtendimentoVariacaoId(firstVar.id);
-      setAtendimentoValor(Number(firstVar.valor));
-    } else {
-      // No variations: Clear variation ID and set standard price
-      setAtendimentoVariacaoId('');
-      setAtendimentoValor(Number(service.valor));
-    }
-  };
-
-  // HANDLE VARIATION CHANGE IN MODAL
-  const handleVariationChange = (variationId: string) => {
-    setAtendimentoVariacaoId(variationId);
-    
-    // Find the price
-    const service = servicos.find(s => s.id === atendimentoServicoId);
-    if (!service || !service.variacoes_servico) return;
-
-    const variation = service.variacoes_servico.find(v => v.id === variationId);
-    if (variation) {
-      setAtendimentoValor(Number(variation.valor));
-    }
+    setAtendimentoValor(Number(service.valor));
   };
 
   // SAVE ATENDIMENTO
@@ -351,7 +321,6 @@ export default function PerfilCliente() {
         estabelecimento_id: cliente.estabelecimento_id,
         cliente_id: cliente.id,
         servico_id: atendimentoServicoId,
-        variacao_id: atendimentoVariacaoId || null,
         data_atendimento: atendimentoData,
         valor_cobrado: atendimentoValor,
         observacoes: atendimentoObs.trim() || null
@@ -412,7 +381,6 @@ export default function PerfilCliente() {
   }
 
   const initials = getInitials(cliente.nome, cliente.sobrenome);
-  const selectedService = servicos.find(s => s.id === atendimentoServicoId);
 
   return (
     <div className="space-y-6">
@@ -817,25 +785,6 @@ export default function PerfilCliente() {
                   ))}
                 </select>
               </div>
-
-              {/* Variação Selection (Dynamically appears if service has variations) */}
-              {selectedService && selectedService.variacoes_servico && selectedService.variacoes_servico.length > 0 && (
-                <div className="space-y-1.5 animate-fade-in">
-                  <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">
-                    Variação do Serviço *
-                  </label>
-                  <select
-                    required
-                    value={atendimentoVariacaoId}
-                    onChange={(e) => handleVariationChange(e.target.value)}
-                    className="w-full px-3.5 py-3 md:px-3 md:py-2.5 border border-border rounded-lg bg-bg text-text-primary text-base md:text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 cursor-pointer"
-                  >
-                    {selectedService.variacoes_servico.map(v => (
-                      <option key={v.id} value={v.id}>{v.nome}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
 
               {/* Valor Cobrado */}
               <div className="space-y-1.5">

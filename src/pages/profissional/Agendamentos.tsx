@@ -24,7 +24,6 @@ import {
 import type {
   Cliente,
   Servico,
-  VariacaoServico,
   BloqueioAgenda,
   AgendamentoWithRelations,
 } from '../../types';
@@ -61,7 +60,7 @@ export default function Agendamentos() {
 
   // Database Data States
   const [workHoursConfig, setWorkHoursConfig] = useState<{ dia_semana: number; hora_inicio: string; hora_fim: string }[]>([]);
-  const [servicos, setServicos] = useState<(Servico & { variacoes_servico?: VariacaoServico[] })[]>([]);
+  const [servicos, setServicos] = useState<Servico[]>([]);
   const [agendamentos, setAgendamentos] = useState<AgendamentoWithRelations[]>([]);
   const [bloqueios, setBloqueios] = useState<BloqueioAgenda[]>([]);
 
@@ -203,7 +202,7 @@ export default function Agendamentos() {
     try {
       const [horariosRes, srvsRes, bloqRes] = await Promise.all([
         supabase.from('horarios_atendimento').select('dia_semana, hora_inicio, hora_fim').eq('estabelecimento_id', estabelecimentoId),
-        supabase.from('servicos').select('*, variacoes_servico(*)').eq('estabelecimento_id', estabelecimentoId).order('nome'),
+        supabase.from('servicos').select('*').eq('estabelecimento_id', estabelecimentoId).order('nome'),
         supabase.from('bloqueios_agenda').select('*').eq('estabelecimento_id', estabelecimentoId)
       ]);
       if (horariosRes.error) throw horariosRes.error;

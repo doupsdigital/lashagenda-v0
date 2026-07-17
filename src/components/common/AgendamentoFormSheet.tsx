@@ -10,7 +10,6 @@ import { getInitials } from '../../utils/initials';
 import type {
   Cliente,
   Servico,
-  VariacaoServico,
   BloqueioAgenda,
   AgendamentoServicoInput,
   AgendamentoWithRelations,
@@ -39,7 +38,7 @@ export default function AgendamentoFormSheet({
 
   // Dados de apoio (buscados uma vez, independente do sheet estar aberto)
   const [workHoursConfig, setWorkHoursConfig] = useState<{ dia_semana: number; hora_inicio: string; hora_fim: string }[]>([]);
-  const [servicos, setServicos] = useState<(Servico & { variacoes_servico?: VariacaoServico[] })[]>([]);
+  const [servicos, setServicos] = useState<Servico[]>([]);
   const [bloqueios, setBloqueios] = useState<BloqueioAgenda[]>([]);
 
   useEffect(() => {
@@ -48,7 +47,7 @@ export default function AgendamentoFormSheet({
       try {
         const [horariosRes, srvsRes, bloqRes] = await Promise.all([
           supabase.from('horarios_atendimento').select('dia_semana, hora_inicio, hora_fim').eq('estabelecimento_id', estabelecimentoId),
-          supabase.from('servicos').select('*, variacoes_servico(*)').eq('estabelecimento_id', estabelecimentoId).order('nome'),
+          supabase.from('servicos').select('*').eq('estabelecimento_id', estabelecimentoId).order('nome'),
           supabase.from('bloqueios_agenda').select('*').eq('estabelecimento_id', estabelecimentoId),
         ]);
         if (horariosRes.error) throw horariosRes.error;
@@ -147,7 +146,6 @@ export default function AgendamentoFormSheet({
             const fullSrv = servicos.find(s => s.id === as.servico_id);
             servicesMap[as.servico_id] = {
               servico_id: as.servico_id,
-              variacao_id: as.variacao_id || '',
               nome: as.servico?.nome || fullSrv?.nome || '',
               duracao: fullSrv?.duracao_minutos || 30,
               valor: Number(as.valor_cobrado),
@@ -190,19 +188,15 @@ export default function AgendamentoFormSheet({
     setFormDuracao(totalD);
   };
 
-  const handleToggleServiceCheckbox = (serv: Servico & { variacoes_servico?: VariacaoServico[] }, checked: boolean) => {
+  const handleToggleServiceCheckbox = (serv: Servico, checked: boolean) => {
     const updated = { ...selectedServices };
 
     if (checked) {
-      const hasVars = serv.variacoes_servico && serv.variacoes_servico.length > 0;
-      const firstVar = hasVars ? serv.variacoes_servico![0] : null;
-
       updated[serv.id] = {
         servico_id: serv.id,
-        variacao_id: firstVar ? firstVar.id : '',
         nome: serv.nome,
         duracao: serv.duracao_minutos,
-        valor: firstVar ? Number(firstVar.valor) : Number(serv.valor),
+        valor: Number(serv.valor),
       };
     } else {
       delete updated[serv.id];
@@ -364,7 +358,6 @@ export default function AgendamentoFormSheet({
       const relPayloads = servicesList.map(s => ({
         agendamento_id: apptId,
         servico_id: s.servico_id,
-        variacao_id: s.variacao_id || null,
         valor_cobrado: s.valor,
       }));
 

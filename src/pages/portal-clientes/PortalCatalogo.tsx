@@ -2,12 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Clock, Tag, Calendar, AlertCircle, Sparkles, RefreshCw, ChevronDown, HelpCircle, MapPin, AtSign } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import type { Servico, VariacaoServico } from '../../types';
+import type { Servico } from '../../types';
 import { usePortal } from '../../contexts/PortalContext';
-
-interface ServicoComVariacoes extends Servico {
-  variacoes: VariacaoServico[];
-}
 
 function formatDuracao(minutos: number): string {
   if (minutos <= 60) return `${minutos} min`;
@@ -56,7 +52,7 @@ function SkeletonCard() {
 }
 
 interface ServicoCardProps {
-  servico: ServicoComVariacoes;
+  servico: Servico;
   onAgendar: () => void;
 }
 
@@ -86,25 +82,6 @@ function ServicoCard({ servico, onAgendar }: ServicoCardProps) {
         </span>
       </div>
 
-      {servico.variacoes.length > 0 && (
-        <div className="border-t border-border pt-3 space-y-1.5">
-          <p className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-2">Opções</p>
-          {servico.variacoes.map(v => (
-            <div key={v.id} className="flex items-center justify-between gap-2 text-sm">
-              <span className="text-text-secondary">{v.nome}</span>
-              <div className="flex items-center gap-1.5 text-text-secondary shrink-0">
-                {v.valor != null && (
-                  <span className="font-medium text-text-primary">{formatValor(v.valor)}</span>
-                )}
-                {v.duracao_minutos != null && (
-                  <span className="text-xs text-text-muted">• {formatDuracao(v.duracao_minutos)}</span>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
       <button
         onClick={onAgendar}
         className="mt-auto w-full py-2.5 bg-rose-600 hover:bg-rose-800 text-white rounded-xl text-sm font-semibold transition-colors duration-200 flex items-center justify-center gap-2 cursor-pointer"
@@ -120,7 +97,7 @@ function ServicoCard({ servico, onAgendar }: ServicoCardProps) {
 export default function PortalCatalogo() {
   const navigate = useNavigate();
   const { establishmentId, slug, nomeNegocio, logoUrl, descricao, instagram, endereco } = usePortal();
-  const [servicos, setServicos] = useState<ServicoComVariacoes[]>([]);
+  const [servicos, setServicos] = useState<Servico[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [faqAberto, setFaqAberto] = useState<number | null>(null);
@@ -132,18 +109,13 @@ export default function PortalCatalogo() {
     try {
       const { data, error: servError } = await supabase
         .from('servicos')
-        .select('*, variacoes_servico(*)')
+        .select('*')
         .eq('estabelecimento_id', establishmentId)
         .order('nome', { ascending: true });
 
       if (servError) throw servError;
 
-      const mapped: ServicoComVariacoes[] = (data || []).map(s => ({
-        ...s,
-        variacoes: (s as any).variacoes_servico || [],
-      }));
-
-      setServicos(mapped);
+      setServicos(data || []);
     } catch {
       setError(true);
     } finally {

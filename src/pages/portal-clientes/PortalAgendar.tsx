@@ -6,18 +6,13 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
-import type { Servico, VariacaoServico, HorarioAtendimento, BloqueioAgenda } from '../../types';
+import type { Servico, HorarioAtendimento, BloqueioAgenda } from '../../types';
 import { usePortal } from '../../contexts/PortalContext';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-interface ServicoComVariacoes extends Servico {
-  variacoes: VariacaoServico[];
-}
-
 interface ItemSelecionado {
-  servico: ServicoComVariacoes;
-  variacao: VariacaoServico | null;
+  servico: Servico;
 }
 
 type Etapa = 1 | 2 | 3 | 4 | 'sucesso';
@@ -69,12 +64,10 @@ function fromMin(total: number): string {
 }
 
 function getDuracaoEfetiva(item: ItemSelecionado): number {
-  if (item.variacao?.duracao_minutos != null) return item.variacao.duracao_minutos;
   return item.servico.duracao_minutos;
 }
 
 function getValorEfetivo(item: ItemSelecionado): number {
-  if (item.variacao?.valor != null) return Number(item.variacao.valor);
   return Number(item.servico.valor);
 }
 
@@ -192,7 +185,7 @@ export default function PortalAgendar() {
   }, [etapa, slug, portalToken]);
 
   // ── Step 1 ──────────────────────────────────────────────────────────────────
-  const [servicos, setServicos] = useState<ServicoComVariacoes[]>([]);
+  const [servicos, setServicos] = useState<Servico[]>([]);
   const [loadingServicos, setLoadingServicos] = useState(true);
   const [selecionados, setSelecionados] = useState<Map<string, ItemSelecionado>>(new Map());
 
@@ -235,9 +228,7 @@ export default function PortalAgendar() {
     [itens],
   );
 
-  const podeAvancar1 =
-    itens.length > 0 &&
-    itens.every(it => !(it.servico.variacoes.length > 0 && it.variacao === null));
+  const podeAvancar1 = itens.length > 0;
 
   const diasDoMes = useMemo(() => {
     const { year, month } = mesAtual;
@@ -260,24 +251,21 @@ export default function PortalAgendar() {
       try {
         const { data, error: servError } = await supabase
           .from('servicos')
-          .select('*, variacoes_servico(*)')
+          .select('*')
           .eq('estabelecimento_id', establishmentId)
           .order('nome', { ascending: true });
 
         if (servError) throw servError;
 
-        const mapped: ServicoComVariacoes[] = (data || []).map(s => ({
-          ...s,
-          variacoes: (s as any).variacoes_servico || [],
-        }));
+        const mapped: Servico[] = data || [];
 
         setServicos(mapped);
 
         if (preSelectedId) {
           const serv = mapped.find(s => s.id === preSelectedId);
           if (serv) {
-            setSelecionados(new Map([[serv.id, { servico: serv, variacao: null }]]));
-            if (serv.variacoes.length === 0) setEtapa(2);
+            setSelecionados(new Map([[serv.id, { servico: serv }]]));
+            setEtapa(2);
           }
         }
       } finally {
@@ -346,20 +334,11 @@ export default function PortalAgendar() {
 
   // ─── Handlers ────────────────────────────────────────────────────────────────
 
-  function toggleServico(serv: ServicoComVariacoes) {
+  function toggleServico(serv: Servico) {
     setSelecionados(prev => {
       const next = new Map(prev);
       if (next.has(serv.id)) next.delete(serv.id);
-      else next.set(serv.id, { servico: serv, variacao: null });
-      return next;
-    });
-  }
-
-  function selecionarVariacao(servicoId: string, variacao: VariacaoServico) {
-    setSelecionados(prev => {
-      const next = new Map(prev);
-      const item = next.get(servicoId);
-      if (item) next.set(servicoId, { ...item, variacao });
+      else next.set(serv.id, { servico: serv });
       return next;
     });
   }
@@ -450,7 +429,6 @@ export default function PortalAgendar() {
             .insert({
               agendamento_id: agendamentoId,
               servico_id: item.servico.id,
-              variacao_id: item.variacao?.id ?? null,
               valor_cobrado: getValorEfetivo(item),
             });
           if (asError) throw asError;
@@ -640,7 +618,6 @@ export default function PortalAgendar() {
                 <div className="divide-y divide-border">
                   {servicos.map(serv => {
                     const isChecked = selecionados.has(serv.id);
-                    const item = selecionados.get(serv.id);
                     return (
                       <div key={serv.id} className={`transition-colors ${isChecked ? 'bg-rose-600' : ''}`}>
                         <div
@@ -680,35 +657,6 @@ export default function PortalAgendar() {
                             {formatValor(serv.valor)}
                           </span>
                         </div>
-
-                        {/* Variações */}
-                        {isChecked && serv.variacoes.length > 0 && (
-                          <div className="ml-[5rem] mr-4 sm:mr-5 mb-4 bg-white/95 border border-rose-100 rounded-xl p-3 space-y-2">
-                            <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">
-                              Escolha uma opção <span className="text-red-500">*</span>
-                            </p>
-                            {serv.variacoes.map(v => (
-                              <label key={v.id} className="flex items-center gap-2.5 cursor-pointer">
-                                <input
-                                  type="radio"
-                                  name={`variacao-${serv.id}`}
-                                  checked={item?.variacao?.id === v.id}
-                                  onChange={() => selecionarVariacao(serv.id, v)}
-                                  className="w-3.5 h-3.5 accent-rose-600 cursor-pointer"
-                                />
-                                <span className="text-sm text-text-secondary flex-1">{v.nome}</span>
-                                <div className="flex items-center gap-2 text-xs text-text-secondary shrink-0">
-                                  {v.valor != null && (
-                                    <span className="font-medium text-text-primary">{formatValor(v.valor)}</span>
-                                  )}
-                                  {v.duracao_minutos != null && (
-                                    <span className="text-text-muted">• {formatDuracao(v.duracao_minutos)}</span>
-                                  )}
-                                </div>
-                              </label>
-                            ))}
-                          </div>
-                        )}
                       </div>
                     );
                   })}
@@ -725,7 +673,6 @@ export default function PortalAgendar() {
                     <div key={it.servico.id} className="flex justify-between text-sm text-text-secondary">
                       <span>
                         {it.servico.nome}
-                        {it.variacao ? ` — ${it.variacao.nome}` : ''}
                       </span>
                       <span className="font-medium text-text-primary">{formatValor(getValorEfetivo(it))}</span>
                     </div>
@@ -938,7 +885,6 @@ export default function PortalAgendar() {
                 <div key={it.servico.id} className="flex justify-between text-sm">
                   <span className="text-text-secondary">
                     {it.servico.nome}
-                    {it.variacao ? ` — ${it.variacao.nome}` : ''}
                   </span>
                   <span className="font-medium text-text-primary">{formatValor(getValorEfetivo(it))}</span>
                 </div>

@@ -141,7 +141,6 @@ export interface AgendamentoServico {
 
 export interface AgendamentoServicoInput {
   servico_id: string;
-  variacao_id: string;
   nome: string;
   duracao: number;
   valor: number;

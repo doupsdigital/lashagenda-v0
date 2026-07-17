@@ -496,7 +496,7 @@ const STEPS: Record<Exclude<OnboardingPageKey, 'meu_estudio'>, DriveStep[]> & { 
       element: '#ob-portal-servico-select',
       popover: {
         title: 'Escolha o serviço',
-        description: 'Toque na linha do serviço para selecioná-lo — ela fica destacada em rosa. Você pode escolher mais de um serviço no mesmo agendamento. Se algum tiver variações (tipo ou duração diferentes), escolha a opção desejada antes de continuar.',
+        description: 'Toque na linha do serviço para selecioná-lo — ela fica destacada em rosa. Você pode escolher mais de um serviço no mesmo agendamento.',
       },
     },
     {
