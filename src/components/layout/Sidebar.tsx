@@ -38,7 +38,7 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
   const [businessName, setBusinessName] = useState<string>('...');
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   
-  const { hasFeature, isPremium, status } = useSubscription();
+  const { hasFeature, isPremium } = useSubscription();
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
   const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
 
@@ -244,11 +244,8 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
           </nav>
         </div>
 
-        {/* Upsell do Premium — apenas para quem está no plano Agenda. Some
-            durante o trial porque o TrialBanner no topo já cobre o mesmo
-            recado ("Assinar Agora") — mostrar os dois ao mesmo tempo duplica
-            a mensagem de venda na mesma tela. */}
-        {!isPremium && status !== 'trial' && !collapsed && (
+        {/* Upsell do Premium — apenas para quem está no plano Agenda */}
+        {!isPremium && !collapsed && (
           <div className="mx-3 mb-3 p-3.5 rounded-xl bg-gradient-to-br from-rose-50 to-pink-50 border border-rose-100 flex-shrink-0">
             <div className="flex items-center gap-1.5 mb-1.5">
               <Sparkles className="w-3.5 h-3.5 text-rose-600" />
