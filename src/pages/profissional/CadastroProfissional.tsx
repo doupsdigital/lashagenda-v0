@@ -1,6 +1,6 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertCircle, Eye, EyeOff, Mail, Lock, User, Sparkles, Calendar, Link2, Phone } from 'lucide-react';
+import { AlertCircle, Eye, EyeOff, Mail, Lock, User, Phone } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import InstallBanner from '../../components/common/InstallBanner';
 
@@ -414,35 +414,9 @@ export default function CadastroProfissional() {
               </div>
             </div>
 
-            <div className="w-full space-y-3 mb-4 text-left">
-              <div className="flex items-start gap-3 bg-rose-50/50 border border-rose-100 rounded-xl p-3.5">
-                <div className="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-4 h-4 text-rose-600" />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-text-primary">Cadastre seus serviços</p>
-                  <p className="text-[11px] text-text-secondary mt-0.5">Adicione os procedimentos, preços e durações que você oferece.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 bg-rose-50/50 border border-rose-100 rounded-xl p-3.5">
-                <div className="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center flex-shrink-0">
-                  <Calendar className="w-4 h-4 text-rose-600" />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-text-primary">Configure seus horários</p>
-                  <p className="text-[11px] text-text-secondary mt-0.5">Defina os dias e horários em que você atende.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 bg-rose-50/50 border border-rose-100 rounded-xl p-3.5">
-                <div className="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center flex-shrink-0">
-                  <Link2 className="w-4 h-4 text-rose-600" />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-text-primary">Compartilhe seu link</p>
-                  <p className="text-[11px] text-text-secondary mt-0.5">Envie o link do portal para suas clientes agendarem online.</p>
-                </div>
-              </div>
-            </div>
+            <p className="text-xs text-text-secondary mb-4">
+              No próximo passo, vamos te guiar por 3 etapas rápidas pra deixar seu atendimento pronto.
+            </p>
 
             <div className="w-full mb-4">
               <InstallBanner inline />
@@ -452,7 +426,7 @@ export default function CadastroProfissional() {
               onClick={() => window.location.replace('/meu-estudio')}
               className="w-full py-3.5 bg-rose-600 hover:bg-rose-800 text-white rounded-xl text-sm font-semibold transition-all shadow-md cursor-pointer"
             >
-              Começar a configurar
+              Começar o tutorial
             </button>
           </div>
         </div>
