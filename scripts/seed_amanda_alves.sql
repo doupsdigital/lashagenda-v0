@@ -46,6 +46,14 @@ BEGIN
     RAISE EXCEPTION 'Conta de autenticação da Amanda não encontrada. Rode "node scripts/create_auth_user_amanda.mjs" antes deste seed.';
   END IF;
 
+  -- Se já existe uma profissional com esse e-mail (de uma tentativa anterior
+  -- deste script), remove o estabelecimento dela primeiro — o ON DELETE
+  -- CASCADE já configurado no banco limpa tudo relacionado (usuarios,
+  -- clientes, serviços, agendamentos, etc.) sozinho, deixando o script
+  -- seguro pra rodar de novo do zero quantas vezes precisar.
+  DELETE FROM public.estabelecimentos
+  WHERE id IN (SELECT estabelecimento_id FROM public.usuarios WHERE id = usr);
+
   -- ======================================================================
   -- 2. ESTABELECIMENTO — plano Básico, assinatura ativa (sem trial, pra não
   --    aparecer banner de contagem regressiva nos vídeos)
