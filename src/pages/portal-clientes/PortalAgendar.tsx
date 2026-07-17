@@ -538,7 +538,25 @@ export default function PortalAgendar() {
           whatsapp: whatsappConvidado,
           estabelecimento_id: establishmentId,
         });
-        if (clientError) throw clientError;
+        if (clientError) {
+          // 23505 = violação do índice único de WhatsApp — outra aba/dispositivo
+          // criou o mesmo cadastro entre o passo 1 e este insert (corrida rara,
+          // ex: duplo toque ou duas abas abertas). Reaproveita quem ganhou a
+          // corrida em vez de falhar o agendamento de quem perdeu.
+          if (clientError.code === '23505') {
+            const { data: raceWinnerId } = await supabase
+              .rpc('get_cliente_id_by_email_or_whatsapp', {
+                p_email: '',
+                p_whatsapp_digits: whatsappDigits,
+                p_estabelecimento_id: establishmentId,
+                p_nome: nome,
+              });
+            if (!raceWinnerId) throw clientError;
+            targetClienteId = raceWinnerId as string;
+          } else {
+            throw clientError;
+          }
+        }
       }
 
       // 3. Cria a sessão anônima vinculada a essa cliente

@@ -53,6 +53,13 @@ CREATE TABLE IF NOT EXISTS public.clientes (
   created_at        TIMESTAMPTZ DEFAULT now()
 );
 
+-- Impede duas clientes com o mesmo WhatsApp (normalizado, só dígitos) no
+-- mesmo estabelecimento — protege contra corrida no cadastro por convidada
+-- (ver confirmarComoConvidado em PortalAgendar.tsx).
+CREATE UNIQUE INDEX IF NOT EXISTS clientes_estabelecimento_whatsapp_digits_key
+ON public.clientes (estabelecimento_id, regexp_replace(whatsapp, '[^0-9]', '', 'g'))
+WHERE whatsapp IS NOT NULL;
+
 -- Usuários (profissionais e clientes autenticados)
 CREATE TABLE IF NOT EXISTS public.usuarios (
   id                UUID        PRIMARY KEY,  -- mesmo ID do auth.users
