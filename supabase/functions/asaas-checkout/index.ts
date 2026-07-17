@@ -108,13 +108,15 @@ serve(async (req) => {
     }
     if (!payment) throw new Error('Nenhum pagamento encontrado para a assinatura')
 
-    // 4. Salva os IDs do Asaas no banco
+    // 4. Salva os IDs da assinatura no Asaas — NÃO grava `plano` aqui: isso só
+    // pode acontecer depois que o pagamento for de fato confirmado (webhook ou
+    // asaas-check-payment), senão qualquer um vira Premium só de gerar o Pix
+    // ou abrir o checkout de cartão, sem pagar nada.
     await supabase
       .from('estabelecimentos')
       .update({
         billing_customer_id:     customerId,
         billing_subscription_id: subscription.id,
-        plano:                   plano,
       })
       .eq('id', estabelecimento_id)
 
