@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Building2, WandSparkles, Link2, Copy, Check, X, Lightbulb } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useGuidedTour, type GuidedTourStep } from '../../hooks/useGuidedTour';
+import { getFieldTipsActive, subscribeFieldTipsActive } from '../../hooks/guidedTourFieldTipsStore';
 
 interface StepMeta {
   numero: number;
@@ -199,9 +200,13 @@ function CompactBanner({ step, completeStep }: { step: GuidedTourStep; completeS
   const location = useLocation();
   const [dismissed, setDismissed] = useState(false);
   useEffect(() => setDismissed(false), [location.pathname]);
+  const fieldTipsActive = useSyncExternalStore(subscribeFieldTipsActive, getFieldTipsActive);
 
   const meta = STEP_META[step];
-  if (dismissed) return null;
+  // Enquanto as dicas de campo (driver.js) estão abertas, o banner some pra
+  // não brigar visualmente com elas — volta a aparecer quando o usuário
+  // termina ou fecha as dicas.
+  if (dismissed || fieldTipsActive) return null;
 
   const handleComplete = async () => {
     await completeStep(step);

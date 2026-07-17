@@ -3,6 +3,7 @@ import { driver } from 'driver.js';
 import type { DriveStep } from 'driver.js';
 import { useAuth } from '../contexts/AuthContext';
 import { useGuidedTour, type GuidedTourStep } from './useGuidedTour';
+import { setFieldTipsActive } from './guidedTourFieldTipsStore';
 
 // Tooltips de campo que complementam o checklist guiado — conteúdo próprio,
 // independente dos tours do botão Ajuda (useOnboarding). Só dispara sozinho
@@ -48,9 +49,13 @@ export function useGuidedTourFieldTips(pageStep: GuidedTourStep, steps: DriveSte
         nextBtnText: 'Próximo →',
         prevBtnText: '← Anterior',
         doneBtnText: 'Entendi ✓',
-        onDestroyed: () => { markPageSeen(seenKey); },
+        onDestroyed: () => {
+          setFieldTipsActive(false);
+          markPageSeen(seenKey);
+        },
         steps: stepsRef.current,
       } as Parameters<typeof driver>[0]);
+      setFieldTipsActive(true);
       driverObj.drive();
     };
 
@@ -78,6 +83,9 @@ export function useGuidedTourFieldTips(pageStep: GuidedTourStep, steps: DriveSte
       // no StrictMode do React em desenvolvimento, que monta/desmonta/monta
       // de novo cada efeito de propósito. Libera a trava pra tentativa real.
       if (!driverStarted) startedRef.current = false;
+      // Página desmontou (ex: navegou embora) com o tour ainda aberto —
+      // sem isso o banner do checklist ficaria escondido pra sempre.
+      if (driverStarted) setFieldTipsActive(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
