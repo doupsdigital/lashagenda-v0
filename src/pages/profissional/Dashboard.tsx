@@ -329,20 +329,20 @@ export default function Dashboard() {
         <div className="absolute top-4 right-5 text-white/50 pointer-events-none select-none leading-none text-lg font-light">
           ✦<br /><span className="text-sm">✦</span>
         </div>
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="font-title font-bold text-4xl md:text-4xl">
-              {getGreeting()}{firstName ? `, ${firstName}!` : '!'}
-            </h1>
-            <p className="text-base md:text-sm text-white/70 mt-2 md:mt-1.5">
-              Aqui está o resumo do seu dia — {getDateString()}.
-            </p>
-          </div>
+        <div>
+          <h1 className="font-title font-bold text-4xl md:text-4xl">
+            {getGreeting()}{firstName ? `, ${firstName}!` : '!'}
+          </h1>
+          <p className="text-base md:text-sm text-white/70 mt-2 md:mt-1.5">
+            Aqui está o resumo do seu dia — {getDateString()}.
+          </p>
           {isPremium && (
-            <span className="flex items-center gap-1.5 px-3 py-1.5 mr-6 rounded-full bg-white/15 backdrop-blur-sm text-sm md:text-xs font-bold tracking-wide shrink-0">
-              <Crown className="w-4 h-4 md:w-3.5 md:h-3.5" />
-              PREMIUM
-            </span>
+            <div className="flex justify-end">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 mt-3 rounded-full bg-white/15 backdrop-blur-sm text-sm md:text-xs font-bold tracking-wide">
+                <Crown className="w-4 h-4 md:w-3.5 md:h-3.5" />
+                PREMIUM
+              </span>
+            </div>
           )}
         </div>
       </div>
