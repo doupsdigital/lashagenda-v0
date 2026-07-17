@@ -37,9 +37,9 @@ serve(async (req) => {
       case 'PAYMENT_CONFIRMED': {
         novoStatus = 'ativo'
         // Determina o plano pelo valor pago (fonte de verdade do Asaas)
-        // Premium = R$ 89,90 / Agenda (basico) = R$ 59,90 — threshold no ponto médio (75)
+        // Premium = R$ 99,90 / Agenda (basico) = R$ 69,90 — threshold no ponto médio (85)
         const valor = parseFloat(String(payment.value ?? 0))
-        novoPlano = valor >= 75 ? 'premium' : 'basico'
+        novoPlano = valor >= 85 ? 'premium' : 'basico'
         break
       }
       case 'PAYMENT_OVERDUE':

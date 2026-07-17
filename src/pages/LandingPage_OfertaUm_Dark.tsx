@@ -633,7 +633,7 @@ export default function LandingPage_OfertaUm_Dark() {
               <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: P.accent, marginBottom: 8 }}>Plano Agenda</div>
               <div style={{ marginBottom: 20 }}>
                 <span style={{ fontSize: 11, color: P.accent }}>R$ </span>
-                <span style={{ fontSize: 40, fontWeight: 900, color: P.accent }}>59,90</span>
+                <span style={{ fontSize: 40, fontWeight: 900, color: P.accent }}>69,90</span>
                 <span style={{ fontSize: 11, color: P.muted }}>/mês</span>
               </div>
               <div style={{ paddingTop: 20, borderTop: `1px solid ${P.border}`, display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 24 }}>
@@ -663,7 +663,7 @@ export default function LandingPage_OfertaUm_Dark() {
               <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: P.muted, marginBottom: 8 }}>Plano Premium</div>
               <div style={{ marginBottom: 20 }}>
                 <span style={{ fontSize: 11, color: P.muted }}>R$ </span>
-                <span style={{ fontSize: 40, fontWeight: 900, color: P.text }}>89,90</span>
+                <span style={{ fontSize: 40, fontWeight: 900, color: P.text }}>99,90</span>
                 <span style={{ fontSize: 11, color: P.muted }}>/mês</span>
               </div>
               <div style={{ paddingTop: 20, borderTop: `1px solid ${P.border}`, display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 24 }}>

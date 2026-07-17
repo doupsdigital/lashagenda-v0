@@ -47,9 +47,9 @@ serve(async (req) => {
     }
 
     // 2. Determina o plano pelo valor pago
-    // Premium = R$ 89,90 / Agenda (basico) = R$ 59,90 — threshold no ponto médio (75)
+    // Premium = R$ 99,90 / Agenda (basico) = R$ 69,90 — threshold no ponto médio (85)
     const valor = parseFloat(String(payment.value ?? 0))
-    const novoPlano = valor >= 75 ? 'premium' : 'basico'
+    const novoPlano = valor >= 85 ? 'premium' : 'basico'
 
     // 3. Atualiza o banco (mesma lógica do webhook, funciona como fallback)
     const supabase = createClient(SUPABASE_URL, SB_SERVICE_ROLE_KEY)

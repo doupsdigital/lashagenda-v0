@@ -355,7 +355,7 @@ export default function Faturamento() {
                     </h2>
                     <p className="text-sm md:text-xs text-rose-800/90 font-medium mt-1">Ideal para automatizar sua agenda e nunca mais perder um horário no WhatsApp.</p>
                     <div className="mt-4 flex items-baseline gap-1">
-                      <span className="text-3xl md:text-2xl font-extrabold font-title text-rose-800">R$ 59,90</span>
+                      <span className="text-3xl md:text-2xl font-extrabold font-title text-rose-800">R$ 69,90</span>
                       <span className="text-sm md:text-xs font-semibold text-rose-800/90">/ mês</span>
                     </div>
                   </div>
@@ -446,7 +446,7 @@ export default function Faturamento() {
                     </h2>
                     <p className="text-sm md:text-xs text-rose-800/90 font-medium mt-1">Para quem quer relatórios completos do negócio e fichas de anamnese profissionais para Lash Designers.</p>
                     <div className="mt-4 flex items-baseline gap-1">
-                      <span className="text-3xl md:text-2xl font-extrabold font-title text-rose-800">R$ 89,90</span>
+                      <span className="text-3xl md:text-2xl font-extrabold font-title text-rose-800">R$ 99,90</span>
                       <span className="text-sm md:text-xs font-semibold text-rose-800/90">/ mês</span>
                     </div>
                   </div>
