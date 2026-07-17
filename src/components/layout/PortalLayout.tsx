@@ -12,6 +12,12 @@ export default function PortalLayout() {
   const { user, profile, isProfissional, signOut } = useAuth();
   const { nomeNegocio, logoUrl, slug, loading, nomeProfissional, telefoneProfissional } = usePortal();
   const isAgendar = location.pathname.endsWith('/agendar');
+  // O convite de instalação só pode aparecer aqui: sem start_url no manifest,
+  // o iOS usa a página atual como ponto de partida do ícone instalado — essa
+  // é a única rota preparada pra recuperar a sessão se ela não sobreviver à
+  // instalação (ver PortalEntrarApp). Em qualquer outra tela, instalar a
+  // partir dali arriscaria abrir o app sem sessão e sem como se recuperar.
+  const isAppToken = location.pathname.includes('/app/');
 
   const [installBannerVisible, setInstallBannerVisible] = useState(false);
 
@@ -139,7 +145,7 @@ export default function PortalLayout() {
         <Outlet />
       </main>
 
-      {user && <InstallBanner onVisibilityChange={setInstallBannerVisible} />}
+      {user && isAppToken && <InstallBanner onVisibilityChange={setInstallBannerVisible} />}
 
       {/* Bottom nav (mobile) */}
       <nav
