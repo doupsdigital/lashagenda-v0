@@ -375,6 +375,38 @@ CREATE POLICY "usuarios_update"
   ON public.usuarios FOR UPDATE TO authenticated
   USING (id = auth.uid());
 
+-- usuarios_update só verifica dono da linha (id = auth.uid()), sem restringir
+-- coluna. get_auth_user_role()/get_auth_user_establishment() leem role e
+-- estabelecimento_id direto dessa tabela, ao vivo (sem cache no token) — sem
+-- essa trava, qualquer sessão de cliente convidada (que qualquer visitante
+-- cria sozinho, só completando um agendamento público) poderia rodar
+-- UPDATE usuarios SET role='profissional' WHERE id=auth.uid() e virar
+-- profissional do próprio estabelecimento, ganhando acesso total à conta.
+CREATE OR REPLACE FUNCTION public.restringir_update_usuario_por_role()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  IF OLD.role = 'cliente' THEN
+    IF NEW.role IS DISTINCT FROM OLD.role
+    OR NEW.estabelecimento_id IS DISTINCT FROM OLD.estabelecimento_id
+    OR NEW.cliente_id IS DISTINCT FROM OLD.cliente_id
+    OR NEW.id IS DISTINCT FROM OLD.id
+    THEN
+      RAISE EXCEPTION 'Não é permitido alterar esses campos por autoatendimento.';
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_restringir_update_usuario ON public.usuarios;
+CREATE TRIGGER trg_restringir_update_usuario
+  BEFORE UPDATE ON public.usuarios
+  FOR EACH ROW EXECUTE FUNCTION public.restringir_update_usuario_por_role();
+
 -- CLIENTES
 CREATE POLICY "clientes_profissional"
   ON public.clientes FOR ALL TO authenticated
