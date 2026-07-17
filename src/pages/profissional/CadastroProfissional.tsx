@@ -175,6 +175,14 @@ export default function CadastroProfissional() {
         }))
       );
 
+      // Evento de conversão do Meta Pixel — só dispara se o pixel já foi
+      // carregado (ex: veio da /lp); quem chega direto no /cadastro sem
+      // passar por lá nunca teve o script injetado, então window.fbq nem existe.
+      const fbq = (window as typeof window & { fbq?: (...args: unknown[]) => void }).fbq;
+      if (typeof fbq === 'function') {
+        fbq('track', 'CompleteRegistration');
+      }
+
       setSuccess(true);
     } catch (err: unknown) {
       setErrorMsg(err instanceof Error ? err.message : 'Ocorreu um erro ao criar seu cadastro. Tente novamente.');
