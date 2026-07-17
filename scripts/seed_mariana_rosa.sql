@@ -25,6 +25,7 @@ DO $$
 DECLARE
   est UUID;
   usr UUID;
+  old_est UUID;
 
   -- Serviços
   s_fio UUID; s_vr UUID; s_vh UUID; s_vb UUID; s_mega UUID;
@@ -48,12 +49,23 @@ BEGIN
   END IF;
 
   -- Se já existe uma profissional com esse e-mail (de uma tentativa anterior
-  -- deste script), remove o estabelecimento dela primeiro — o ON DELETE
-  -- CASCADE já configurado no banco limpa tudo relacionado (usuarios,
-  -- clientes, serviços, agendamentos, etc.) sozinho, deixando o script
-  -- seguro pra rodar de novo do zero quantas vezes precisar.
-  DELETE FROM public.estabelecimentos
-  WHERE id IN (SELECT estabelecimento_id FROM public.usuarios WHERE id = usr);
+  -- deste script), limpa os dados dela antes de recriar. agendamento_id em
+  -- agendamento_servicos tem ON DELETE CASCADE, mas servico_id (nessa
+  -- tabela e em atendimentos) não tem — apagar o estabelecimento direto
+  -- derruba servicos e agendamentos em cascatas paralelas cuja ordem o
+  -- Postgres não garante, e pode tentar apagar um serviço enquanto ainda
+  -- há uma linha em agendamento_servicos/atendimentos apontando pra ele.
+  -- Por isso apaga essas duas tabelas explicitamente primeiro.
+  SELECT estabelecimento_id INTO old_est FROM public.usuarios WHERE id = usr;
+
+  IF old_est IS NOT NULL THEN
+    DELETE FROM public.agendamento_servicos
+    WHERE agendamento_id IN (SELECT id FROM public.agendamentos WHERE estabelecimento_id = old_est);
+
+    DELETE FROM public.atendimentos WHERE estabelecimento_id = old_est;
+
+    DELETE FROM public.estabelecimentos WHERE id = old_est;
+  END IF;
 
   -- ======================================================================
   -- 2. ESTABELECIMENTO — plano Premium, assinatura ativa (sem trial)
