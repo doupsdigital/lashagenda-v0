@@ -1,6 +1,6 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertCircle, Eye, EyeOff, Mail, Lock, User, Phone } from 'lucide-react';
+import { AlertCircle, Eye, EyeOff, Mail, Lock, User, Phone, Play } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import InstallBanner from '../../components/common/InstallBanner';
 
@@ -410,14 +410,16 @@ export default function CadastroProfissional() {
               </p>
               <div className="flex justify-center">
                 <div className="relative rounded-xl overflow-hidden bg-black w-full" style={{ maxWidth: '240px', aspectRatio: '9 / 16' }}>
-                  <iframe
-                    src="https://player.vimeo.com/video/1207680718?h=97fd933d25&badge=0&autopause=0&player_id=0&app_id=58479"
-                    className="absolute inset-0 w-full h-full"
-                    frameBorder={0}
-                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-                    allowFullScreen
-                    title="Tutorial de Boas-vindas - Lash Agenda"
+                  <img
+                    src="/video-boas-vindas-placeholder.png"
+                    alt="Vídeo de boas-vindas em breve"
+                    className="absolute inset-0 w-full h-full object-cover"
                   />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                    <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                      <Play className="w-6 h-6 text-rose-600 fill-rose-600 ml-0.5" />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
