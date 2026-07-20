@@ -426,7 +426,7 @@ export default function LandingPage_OfertaUm() {
               {/* 9:16 aspect ratio wrapper */}
               <div style={{ position: 'relative', paddingBottom: '177.78%', height: 0 }}>
                 <iframe
-                  src="https://player.vimeo.com/video/1208380132?h=7e893700a1&badge=0&autopause=0&player_id=0&app_id=58479"
+                  src="https://player.vimeo.com/video/1211503636?h=f869dd2731&badge=0&autopause=0&player_id=0&app_id=58479"
                   allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
                   style={{
                     position: 'absolute',
