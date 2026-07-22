@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Check, Bell, Calendar, BookOpen, TrendingUp, Clock, ShieldCheck, Sparkles, ChevronDown, XCircle, CheckCircle2, Users, LayoutGrid, Percent, Monitor, Heart, Zap, Wallet, Smartphone, CreditCard, LogIn } from 'lucide-react';
+import { ArrowRight, Check, Bell, Calendar, BookOpen, TrendingUp, Clock, ShieldCheck, Sparkles, ChevronDown, XCircle, CheckCircle2, Users, LayoutGrid, Percent, Monitor, Heart, Zap, Wallet, Smartphone, CreditCard, LogIn, PlayCircle } from 'lucide-react';
 
 // ── Animation presets ──────────────────────────────────────────────────────
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -299,168 +299,81 @@ export default function LandingPage_OfertaUm() {
             </motion.div>
           </div>
 
-          {/* Right — floating mockup */}
-          <div className="flex-1 flex justify-center w-full bg-[#c84b72] lg:bg-transparent rounded-2xl lg:rounded-none py-10 lg:py-0 px-4 lg:px-0" style={{ position: 'relative', minHeight: 400 }}>
+          {/* Right — VSL */}
+          <div className="flex-1 flex justify-center w-full" style={{ position: 'relative', minHeight: 400 }}>
+            <div style={{ width: '100%', maxWidth: 380 }}>
 
-            {/* Decorative circles — hidden on mobile */}
-            <motion.div
-              className="hidden sm:block"
-              animate={{ opacity: [0.4, 0.9, 0.4], scale: [1, 1.05, 1] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              style={{ position: 'absolute', top: -20, right: -20, width: 120, height: 120, borderRadius: '50%', border: `2px dashed rgba(200,75,114,0.22)`, pointerEvents: 'none' }}
-            />
-            <motion.div
-              className="hidden sm:block"
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-              style={{ position: 'absolute', bottom: 20, left: -30, width: 80, height: 80, borderRadius: '50%', background: P.accentLight, pointerEvents: 'none' }}
-            />
-
-            {/* Main mockup card — floats */}
-            <motion.div
-              initial={{ opacity: 0, y: 40, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: 1.2, duration: 0.8, ease: EASE }}
-              style={{ width: '100%', maxWidth: 380, position: 'relative', zIndex: 2 }}
-            >
+              {/* Texto acima do vídeo */}
               <motion.div
-                animate={{ y: [0, -16, 0], rotate: [-1, 1, -1] }}
-                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-                style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 20, padding: 20, boxShadow: '0 32px 80px rgba(0,0,0,0.1)' }}
+                initial="hidden"
+                animate="visible"
+                variants={stagger(0.1)}
+                style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, paddingBottom: 12, borderBottom: `1px solid ${P.border}` }}>
-                  <div>
-                    <div style={{ fontSize: 9, fontWeight: 700, color: P.accent, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>App do Estúdio</div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: P.text }}>Mari Lash Studio</div>
-                  </div>
-                  <motion.div
-                    animate={{ opacity: [1, 0.4, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981' }}
-                  />
-                </div>
-
-                <div style={{ background: P.accentLight, border: `1px solid rgba(200,75,114,0.15)`, borderRadius: 12, padding: 14, marginBottom: 12 }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: P.accent, marginBottom: 6 }}>✦ Volume Russo — R$ 180</div>
-                  <div style={{ fontSize: 9, color: P.muted }}>Escolha a data e horário disponíveis</div>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 14 }}>
-                  {[{ slot: 'Segunda — 09:00', selected: true }, { slot: 'Segunda — 11:00', selected: false }, { slot: 'Terça — 14:00', selected: false }].map((item, i) => (
-                    <div key={i} style={{ background: item.selected ? P.accentLight : P.bg, border: `1px solid ${item.selected ? 'rgba(200,75,114,0.3)' : P.border}`, borderRadius: 8, padding: '8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: 11, fontWeight: item.selected ? 700 : 400, color: item.selected ? P.accent : P.muted }}>📅 {item.slot}</span>
-                      {item.selected && <span style={{ width: 6, height: 6, borderRadius: '50%', background: P.accent, display: 'inline-block' }} />}
-                    </div>
-                  ))}
-                </div>
-
-                <button style={{ width: '100%', background: P.accent, color: '#fff', border: 'none', borderRadius: 10, padding: '10px 0', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
-                  Confirmar agendamento
-                </button>
-
-                <div style={{ marginTop: 12, paddingTop: 10, borderTop: `1px solid ${P.border}`, fontSize: 9, color: P.faint, textAlign: 'center' }}>
-                  Sua cliente agenda sozinha — você recebe o aviso na hora
-                </div>
+                <motion.div
+                  variants={fadeUp}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '10px 22px', background: P.accentLight, border: `1px solid rgba(200,75,114,0.25)`, borderRadius: 999 }}
+                >
+                  <PlayCircle size={20} color={P.accent} />
+                  <span style={{ fontSize: 15, fontWeight: 800, color: P.accent, letterSpacing: -0.2 }}>Veja como funciona</span>
+                </motion.div>
               </motion.div>
-            </motion.div>
 
-            {/* Floating notification chip */}
-            <motion.div
-              initial={{ opacity: 0, x: -24 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 2.2, duration: 0.6, ease: EASE }}
-              style={{ position: 'absolute', top: 10, left: 0, zIndex: 3, display: 'flex' }}
-            >
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-                style={{ background: P.card, border: `1px solid ${P.border}`, borderRadius: 12, padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 8px 24px rgba(0,0,0,0.08)' }}
-              >
-                <Bell size={14} color={P.accent} />
-                <div>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: P.text }}>Nova marcação!</div>
-                  <div style={{ fontSize: 9, color: P.muted }}>Volume Russo • Segunda 09h</div>
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── VSL VIDEO ── */}
-      <section style={{ position: 'relative', zIndex: 1, padding: 'clamp(24px, 4vw, 56px) 20px clamp(44px, 8vw, 80px)', background: P.bg }}>
-        <div style={{ maxWidth: 560, margin: '0 auto' }}>
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
-            variants={stagger(0.1)}
-            style={{ textAlign: 'center', marginBottom: 36 }}
-          >
-            <motion.p variants={fadeUp} style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 2, color: P.accent, marginBottom: 12 }}>Veja como funciona</motion.p>
-            <motion.h2 variants={fadeUp} style={{ fontSize: 'clamp(20px, 4.5vw, 34px)', fontWeight: 900, letterSpacing: -0.5, lineHeight: 1.2, color: '#3a2d40', textWrap: 'balance' } as React.CSSProperties}>
-              Como o Lash Agenda muda<br />o seu dia a dia
-            </motion.h2>
-            <motion.p variants={fadeUp} style={{ fontSize: 14, color: P.muted, marginTop: 10, lineHeight: 1.75, maxWidth: 380, margin: '10px auto 0', fontStyle: 'italic' }}>
-              Agenda automática, ficha de cliente, controle de ganhos — tudo no seu celular.
-            </motion.p>
-          </motion.div>
-
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <motion.div
-              initial={{ opacity: 0, y: 40, scale: 0.97 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.75, ease: EASE }}
-              style={{
-                position: 'relative',
-                borderRadius: 20,
-                overflow: 'hidden',
-                boxShadow: '0 32px 80px rgba(0,0,0,0.18)',
-                border: `1px solid ${P.border}`,
-                background: '#000',
-                width: '100%',
-                maxWidth: 320,
-              }}
-            >
-              {/* 9:16 aspect ratio wrapper */}
-              <div style={{ position: 'relative', paddingBottom: '177.78%', height: 0 }}>
-                <iframe
-                  src="https://player.vimeo.com/video/1211503636?h=f869dd2731&badge=0&autopause=0&player_id=0&app_id=58479"
-                  allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <motion.div
+                  initial={{ opacity: 0, y: 40, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: 0.3, duration: 0.75, ease: EASE }}
                   style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
+                    position: 'relative',
+                    borderRadius: 20,
+                    overflow: 'hidden',
+                    boxShadow: '0 32px 80px rgba(0,0,0,0.18)',
+                    border: `1px solid ${P.border}`,
+                    background: '#000',
                     width: '100%',
-                    height: '100%',
-                    border: 'none',
+                    maxWidth: 320,
                   }}
-                  title="Lash Agenda — Como funciona"
-                />
+                >
+                  {/* 9:16 aspect ratio wrapper */}
+                  <div style={{ position: 'relative', paddingBottom: '177.78%', height: 0 }}>
+                    <iframe
+                      src="https://player.vimeo.com/video/1211503636?h=f869dd2731&badge=0&autopause=0&player_id=0&app_id=58479"
+                      allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        border: 'none',
+                      }}
+                      title="Lash Agenda — Como funciona"
+                    />
+                  </div>
+                </motion.div>
               </div>
-            </motion.div>
-          </div>
 
-          {/* CTA abaixo do vídeo */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.5 }}
-            transition={{ delay: 0.3, duration: 0.6, ease: EASE }}
-            style={{ textAlign: 'center', marginTop: 32 }}
-          >
-            <motion.button
-              onClick={() => navigate('/cadastro')}
-              whileHover={{ scale: 1.05, boxShadow: `0 12px 40px rgba(200,75,114,0.45)` }}
-              whileTap={{ scale: 0.97 }}
-              transition={SPRING}
-              style={{ background: P.accent, color: '#fff', border: 'none', borderRadius: 14, padding: '14px 32px', fontWeight: 700, fontSize: 15, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8, boxShadow: `0 8px 32px rgba(200,75,114,0.35)` }}
-            >
-              Testar 14 dias grátis <ArrowRight size={16} />
-            </motion.button>
-            <p style={{ marginTop: 10, fontSize: 12, color: P.faint }}>Sem cartão de crédito. Cancele quando quiser.</p>
-          </motion.div>
+              {/* CTA abaixo do vídeo */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.6, ease: EASE }}
+                style={{ textAlign: 'center', marginTop: 24 }}
+              >
+                <motion.button
+                  onClick={() => navigate('/cadastro')}
+                  whileHover={{ scale: 1.05, boxShadow: `0 12px 40px rgba(200,75,114,0.45)` }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={SPRING}
+                  style={{ background: P.accent, color: '#fff', border: 'none', borderRadius: 14, padding: '14px 32px', fontWeight: 700, fontSize: 15, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8, boxShadow: `0 8px 32px rgba(200,75,114,0.35)` }}
+                >
+                  Testar 14 dias grátis <ArrowRight size={16} />
+                </motion.button>
+                <p style={{ marginTop: 10, fontSize: 12, color: P.faint }}>Sem cartão de crédito. Cancele quando quiser.</p>
+              </motion.div>
+            </div>
+          </div>
         </div>
       </section>
 
