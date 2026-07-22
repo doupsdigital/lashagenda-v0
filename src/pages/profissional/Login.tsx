@@ -63,9 +63,12 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-bg px-4 py-12 relative overflow-hidden font-sans">
-      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-rose-100/40 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-rose-100/40 blur-3xl pointer-events-none" />
+    <div
+      className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden font-sans"
+      style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
+    >
+      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-white/10 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-white/10 blur-3xl pointer-events-none" />
 
       <div className="w-full max-w-[420px] bg-white border border-border rounded-[20px] shadow-xl p-8 md:p-10 relative z-10 animate-fade-in">
         <div className="flex flex-col items-center text-center mb-4">
@@ -95,7 +98,7 @@ export default function Login() {
 
         <div className="flex items-center gap-3 my-5">
           <div className="flex-1 h-px bg-border" />
-          <span className="text-xs text-text-secondary">ou</span>
+          <span className="text-sm font-semibold text-text-secondary">ou</span>
           <div className="flex-1 h-px bg-border" />
         </div>
 

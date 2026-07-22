@@ -1,6 +1,6 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertCircle, Eye, EyeOff, Mail, Lock, User, Phone } from 'lucide-react';
+import { AlertCircle, Eye, EyeOff, Mail, Lock, User, Phone, CreditCard, ShieldCheck } from 'lucide-react';
 import posthog from 'posthog-js';
 import { supabase } from '../../lib/supabase';
 import InstallBanner from '../../components/common/InstallBanner';
@@ -17,6 +17,7 @@ export default function CadastroProfissional() {
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [showEmailForm, setShowEmailForm] = useState(false);
 
   // Solidifica a URL "real" da página em /meu-estudio quando a profissional
   // instala o app direto desta tela (o InstallBanner logo abaixo convida pra
@@ -197,9 +198,12 @@ export default function CadastroProfissional() {
     'w-full pl-10 pr-4 py-2.5 border border-border rounded-xl bg-bg text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-text-muted transition-all';
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-bg px-4 py-12 relative overflow-hidden font-sans">
-      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-rose-100/40 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-rose-100/40 blur-3xl pointer-events-none" />
+    <div
+      className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden font-sans"
+      style={{ background: 'linear-gradient(to bottom right, var(--rose-600) 75%, var(--rose-400) 100%)' }}
+    >
+      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-white/10 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-white/10 blur-3xl pointer-events-none" />
 
       <div className="w-full max-w-[440px] bg-white border border-border rounded-[20px] shadow-xl p-8 md:p-10 relative z-10 animate-fade-in">
         <div className="flex flex-col items-center text-center mb-6">
@@ -231,11 +235,41 @@ export default function CadastroProfissional() {
 
         {/* O modal de boas-vindas é renderizado fora do card abaixo */}
 
+        <div className="flex items-center justify-center gap-2 mb-5 flex-wrap">
+          <span className="inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 border border-rose-100 rounded-full px-3 py-1.5 text-[11px] font-semibold">
+            <CreditCard className="w-3.5 h-3.5" />
+            Sem cartão de crédito
+          </span>
+          <span className="inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 border border-rose-100 rounded-full px-3 py-1.5 text-[11px] font-semibold">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            Cancele quando quiser
+          </span>
+        </div>
+
         <GoogleAuthButton />
 
+        {!showEmailForm ? (
+          <>
+            <div className="flex items-center gap-3 my-5">
+              <div className="flex-1 h-px bg-border" />
+              <span className="text-sm font-semibold text-text-secondary">ou</span>
+              <div className="flex-1 h-px bg-border" />
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowEmailForm(true)}
+              className="w-full py-3 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2.5 cursor-pointer"
+            >
+              <Mail className="w-4 h-4" />
+              Cadastrar com nome, e-mail e senha
+            </button>
+          </>
+        ) : (
+        <>
         <div className="flex items-center gap-3 my-5">
           <div className="flex-1 h-px bg-border" />
-          <span className="text-xs text-text-secondary">ou cadastre-se com e-mail</span>
+          <span className="text-xs text-text-secondary">seus dados</span>
           <div className="flex-1 h-px bg-border" />
         </div>
 
@@ -351,12 +385,9 @@ export default function CadastroProfissional() {
               'Criar Conta Gratuitamente'
             )}
           </button>
-
-          <div className="mt-4 flex flex-col items-center gap-1 text-[11px] text-text-secondary select-none">
-            <span>✓ Sem cartão de crédito necessário</span>
-            <span>✓ Cancele a qualquer momento</span>
-          </div>
         </form>
+        </>
+        )}
 
         <p className="text-center text-xs text-text-secondary mt-6">
           Já tem conta?{' '}
