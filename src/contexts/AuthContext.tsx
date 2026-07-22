@@ -107,7 +107,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
 
       if (profileData.role === 'profissional') {
-        posthog.identify(profileData.id, {
+        // distinct_id é o estabelecimento_id (não o usuarios.id) para bater com o
+        // distinct_id usado pelos triggers SQL server-side (ver Fase 4 do plano de
+        // analytics) — senão o PostHog trata como duas pessoas diferentes e o
+        // funil nunca conecta a etapa de agendamento_criado com as anteriores.
+        posthog.identify(profileData.estabelecimento_id, {
           email: profileData.email,
           nome_negocio: profileData.estabelecimentos?.nome_negocio,
           estabelecimento_id: profileData.estabelecimento_id,
@@ -152,7 +156,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setPortalToken(profileData.clientes?.portal_token ?? null);
 
       if (profileData.role === 'profissional') {
-        posthog.identify(profileData.id, {
+        posthog.identify(profileData.estabelecimento_id, {
           email: profileData.email,
           nome_negocio: profileData.estabelecimentos?.nome_negocio,
           estabelecimento_id: profileData.estabelecimento_id,

@@ -4,13 +4,20 @@ import posthog from 'posthog-js'
 import './index.css'
 import App from './App.tsx'
 
-posthog.init(import.meta.env.VITE_POSTHOG_KEY, {
-  api_host: import.meta.env.VITE_POSTHOG_HOST,
-  capture_pageview: false, // SPA: disparado manualmente a cada troca de rota (ver App.tsx)
-  session_recording: {
-    maskAllInputs: false, // mascaramento seletivo de dados de clientes, ver Fase 5
-  },
-});
+// O Portal do Cliente (/portal/...) nunca deve ser rastreado — nem eventos,
+// nem gravação de sessão, nem cookies do PostHog (ver Fase 5 do plano de
+// analytics). Os links para o portal sempre abrem em nova aba
+// (target="_blank", ver LinkAgendamento.tsx), então essa checagem no
+// carregamento inicial da página cobre 100% dos casos reais.
+if (!window.location.pathname.startsWith('/portal/')) {
+  posthog.init(import.meta.env.VITE_POSTHOG_KEY, {
+    api_host: import.meta.env.VITE_POSTHOG_HOST,
+    capture_pageview: false, // SPA: disparado manualmente a cada troca de rota (ver App.tsx)
+    session_recording: {
+      maskAllInputs: false, // mascaramento seletivo de dados de clientes, ver Fase 5
+    },
+  });
+}
 
 // Registra o service worker para habilitar instalação como PWA
 if ('serviceWorker' in navigator) {
