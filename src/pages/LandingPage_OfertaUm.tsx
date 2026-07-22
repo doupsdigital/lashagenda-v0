@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Check, Bell, Calendar, BookOpen, TrendingUp, Clock, ShieldCheck, Sparkles, ChevronDown, XCircle, CheckCircle2, Users, LayoutGrid, Percent, Monitor, Heart, Zap, Wallet, Smartphone, CreditCard, LogIn, PlayCircle, Play } from 'lucide-react';
+import { ArrowRight, Check, Bell, Calendar, BookOpen, TrendingUp, Clock, ShieldCheck, Sparkles, ChevronDown, XCircle, CheckCircle2, Users, LayoutGrid, Percent, Monitor, Heart, Zap, Wallet, Smartphone, CreditCard, PlayCircle, Play } from 'lucide-react';
 
 // ── Animation presets ──────────────────────────────────────────────────────
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -265,19 +265,14 @@ export default function LandingPage_OfertaUm() {
             >
               <motion.button
                 onClick={() => navigate('/cadastro')}
-                whileHover={{ scale: 1.05, boxShadow: `0 12px 40px rgba(200,75,114,0.45)` }}
-                whileTap={{ scale: 0.97 }}
-                transition={SPRING}
-                style={{ background: P.accent, color: '#fff', border: 'none', borderRadius: 14, padding: '15px 28px', fontWeight: 700, fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: `0 8px 32px rgba(200,75,114,0.35)` }}
+                animate={{ scale: [1, 1.035, 1] }}
+                transition={{ scale: { duration: 2.6, repeat: Infinity, ease: 'easeInOut' } }}
+                whileHover={{ scale: 1.05, boxShadow: `0 12px 40px rgba(200,75,114,0.45)`, transition: { duration: 0.2 } }}
+                whileTap={{ scale: 0.97, transition: { duration: 0.1 } }}
+                style={{ background: P.accent, color: '#fff', border: 'none', borderRadius: 14, padding: '15px 40px', fontWeight: 700, fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: `0 8px 32px rgba(200,75,114,0.35)`, width: '100%', maxWidth: 340 }}
               >
                 Testar 7 dias grátis <ArrowRight size={16} />
               </motion.button>
-              <Link
-                to="/login"
-                style={{ color: P.text, fontSize: 14, fontWeight: 600, textDecoration: 'none', padding: '15px 20px', background: 'rgba(255,255,255,0.85)', border: `1px solid rgba(200,75,114,0.25)`, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}
-              >
-                <LogIn size={16} /> Já tenho conta
-              </Link>
             </motion.div>
 
             {/* Trust */}
@@ -289,9 +284,8 @@ export default function LandingPage_OfertaUm() {
               style={{ gap: 20 }}
             >
               {[
-                { icon: <Clock size={14} />, text: '7 dias grátis' },
+                { icon: <Clock size={14} />, text: 'Acesso imediato' },
                 { icon: <CreditCard size={14} />, text: 'Sem cartão de crédito' },
-                { icon: <ShieldCheck size={14} />, text: 'Garantia 7 dias' },
               ].map(b => (
                 <span key={b.text} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 600, color: P.text }}>
                   <span style={{ color: P.accent, display: 'flex' }}>{b.icon}</span> {b.text}
@@ -827,9 +821,9 @@ export default function LandingPage_OfertaUm() {
           <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
             <ShieldCheck size={24} color="#10b981" />
           </div>
-          <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, color: P.text }}>7 dias de garantia incondicional</h3>
+          <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, color: P.text }}>Garantia de satisfação total</h3>
           <p style={{ fontSize: 14, color: P.muted, lineHeight: 1.8 }}>
-            Use na sua rotina real. Se em até 7 dias você achar que o Lash Agenda não ajudou no seu dia a dia, devolvemos seu dinheiro integralmente. Sem burocracia, sem pergunta.
+            Comece com 7 dias grátis, sem cartão de crédito. E se depois de assinar você mudar de ideia nos primeiros 7 dias, devolvemos 100% do valor pago. Sem burocracia, sem perguntas.
           </p>
         </motion.div>
       </section>

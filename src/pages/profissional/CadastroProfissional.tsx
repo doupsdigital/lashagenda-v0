@@ -235,13 +235,13 @@ export default function CadastroProfissional() {
 
         {/* O modal de boas-vindas é renderizado fora do card abaixo */}
 
-        <div className="flex items-center justify-center gap-2 mb-5 flex-wrap">
-          <span className="inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 border border-rose-100 rounded-full px-3 py-1.5 text-[11px] font-semibold">
-            <CreditCard className="w-3.5 h-3.5" />
-            Sem cartão de crédito
+        <div className="flex items-center justify-center gap-1.5 mb-5">
+          <span className="inline-flex items-center gap-1 bg-rose-50 text-rose-700 border border-rose-100 rounded-full px-2.5 py-1 text-[10px] font-semibold whitespace-nowrap">
+            <CreditCard className="w-3 h-3 flex-shrink-0" />
+            Sem cartão
           </span>
-          <span className="inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 border border-rose-100 rounded-full px-3 py-1.5 text-[11px] font-semibold">
-            <ShieldCheck className="w-3.5 h-3.5" />
+          <span className="inline-flex items-center gap-1 bg-rose-50 text-rose-700 border border-rose-100 rounded-full px-2.5 py-1 text-[10px] font-semibold whitespace-nowrap">
+            <ShieldCheck className="w-3 h-3 flex-shrink-0" />
             Cancele quando quiser
           </span>
         </div>
