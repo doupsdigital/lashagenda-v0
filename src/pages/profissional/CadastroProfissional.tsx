@@ -4,6 +4,7 @@ import { AlertCircle, Eye, EyeOff, Mail, Lock, User, Phone } from 'lucide-react'
 import posthog from 'posthog-js';
 import { supabase } from '../../lib/supabase';
 import InstallBanner from '../../components/common/InstallBanner';
+import GoogleAuthButton from '../../components/common/GoogleAuthButton';
 
 export default function CadastroProfissional() {
   const [form, setForm] = useState({
@@ -11,10 +12,8 @@ export default function CadastroProfissional() {
     email: '',
     telefone: '',
     senha: '',
-    confirmarSenha: '',
   });
   const [showSenha, setShowSenha] = useState(false);
-  const [showConfirmar, setShowConfirmar] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -55,7 +54,7 @@ export default function CadastroProfissional() {
   };
 
   const validate = (): string | null => {
-    if (!form.nome || !form.email || !form.telefone || !form.senha || !form.confirmarSenha) {
+    if (!form.nome || !form.email || !form.telefone || !form.senha) {
       return 'Preencha todos os campos obrigatórios.';
     }
     const phoneDigits = form.telefone.replace(/\D/g, '');
@@ -65,7 +64,6 @@ export default function CadastroProfissional() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(form.email)) return 'Informe um e-mail válido.';
     if (form.senha.length < 6) return 'A senha deve ter pelo menos 6 caracteres.';
-    if (form.senha !== form.confirmarSenha) return 'As senhas não coincidem.';
     return null;
   };
 
@@ -233,6 +231,14 @@ export default function CadastroProfissional() {
 
         {/* O modal de boas-vindas é renderizado fora do card abaixo */}
 
+        <GoogleAuthButton />
+
+        <div className="flex items-center gap-3 my-5">
+          <div className="flex-1 h-px bg-border" />
+          <span className="text-xs text-text-secondary">ou cadastre-se com e-mail</span>
+          <div className="flex-1 h-px bg-border" />
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Nome */}
           <div className="space-y-1.5">
@@ -330,35 +336,6 @@ export default function CadastroProfissional() {
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-text-muted hover:text-rose-600 cursor-pointer"
               >
                 {showSenha ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
-
-          {/* Confirmar Senha */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-text-secondary block">
-              Confirmar Senha
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
-                <Lock className="w-4 h-4" />
-              </div>
-              <input
-                name="confirmarSenha"
-                type={showConfirmar ? 'text' : 'password'}
-                required
-                placeholder="Repita a senha"
-                value={form.confirmarSenha}
-                onChange={handleChange}
-                className={`${inputClass} pr-10`}
-              />
-              <button
-                type="button"
-                tabIndex={-1}
-                onClick={() => setShowConfirmar(!showConfirmar)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-text-muted hover:text-rose-600 cursor-pointer"
-              >
-                {showConfirmar ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
           </div>

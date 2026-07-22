@@ -2,6 +2,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import GoogleAuthButton from '../../components/common/GoogleAuthButton';
 
 export default function Login() {
   const { user, isProfissional, estabelecimentoSlug, loading: authLoading, signIn } = useAuth();
@@ -89,6 +90,14 @@ export default function Login() {
             <p className="text-xs font-medium leading-relaxed">{errorMsg}</p>
           </div>
         )}
+
+        <GoogleAuthButton label="Entrar com Google" />
+
+        <div className="flex items-center gap-3 my-5">
+          <div className="flex-1 h-px bg-border" />
+          <span className="text-xs text-text-secondary">ou</span>
+          <div className="flex-1 h-px bg-border" />
+        </div>
 
         <form onSubmit={handleLogin} className="space-y-5">
           <div className="space-y-1.5">

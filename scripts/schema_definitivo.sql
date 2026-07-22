@@ -257,11 +257,19 @@ DECLARE
   user_role    TEXT;
   client_uuid  UUID;
 BEGIN
-  negocio_nome := new.raw_user_meta_data ->> 'nome_negocio';
+  -- Login com Google não fornece nome_negocio nem slug (só nome, e-mail e
+  -- foto) — usa o nome da conta Google como nome provisório do negócio;
+  -- a profissional pode renomear depois em Configurações.
+  negocio_nome := COALESCE(
+    new.raw_user_meta_data ->> 'nome_negocio',
+    new.raw_user_meta_data ->> 'full_name',
+    new.raw_user_meta_data ->> 'name',
+    'Meu Estúdio'
+  );
   negocio_slug := new.raw_user_meta_data ->> 'slug';
   user_role    := COALESCE(new.raw_user_meta_data ->> 'role', 'profissional');
 
-  IF user_role = 'profissional' AND negocio_nome IS NOT NULL THEN
+  IF user_role = 'profissional' THEN
 
     -- 1. Criar o estabelecimento com trial de 7 dias no plano Agenda
     INSERT INTO public.estabelecimentos (nome_negocio, slug, plano, status_assinatura, trial_ends_at)
