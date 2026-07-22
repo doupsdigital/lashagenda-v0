@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import type { ReactNode } from 'react';
+import posthog from 'posthog-js';
 import { supabase } from '../lib/supabase';
 import type { User } from '@supabase/supabase-js';
 import type { Usuario } from '../types';
@@ -71,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const fetchProfile = async () => {
         return await supabase
           .from('usuarios')
-          .select('*, estabelecimentos(plano, status_assinatura, slug, trial_ends_at), clientes(portal_token)')
+          .select('*, estabelecimentos(nome_negocio, plano, status_assinatura, slug, trial_ends_at), clientes(portal_token)')
           .eq('id', session.user.id)
           .maybeSingle();
       };
@@ -104,6 +105,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setTrialEndsAt(profileData.estabelecimentos?.trial_ends_at ?? null);
       setPortalToken(profileData.clientes?.portal_token ?? null);
       setLoading(false);
+
+      if (profileData.role === 'profissional') {
+        posthog.identify(profileData.id, {
+          email: profileData.email,
+          nome_negocio: profileData.estabelecimentos?.nome_negocio,
+          estabelecimento_id: profileData.estabelecimento_id,
+          plano: profileData.estabelecimentos?.plano,
+        });
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -118,6 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
+    posthog.reset();
     await supabase.auth.signOut();
   };
 
@@ -125,7 +136,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!user) return;
     const { data } = await supabase
       .from('usuarios')
-      .select('*, estabelecimentos(plano, status_assinatura, slug, trial_ends_at)')
+      .select('*, estabelecimentos(nome_negocio, plano, status_assinatura, slug, trial_ends_at)')
       .eq('id', user.id)
       .maybeSingle();
 
@@ -139,6 +150,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setEstabelecimentoSlug(profileData.estabelecimentos?.slug ?? null);
       setTrialEndsAt(profileData.estabelecimentos?.trial_ends_at ?? null);
       setPortalToken(profileData.clientes?.portal_token ?? null);
+
+      if (profileData.role === 'profissional') {
+        posthog.identify(profileData.id, {
+          email: profileData.email,
+          nome_negocio: profileData.estabelecimentos?.nome_negocio,
+          estabelecimento_id: profileData.estabelecimento_id,
+          plano: profileData.estabelecimentos?.plano,
+        });
+      }
     }
   };
 

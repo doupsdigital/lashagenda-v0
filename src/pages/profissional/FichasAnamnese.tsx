@@ -112,7 +112,7 @@ export default function FichasAnamnese() {
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-border">
+          <div className="divide-y divide-border ph-mask">
             {clientesFiltrados.map((cliente) => {
               const initials = getInitials(cliente.nome, cliente.sobrenome);
               const preenchida = temFichaPreenchida(cliente);

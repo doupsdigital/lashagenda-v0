@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertCircle, Eye, EyeOff, Mail, Lock, User, Phone } from 'lucide-react';
+import posthog from 'posthog-js';
 import { supabase } from '../../lib/supabase';
 import InstallBanner from '../../components/common/InstallBanner';
 
@@ -182,6 +183,10 @@ export default function CadastroProfissional() {
       if (typeof fbq === 'function') {
         fbq('track', 'CompleteRegistration');
       }
+
+      posthog.capture('signup_completed', {
+        estabelecimento_id: userProfile.estabelecimento_id,
+      });
 
       setSuccess(true);
     } catch (err: unknown) {
@@ -381,6 +386,13 @@ export default function CadastroProfissional() {
           <Link to="/login" className="text-rose-600 font-semibold hover:underline">
             Faça login
           </Link>
+        </p>
+        <p className="text-center text-[11px] text-text-secondary mt-2">
+          Ao criar sua conta, você concorda com nossa{' '}
+          <Link to="/privacidade" className="text-rose-600 hover:underline">
+            Política de Privacidade
+          </Link>
+          .
         </p>
       </div>
 

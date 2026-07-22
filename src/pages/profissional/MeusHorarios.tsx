@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import posthog from 'posthog-js';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useOnboarding } from '../../hooks/useOnboarding';
@@ -207,6 +208,7 @@ export default function MeusHorarios() {
 
       setDias(updatedDias);
       setHorariosSuccess('Expediente salvo com sucesso!');
+      posthog.capture('horarios_configurados');
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Erro ao salvar expediente.';
       setHorariosError(msg);

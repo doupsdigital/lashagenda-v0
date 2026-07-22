@@ -3,6 +3,7 @@ import { useOnboarding } from '../../hooks/useOnboarding';
 import { useGuidedTour } from '../../hooks/useGuidedTour';
 import { useGuidedTourFieldTips } from '../../hooks/useGuidedTourFieldTips';
 import type { DriveStep } from 'driver.js';
+import posthog from 'posthog-js';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -288,6 +289,10 @@ export default function Servicos() {
         if (!data) throw new Error('Falha ao criar serviço');
         servicoId = data.id;
         await registrarLog('criou', 'servico', servicoId, `Criou serviço "${servicoNome}"`);
+        posthog.capture('servico_criado', {
+          valor: valorFinal,
+          duracao_minutos: duracaoFinal,
+        });
       }
 
       const wasEditing = !!editingServico;

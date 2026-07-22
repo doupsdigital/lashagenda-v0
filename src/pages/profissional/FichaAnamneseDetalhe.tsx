@@ -605,7 +605,7 @@ export default function FichaAnamneseDetalhe() {
             <div className="w-14 h-14 md:w-12 md:h-12 rounded-full bg-rose-100 border-2 border-white/40 text-rose-800 flex items-center justify-center font-title font-bold text-lg md:text-base flex-shrink-0">
               {initials}
             </div>
-            <h2 className="font-title font-semibold text-2xl md:text-xl leading-snug">
+            <h2 className="font-title font-semibold text-2xl md:text-xl leading-snug ph-mask">
               {cliente.nome} {cliente.sobrenome}
             </h2>
           </div>
@@ -619,7 +619,10 @@ export default function FichaAnamneseDetalhe() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Toda a ficha é mascarada na gravação de sessão: mistura dados de
+          preferência estética com dados de saúde (alergias, gestante,
+          doenças crônicas) — dado sensível pela LGPD (art. 5º, II). */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ph-mask">
 
         {/* Perfil do Olho & Cílios Naturais */}
         <AnamneseSection

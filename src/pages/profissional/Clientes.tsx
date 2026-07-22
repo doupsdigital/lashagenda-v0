@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
+import posthog from 'posthog-js';
 import { useAuth } from '../../contexts/AuthContext';
 import { useOnboarding } from '../../hooks/useOnboarding';
 import { supabase } from '../../lib/supabase';
@@ -160,6 +161,7 @@ export default function Clientes() {
       if (!newClient) throw new Error('Erro ao salvar cliente.');
 
       await registrarLog('criou', 'cliente', newClient.id, `Cadastrou o cliente "${nome}"`);
+      posthog.capture('primeiro_cliente_cadastrado');
       const nomeCadastrado = nome;
       resetForm();
       fetchData();
@@ -423,7 +425,7 @@ export default function Clientes() {
           </div>
         ) : (
           <>
-            <div className="divide-y divide-border">
+            <div className="divide-y divide-border ph-mask">
               {paginatedClientes.map(client => {
                 const initials = getInitials(client.nome, client.sobrenome);
 

@@ -443,7 +443,7 @@ export default function PerfilCliente() {
             <div className="w-14 h-14 md:w-12 md:h-12 rounded-full bg-rose-100 border-2 border-white/40 text-rose-800 flex items-center justify-center font-title font-bold text-lg md:text-base flex-shrink-0">
               {initials}
             </div>
-            <h2 className="font-title font-semibold text-2xl md:text-xl leading-snug">
+            <h2 className="font-title font-semibold text-2xl md:text-xl leading-snug ph-mask">
               {cliente.nome} {cliente.sobrenome}
             </h2>
           </div>
@@ -463,7 +463,7 @@ export default function PerfilCliente() {
         <div className="lg:col-span-1 bg-white border border-border rounded-[14px] p-5 shadow-sm space-y-4 h-fit">
           <p className="text-sm md:text-xs font-bold text-text-muted uppercase tracking-wider border-b border-border pb-2">Resumo Rápido</p>
 
-          <div className="space-y-3.5">
+          <div className="space-y-3.5 ph-mask">
             <div>
               <p className="text-xs md:text-[10px] text-text-secondary uppercase font-semibold">WhatsApp</p>
               <p className="text-base md:text-sm font-semibold text-text-primary mt-0.5">{cliente.whatsapp}</p>
@@ -532,7 +532,7 @@ export default function PerfilCliente() {
 
             {/* TAB: DADOS PESSOAIS */}
             {activeTab === 'dados' && (
-              <form onSubmit={handleSavePersonalData} className="space-y-5">
+              <form onSubmit={handleSavePersonalData} className="space-y-5 ph-mask">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-sm md:text-xs font-semibold uppercase tracking-wider text-text-secondary">Nome *</label>

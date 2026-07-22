@@ -8,6 +8,7 @@ import ClienteRoute from './components/common/ClienteRoute';
 import Layout from './components/layout/Layout';
 import PortalLayout from './components/layout/PortalLayout';
 import ScrollToTop from './components/common/ScrollToTop';
+import PostHogPageview from './components/common/PostHogPageview';
 import Login from './pages/profissional/Login';
 import Dashboard from './pages/profissional/Dashboard';
 import Clientes from './pages/profissional/Clientes';
@@ -33,6 +34,7 @@ import LandingPage_OfertaUm_Dark from './pages/LandingPage_OfertaUm_Dark';
 import LandingPage_OfertaDois from './pages/LandingPage_OfertaDois';
 import LandingPage_OfertaDois_Dark from './pages/LandingPage_OfertaDois_Dark';
 import Tutoriais from './pages/profissional/Tutoriais';
+import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
 
 
 import PlanGuard from './components/common/PlanGuard';
@@ -92,6 +94,7 @@ export default function App() {
       <AuthProvider>
         <BrowserRouter>
           <ScrollToTop />
+          <PostHogPageview />
           <Routes>
             {/* Públicas */}
             <Route path="/v5" element={<LandingPage_v5 />} />
@@ -107,6 +110,7 @@ export default function App() {
             <Route path="/cadastro" element={<CadastroProfissional />} />
             <Route path="/recuperar-senha" element={<RecuperarSenha />} />
             <Route path="/redefinir-senha" element={<RedefinirSenha />} />
+            <Route path="/privacidade" element={<PoliticaPrivacidade />} />
 
             {/* Rotas da profissional */}
             <Route

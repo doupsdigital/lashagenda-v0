@@ -1,6 +1,7 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Building2, WandSparkles, Link2, Copy, Check, X, Lightbulb } from 'lucide-react';
+import posthog from 'posthog-js';
 import { useAuth } from '../../contexts/AuthContext';
 import { useGuidedTour, type GuidedTourStep } from '../../hooks/useGuidedTour';
 import { getFieldTipsActive, subscribeFieldTipsActive } from '../../hooks/guidedTourFieldTipsStore';
@@ -109,6 +110,7 @@ function FullSheet({ step, stepIndex, totalSteps, skip, completeStep }: {
 
   const handleCopyLink = async () => {
     if (!portalUrl) return;
+    posthog.capture('link_agendamento_copiado');
     try {
       await navigator.clipboard.writeText(portalUrl);
     } catch {

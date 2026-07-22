@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import posthog from 'posthog-js';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useOnboarding } from '../../hooks/useOnboarding';
@@ -35,6 +36,7 @@ export default function LinkAgendamento() {
   const handleCopyLink = async () => {
     if (!estabelecimentoSlug) return;
     const portalUrl = `${window.location.origin}/portal/${estabelecimentoSlug}`;
+    posthog.capture('link_agendamento_copiado');
     try {
       await navigator.clipboard.writeText(portalUrl);
       setSlugCopied(true);

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
+import posthog from 'posthog-js';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useSubscription } from '../../hooks/useSubscription';
@@ -184,6 +185,7 @@ export default function Dashboard() {
   const handleCopyLink = async () => {
     if (!estabelecimentoSlug) return;
     const portalUrl = `${window.location.origin}/portal/${estabelecimentoSlug}`;
+    posthog.capture('link_agendamento_copiado');
     try {
       await navigator.clipboard.writeText(portalUrl);
       setLinkCopied(true);

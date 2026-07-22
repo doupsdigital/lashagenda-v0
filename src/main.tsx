@@ -1,7 +1,16 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import posthog from 'posthog-js'
 import './index.css'
 import App from './App.tsx'
+
+posthog.init(import.meta.env.VITE_POSTHOG_KEY, {
+  api_host: import.meta.env.VITE_POSTHOG_HOST,
+  capture_pageview: false, // SPA: disparado manualmente a cada troca de rota (ver App.tsx)
+  session_recording: {
+    maskAllInputs: false, // mascaramento seletivo de dados de clientes, ver Fase 5
+  },
+});
 
 // Registra o service worker para habilitar instalação como PWA
 if ('serviceWorker' in navigator) {
