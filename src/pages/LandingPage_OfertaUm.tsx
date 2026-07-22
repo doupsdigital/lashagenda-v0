@@ -340,7 +340,7 @@ export default function LandingPage_OfertaUm() {
                   <div style={{ position: 'relative', paddingBottom: '177.78%', height: 0 }}>
                     {vslPlaying ? (
                       <iframe
-                        src="https://www.youtube-nocookie.com/embed/yGYEGVhuxFw?autoplay=1&rel=0&modestbranding=1&playsinline=1&cc_load_policy=0"
+                        src="https://www.youtube-nocookie.com/embed/mcNEFbnHXrg?autoplay=1&rel=0&modestbranding=1&playsinline=1&cc_load_policy=0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowFullScreen
                         style={{

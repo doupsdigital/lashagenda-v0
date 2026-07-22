@@ -423,10 +423,10 @@ export default function CadastroProfissional() {
               <div className="flex justify-center">
                 <div className="relative rounded-xl overflow-hidden bg-black w-full" style={{ maxWidth: '240px', aspectRatio: '9 / 16' }}>
                   <iframe
-                    src="https://player.vimeo.com/video/1211379321?h=661f1ed29e&badge=0&autopause=0&player_id=0&app_id=58479"
+                    src="https://www.youtube-nocookie.com/embed/xef5mzQFXFA?rel=0&modestbranding=1&playsinline=1&cc_load_policy=0"
                     className="absolute inset-0 w-full h-full"
                     frameBorder={0}
-                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
                     title="Tutorial de Boas-vindas - Lash Agenda"
                   />
