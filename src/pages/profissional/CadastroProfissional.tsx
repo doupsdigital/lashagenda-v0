@@ -220,7 +220,7 @@ export default function CadastroProfissional() {
             Comece grátis agora
           </h2>
           <p className="text-rose-600 font-semibold text-sm mt-0.5">
-            14 dias sem compromisso
+            7 dias sem compromisso
           </p>
         </div>
 

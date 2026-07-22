@@ -85,7 +85,7 @@ SUPABASE_SERVICE_ROLE = [service role key]
 **O que o schema cria:**
 - Todas as tabelas (usuários, estabelecimentos, clientes, serviços, agendamentos, etc.)
 - Todas as políticas de segurança (RLS)
-- Triggers de onboarding (trial de 14 dias ao criar conta)
+- Triggers de onboarding (trial de 7 dias ao criar conta)
 - Funções auxiliares (get_slots_ocupados, get_portal_profissional_info, etc.)
 - Trigger de notificações push (notify_new_agendamento)
 
@@ -288,7 +288,7 @@ https://vgolovxcrsxnpcecvoyi.supabase.co/functions/v1/asaas-webhook
 **1. Criar conta de profissional de teste:**
 - Acesse a URL de produção: `https://lashhub.vercel.app/cadastro`
 - Crie uma conta com e-mail seu (pode usar alias: `seuemail+teste@gmail.com`)
-- Verifique que entrou no trial de 14 dias
+- Verifique que entrou no trial de 7 dias
 
 **2. Fazer assinatura via Pix:**
 - Painel → **Assinatura** (`/assinatura`)

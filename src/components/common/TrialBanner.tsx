@@ -19,9 +19,10 @@ export default function TrialBanner() {
 
   const expired = daysLeft !== null && daysLeft <= 0;
 
-  // Cores por urgência
-  const urgent = expired || (daysLeft !== null && daysLeft <= 3);
-  const warning = !urgent && daysLeft !== null && daysLeft <= 7;
+  // Cores por urgência — limiares proporcionais a um trial de 7 dias
+  // (ver docs/plano_reducao_trial_14_para_7_dias.md)
+  const urgent = expired || (daysLeft !== null && daysLeft <= 2);
+  const warning = !urgent && daysLeft !== null && daysLeft <= 4;
 
   const bgClass = urgent
     ? 'bg-red-600'

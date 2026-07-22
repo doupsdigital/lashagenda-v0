@@ -1,11 +1,13 @@
 # Plano: Notificações Automáticas de Trial por E-mail
 
+> ⚠️ **Atenção**: este plano nunca foi implementado (ver `docs/plano_reducao_trial_14_para_7_dias.md`). Os dias "3" e "12" abaixo foram pensados para um trial de **14 dias**, que já não é mais o valor real do sistema (o trial atual é de **7 dias**). Se este plano for retomado no futuro, recalcular os dias-gatilho proporcionalmente antes de implementar.
+
 ## Objetivo
 
 Disparar e-mails automáticos para profissionais durante o período de testes:
 
 - **Dia 3**: E-mail de boas-vindas + pergunta se precisa de ajuda para configurar
-- **Dia 12**: E-mail de urgência avisando que o trial expira em 2 dias
+- **Dia 12**: E-mail de urgência avisando que o trial expira em 2 dias (pensado para trial de 14 dias — recalcular se implementar com o trial atual de 7 dias)
 
 ---
 

@@ -168,7 +168,7 @@ WHERE slug = 'slug-da-profissional';
 
 -- Restaurar
 UPDATE public.estabelecimentos
-SET trial_ends_at = now() + INTERVAL '14 days'
+SET trial_ends_at = now() + INTERVAL '7 days'
 WHERE slug = 'slug-da-profissional';
 ```
 
@@ -178,7 +178,7 @@ WHERE slug = 'slug-da-profissional';
 
 O fluxo end-to-end foi testado e validado no sandbox:
 
-✅ Profissional cria conta → trial inicia automaticamente (14 dias Premium)  
+✅ Profissional cria conta → trial inicia automaticamente (7 dias Premium)  
 ✅ Clica "Assinar via Pix" → informa CPF → QR Code real gerado  
 ✅ Paga via Pix → Asaas confirma → webhook atualiza banco → acesso liberado  
 ✅ Cancela assinatura → Asaas cancela → banco atualizado  

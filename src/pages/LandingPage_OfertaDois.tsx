@@ -83,7 +83,7 @@ const faqs = [
   { q: 'Minha cliente precisa baixar algum app?', a: 'Não. Ela acessa o link do seu estúdio e, se quiser, salva na tela inicial do celular como ícone. Funciona igualzinho a um app, mas sem precisar ir em nenhuma loja.' },
   { q: 'O Lash Agenda cobra taxa em cima de cada atendimento?', a: 'Não. O valor de cada procedimento é 100% seu. Você paga apenas a mensalidade fixa do plano.' },
   { q: 'Preciso configurar tudo do zero?', a: 'Não. Quando você entra, o sistema já vem com 10 serviços de Lash e sobrancelhas pré-cadastrados. É só ajustar e começar a usar.' },
-  { q: 'Como funciona o período de teste?', a: 'Você ganha 14 dias de acesso completo. Não pedimos cartão de crédito pra começar.' },
+  { q: 'Como funciona o período de teste?', a: 'Você ganha 7 dias de acesso completo. Não pedimos cartão de crédito pra começar.' },
 ];
 
 const badPoints = [
@@ -229,7 +229,7 @@ export default function LandingPage_OfertaDois() {
                 transition={SPRING}
                 style={{ background: P.accent, color: '#fff', border: 'none', borderRadius: 14, padding: '15px 28px', fontWeight: 700, fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: `0 8px 32px rgba(200,75,114,0.35)` }}
               >
-                Testar 14 dias grátis <ArrowRight size={16} />
+                Testar 7 dias grátis <ArrowRight size={16} />
               </motion.button>
               <Link
                 to="/login"
@@ -248,7 +248,7 @@ export default function LandingPage_OfertaDois() {
               style={{ gap: 20 }}
             >
               {[
-                { icon: <Clock size={14} />, text: '14 dias grátis' },
+                { icon: <Clock size={14} />, text: '7 dias grátis' },
                 { icon: <CreditCard size={14} />, text: 'Sem cartão de crédito' },
                 { icon: <ShieldCheck size={14} />, text: 'Garantia 7 dias' },
               ].map(b => (
@@ -730,7 +730,7 @@ export default function LandingPage_OfertaDois() {
             style={{ marginBottom: 48 }}
           >
             <motion.h2 variants={fadeUp} style={{ fontSize: 'clamp(24px, 3.5vw, 42px)', fontWeight: 900, letterSpacing: -0.5, marginBottom: 12 }}>Planos sem taxa por atendimento</motion.h2>
-            <motion.p variants={fadeUp} style={{ fontSize: 14, color: P.muted }}>14 dias grátis pra testar. Sem precisar colocar cartão.</motion.p>
+            <motion.p variants={fadeUp} style={{ fontSize: 14, color: P.muted }}>7 dias grátis pra testar. Sem precisar colocar cartão.</motion.p>
           </motion.div>
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left"

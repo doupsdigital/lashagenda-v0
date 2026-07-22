@@ -220,7 +220,7 @@ export default function LandingPage_v5() {
             transition={SPRING}
             style={{ background: P.accent, color: '#fff', border: 'none', borderRadius: 14, padding: '15px 32px', fontWeight: 700, fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, boxShadow: `0 10px 40px rgba(233,30,140,0.35)` }}
           >
-            Testar 14 dias de graça <ArrowRight size={16} />
+            Testar 7 dias de graça <ArrowRight size={16} />
           </motion.button>
           <Link to="/login" style={{ color: P.muted, fontSize: 14, fontWeight: 500, textDecoration: 'none', padding: '15px 24px', border: `1px solid ${P.border}`, borderRadius: 14, display: 'flex', alignItems: 'center' }}>
             Já tenho conta
@@ -234,7 +234,7 @@ export default function LandingPage_v5() {
           transition={{ delay: 1.5, duration: 0.6 }}
           style={{ display: 'flex', gap: 24, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 64 }}
         >
-          {['14 dias grátis', 'Sem cartão de crédito', 'Garantia de 7 dias'].map(b => (
+          {['7 dias grátis', 'Sem cartão de crédito', 'Garantia de 7 dias'].map(b => (
             <span key={b} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: P.muted }}>
               <Check size={13} color={P.accent} /> {b}
             </span>
@@ -487,7 +487,7 @@ export default function LandingPage_v5() {
             <motion.h2 variants={fadeUp} style={{ fontSize: 'clamp(24px, 3.5vw, 42px)', fontWeight: 900, letterSpacing: -0.5, marginBottom: 12 }}>
               Planos sem taxa por atendimento
             </motion.h2>
-            <motion.p variants={fadeUp} style={{ fontSize: 14, color: P.muted }}>Teste 14 dias grátis. Sem precisar cadastrar cartão.</motion.p>
+            <motion.p variants={fadeUp} style={{ fontSize: 14, color: P.muted }}>Teste 7 dias grátis. Sem precisar cadastrar cartão.</motion.p>
           </motion.div>
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left"

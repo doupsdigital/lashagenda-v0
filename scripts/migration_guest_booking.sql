@@ -44,14 +44,14 @@ BEGIN
 
   IF user_role = 'profissional' AND negocio_nome IS NOT NULL THEN
 
-    -- 1. Criar o estabelecimento com trial de 14 dias no plano Agenda
+    -- 1. Criar o estabelecimento com trial de 7 dias no plano Agenda
     INSERT INTO public.estabelecimentos (nome_negocio, slug, plano, status_assinatura, trial_ends_at)
     VALUES (
       negocio_nome,
       COALESCE(negocio_slug, lower(regexp_replace(negocio_nome, '[^a-zA-Z0-9]', '-', 'g'))),
       'basico',
       'trial',
-      now() + INTERVAL '14 days'
+      now() + INTERVAL '7 days'
     )
     RETURNING id INTO new_est_id;
 

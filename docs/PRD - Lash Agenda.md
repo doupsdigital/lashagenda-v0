@@ -23,7 +23,7 @@
 
 - **Tipo:** SaaS Multi-Tenant — cada profissional é um "tenant" isolado
 - **Monetização:** Assinatura mensal recorrente via Pix ou Cartão de Crédito (Asaas)
-- **Trial:** 14 dias com acesso Premium completo ao se cadastrar (inclusive Fichas de Anamnese)
+- **Trial:** 7 dias com acesso Premium completo ao se cadastrar (inclusive Fichas de Anamnese)
 
 ### Planos
 
@@ -209,7 +209,7 @@ Disponível nos dois planos.
 ## 8. Onboarding Automático
 
 Ao se cadastrar, a profissional recebe automaticamente (via trigger no banco):
-1. Estabelecimento criado com 14 dias de trial no plano Premium completo
+1. Estabelecimento criado com 7 dias de trial no plano Premium completo
 2. Configuração padrão do negócio
 3. **10 serviços prontos** em 4 categorias:
    - Extensão de Cílios (4 serviços)

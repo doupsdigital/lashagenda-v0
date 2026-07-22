@@ -41,7 +41,7 @@ export default function BillingGuard() {
 
   if (status === 'trial') {
     title = 'Seu período de testes expirou';
-    message = 'Seus 14 dias grátis acabaram. Escolha um plano pra continuar usando a agenda.';
+    message = 'Seus 7 dias grátis acabaram. Escolha um plano pra continuar usando a agenda.';
     iconColor = 'text-amber-500 bg-amber-50';
   } else if (status === 'suspenso') {
     title = 'Assinatura suspensa';

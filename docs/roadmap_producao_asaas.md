@@ -106,7 +106,7 @@ Antes de abrir a plataforma publicamente, é crucial validar a integração com 
 ### Plano de Teste Rápido:
 1. **Criar Conta de Teste Real**: 
    * Acesse a URL de produção do seu SaaS e faça o cadastro de uma nova profissional (`/cadastro`).
-   * Verifique se a conta foi criada como **Premium Trial (14 dias)** e se o painel da profissional e portal de agendamentos funcionam perfeitamente.
+   * Verifique se a conta foi criada como **Premium Trial (7 dias)** e se o painel da profissional e portal de agendamentos funcionam perfeitamente.
 2. **Simular Compra com Pix Real**:
    * Vá em `/faturamento` e solicite a assinatura via Pix. Como você está em produção, o QR Code e código copia e cola Pix exibidos serão reais.
    * Transfira um valor pequeno de teste (se as assinaturas estiverem precificadas oficialmente a R$ 59,90 e R$ 99,90, você pode temporariamente criar um plano de teste de R$ 5,00 no Asaas para validação, ou pagar o valor integral e depois fazer o reembolso no próprio painel do Asaas).
