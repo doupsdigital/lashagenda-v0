@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Check, Bell, Calendar, BookOpen, TrendingUp, Clock, ShieldCheck, Sparkles, ChevronDown, XCircle, CheckCircle2, Users, LayoutGrid, Percent, Monitor, Heart, Zap, Wallet, Smartphone, CreditCard, LogIn, PlayCircle } from 'lucide-react';
+import { ArrowRight, Check, Bell, Calendar, BookOpen, TrendingUp, Clock, ShieldCheck, Sparkles, ChevronDown, XCircle, CheckCircle2, Users, LayoutGrid, Percent, Monitor, Heart, Zap, Wallet, Smartphone, CreditCard, LogIn, PlayCircle, Play } from 'lucide-react';
 
 // ── Animation presets ──────────────────────────────────────────────────────
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -115,6 +115,7 @@ export default function LandingPage_OfertaUm() {
   const { scrollY, scrollYProgress } = useScroll();
   const [scrolled, setScrolled] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [vslPlaying, setVslPlaying] = useState(false);
 
   useEffect(() => {
     return scrollY.on('change', (v) => setScrolled(v > 80));
@@ -337,19 +338,60 @@ export default function LandingPage_OfertaUm() {
                 >
                   {/* 9:16 aspect ratio wrapper */}
                   <div style={{ position: 'relative', paddingBottom: '177.78%', height: 0 }}>
-                    <iframe
-                      src="https://player.vimeo.com/video/1211503636?h=f869dd2731&badge=0&autopause=0&player_id=0&app_id=58479"
-                      allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        border: 'none',
-                      }}
-                      title="Lash Agenda — Como funciona"
-                    />
+                    {vslPlaying ? (
+                      <iframe
+                        src="https://www.youtube-nocookie.com/embed/yGYEGVhuxFw?autoplay=1&rel=0&modestbranding=1&playsinline=1&cc_load_policy=0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          border: 'none',
+                        }}
+                        title="Lash Agenda — Como funciona"
+                      />
+                    ) : (
+                      // Imagem estática + botão de play: evita tela preta enquanto o
+                      // iframe do Vimeo carrega (comum em navegadores de app como
+                      // Instagram/Facebook). O vídeo real só é carregado ao clicar.
+                      <button
+                        onClick={() => setVslPlaying(true)}
+                        aria-label="Assistir vídeo"
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          width: '100%',
+                          height: '100%',
+                          border: 'none',
+                          padding: 0,
+                          cursor: 'pointer',
+                          backgroundImage: 'url(/vsl-thumbnail.jpg)',
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: 64,
+                            height: 64,
+                            borderRadius: '50%',
+                            background: 'rgba(255,255,255,0.92)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+                          }}
+                        >
+                          <Play size={26} color={P.accent} fill={P.accent} strokeWidth={0} style={{ marginLeft: 3 }} />
+                        </span>
+                      </button>
+                    )}
                   </div>
                 </motion.div>
               </div>
